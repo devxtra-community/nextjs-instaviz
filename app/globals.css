@@ -27,3 +27,25 @@ h1, h2 {
   font-family: "Domine", serif;
 }
 
+.card-custom-top-right {
+  border-top-right-radius: 52px 40px;
+}
+
+
+.bg-dot-fade {
+  background-color: #fff;
+  background-image: 
+    radial-gradient(circle, #d1d5db 0.6px, transparent 1.2px),
+    linear-gradient(to right, #fff 80%, rgba(255,255,255,0.1) 95%, rgba(255,255,255,0) 100%);
+  background-size: 18px 18px, 100% 100%;
+  background-position: 0 0, 0 0;
+}
+
+
+
+.card-custom-top-right {
+  border-top-right-radius: 50px 32px;
+}
+
+
+
