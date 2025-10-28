@@ -1,4 +1,5 @@
 import React from 'react'
+import { Navbar } from "@/components/Navbar";
 
 const plans = [
   {
@@ -66,6 +67,7 @@ const plans = [
 function PlansPage() {
   return (
     <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4">
+        <Navbar/>
       <h1 className="text-3xl font-bold text-center mb-1 text-violet-800">Pricing</h1>
       <div className="flex justify-center">
         <div className="w-full max-w-6xl">
