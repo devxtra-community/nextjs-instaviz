@@ -66,9 +66,9 @@ const plans = [
 
 function PlansPage() {
   return (
-    <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4">
+    <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4 pt-24">
         <Navbar/>
-      <h1 className="text-3xl font-bold text-center mb-1 text-violet-800">Pricing</h1>
+      <h1 className="text-3xl font-bold text-center mb-1 text-violet-800">Our Plans</h1>
       <div className="flex justify-center">
         <div className="w-full max-w-6xl">
           <div className="flex flex-col sm:flex-row sm:justify-center sm:items-stretch gap-6 sm:gap-4 mt-6 overflow-x-auto">
@@ -90,7 +90,7 @@ function PlansPage() {
               >
                 {plan.label && (
                   <span className={`absolute top-6 right-6 px-3 py-1 text-xs rounded-full font-semibold
-                    ${plan.highlight ? 'bg-violet-300 text-violet-900' : idx === 2 ? 'bg-violet-800 text-white' : 'bg-violet-100 text-violet-800'}`}>
+                    ${plan.highlight ? 'bg-violet-100 text-violet-900' : idx === 2 ? 'bg-violet-800 text-white' : 'bg-violet-100 text-violet-800'}`}>
                     {plan.label}
                   </span>
                 )}
