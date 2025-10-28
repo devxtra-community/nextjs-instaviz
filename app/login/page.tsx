@@ -7,14 +7,14 @@ export default function LoginPage() {
       {/* Left Section */}
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         {/* Logo / Header */}
-        <div className="mb-10 flex items-center">
-          <h1 className="text-4xl font-semibold text-purple-700">Instaviz</h1>
+        <div className="lg:hidden mb-10 flex items-center">
+          <h1 className="text-4xl font-semibold text-[#AD49E1]">Instaviz</h1>
         </div>
 
         {/* Form */}
         <div className="mx-auto w-full max-w-md">
-          <h2 className="text-3xl font-semibold text-gray-900">Welcome back</h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
+          <p className="mt-1 text-base text-[#AD49E1]">
             Please sign in to continue your analysis.
           </p>
 
@@ -26,7 +26,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
               />
             </div>
 
@@ -37,14 +37,14 @@ export default function LoginPage() {
               <input
                 type="password"
                 placeholder="••••••••"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
               />
              
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-md bg-purple-600 py-2.5 text-white font-medium hover:bg-purple-700 transition"
+              className="w-full rounded-md bg-[#AD49E1] py-2.5 text-white font-medium hover:bg-purple-600 transition"
             >
               Sign in
             </button>
@@ -63,7 +63,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-600">
               Don’t have an account?{" "}
-              <Link href="/signup" className="text-purple-600 hover:underline">
+              <Link href="/signup" className="text-[#AD49E1] hover:underline">
                 Sign up
               </Link>
             </p>
@@ -72,7 +72,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Section (hidden on mobile) */}
-      <div className="hidden md:flex flex-1 items-center justify-center bg-violet-700">
+      <div className="hidden md:flex flex-1 items-center justify-center bg-[#AD49E1]">
         <img
           src="/analysis-illustration.png"
           alt="Data Visualization"
