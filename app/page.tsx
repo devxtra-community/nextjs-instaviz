@@ -4,7 +4,7 @@ import { InsightsPanel } from '@/components/ChatBar';
 import { DashboardMain } from '@/components/DashboardMain';
 import { Navbar } from "@/components/Navbar";
 const Home: React.FC = () => {
-  const [dataUploaded, setDataUploaded] = useState<boolean>(true);
+  const [dataUploaded, setDataUploaded] = useState<boolean>(false);
 
   return (
     <>
