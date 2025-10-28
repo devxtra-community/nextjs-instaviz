@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Mail, Lock, User } from "lucide-react";
+import Link from "next/link";
 
 export default function SignUpPage() {
     const [formData, setFormData] = useState({
@@ -203,9 +204,9 @@ export default function SignUpPage() {
                     <div className="mt-6 text-center">
                         <p className="text-gray-600 text-sm">
                             Already have an account?{" "}
-                            <a href="#" className="text-indigo-600 hover:underline font-semibold">
+                            <Link href="/login" className="text-indigo-600 hover:underline font-semibold">
                                 Sign in
-                            </a>
+                            </Link>
                         </p>
                     </div>
 
