@@ -48,33 +48,16 @@ export default function SignUpPage() {
                     </p>
 
                     {/* Glass Card */}
-                    <div className="relative backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 w-[430px] shadow-lg hover:shadow-2xl transition">
-                        <h3 className="font-semibold text-lg mb-1 text-white">Analytics Dashboard</h3>
-                        <p className="text-sm text-white/60 mb-4">
-                            Real-time insights powered by AI
-                        </p>
-                        <div className="h-32 bg-linear-to-r from-white/10 to-white/5 rounded-xl flex items-center justify-center">
+                    <div className="relative bg-linear-to-r from-[#9B5DE0] to-[#b188fc] backdrop-blur-md border border-gray-400 rounded-2xl p-6 w-[430px]  transition">
+                        <div className="p-4 flex justify-center">
                             <img
-                                src="/robot-with-books.png"
+                                src="/violet.gif"
                                 alt="AI Data Visualization"
-                                className="w-64 h-auto opacity-90"
+                                className="w-full h-auto opacity-90 rounded-xl shadow-lg"
                             />
                         </div>
-                        <div className="flex justify-between mt-5 text-sm">
-                            <div className="flex flex-col items-center">
-                                <span className="text-white/70">Processed</span>
-                                <span className="text-lg font-semibold">2.4M</span>
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <span className="text-white/70">Accuracy</span>
-                                <span className="text-lg font-semibold">98.5%</span>
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <span className="text-white/70">Speed</span>
-                                <span className="text-lg font-semibold">2.1s</span>
-                            </div>
-                        </div>
                     </div>
+
 
                     <p className="mt-10 text-white/70 text-sm">
                         Join <span className="text-white font-semibold">5,000+</span> teams turning data into insights 🚀
