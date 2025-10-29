@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import { InsightsPanel } from '@/components/ChatBar';
+import { ChatBar } from '@/components/ChatBar';
 import { DashboardMain } from '@/components/DashboardMain';
 import { Navbar } from "@/components/Navbar";
 const Home: React.FC = () => {
@@ -10,9 +10,9 @@ const Home: React.FC = () => {
     <>
       <div className="min-h-screen bg-gray-50 ">
         <Navbar />
-        <div className="pt-20 flex flex-col md:flex-row min-h-[calc(100vh)] h-full">
+        <div className="pt-13 flex flex-col md:flex-row  h-screen">
           <DashboardMain showData={dataUploaded} />
-          <InsightsPanel dataUploaded={dataUploaded} setDataUploaded={setDataUploaded} />
+          <ChatBar dataUploaded={dataUploaded} setDataUploaded={setDataUploaded} />
         </div>
       </div>
     </>

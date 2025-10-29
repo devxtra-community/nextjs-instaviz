@@ -43,26 +43,26 @@ const Sparkle = () => (
   </motion.svg>
 );
 
-type InsightsPanelProps = {
+type ChatBarProps = {
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
 };
 
-export const InsightsPanel: React.FC<InsightsPanelProps> = ({
+export const ChatBar: React.FC<ChatBarProps> = ({
   dataUploaded,
   setDataUploaded,
 }) => {
   if (!dataUploaded) {
     return (
-      <aside className="w-full md:w-120 bg-white p-4 md:p-7 flex flex-col items-center justify-center mt-4 md:mt-0 border-l border-black/10 ml-1  shadow-sm min-h-[300px]">
+      <aside className="w-full md:w-96 bg-white p-3 md:p-4 flex flex-col items-center justify-center mt-4 md:mt-0 border-l border-black/10 ml-1 shadow-sm min-h-[220px]">
         <Sparkle />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
-          className="mt-6 text-center"
+          className="mt-4 text-center"
         >
-          <h2 className="text-lg md:text-xl font-semibold text-violet-700 mb-2">
+          <h2 className="text-base md:text-lg font-semibold text-violet-700 mb-2">
             Upload a file to chat with InstaviZ AI
           </h2>
           <p className="text-xs md:text-sm text-gray-500">
@@ -74,40 +74,37 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
   }
 
   return (
-    <aside className="w-full md:w-120 max-h-[calc(100vh-5rem)] h-[calc(100vh-5rem)] bg-white p-4 md:p-7 flex flex-col justify-between mt-4 md:mt-0 border-l border-black/10 ml-1  shadow-sm">
-      <div className="mb-4">
-        <div className="text-base md:text-2xl font-semibold text-violet-700 mb-4">
+    <aside className="w-full md:w-96 h-full bg-white p-3 md:p-4 flex flex-col justify-between mt-4 md:mt-0 border-l border-black/10 ml-1 shadow-sm">
+      <div className="mb-3">
+        <div className="text-base md:text-lg font-semibold text-violet-700 mb-3">
           <h1>Ask InstaviZ AI</h1>
         </div>
-        <div className="flex flex-col items-start space-y-4 flex-1 overflow-y-auto pr-1">
-          {/* User Chat Bubble */}
-          <div className="flex items-end self-end gap-2">
-            <div className="bg-violet-100 text-violet-700 px-4 py-2 rounded-full shadow text-xs md:text-sm font-medium max-w-[75%]">
+        <div className="flex flex-col items-start space-y-3 flex-1 overflow-y-auto pr-1">
+          <div className="flex items-end justify-end self-end gap-2">
+            <div className="bg-violet-100 text-violet-700 px-3 py-1.5 rounded-full shadow text-xs md:text-sm font-medium max-w-[75%]">
               Can you summarize my data?
             </div>
             <VioletAIAvatar />
           </div>
-          {/* AI Chat Bubble */}
-          <div className="flex items-start gap-2 mt-2">
+          <div className="flex items-start gap-2 mt-1">
             <VioletAIAvatar />
-            <div className="bg-gray-50 text-gray-800 px-4 py-2 rounded-xl shadow text-xs md:text-sm max-w-[75%]">
+            <div className="bg-gray-50 text-gray-800 px-3 py-1.5 rounded-xl shadow text-xs md:text-sm max-w-[75%]">
               Sure! Your uploaded CSV mostly contains sales and user engagement data. Most activity comes from social media and organic search, and your bounce rate dropped 10% this week.
             </div>
           </div>
         </div>
       </div>
-      {/* Input Fixed at Bottom */}
       <div className="relative flex items-center">
         <input
           type="text"
           placeholder="Ask questions about your data..."
-          className="w-full px-4 py-3 rounded-lg border border-violet-200 text-gray-700 shadow focus:ring-2 focus:ring-violet-400 outline-none text-base md:text-sm pr-12"
+          className="w-full px-3 py-2 rounded-lg border border-violet-200 text-gray-700 shadow focus:ring-2 focus:ring-violet-400 outline-none text-base md:text-sm pr-10"
         />
         <button
           type="button"
-          className="absolute right-3 top-1.5 hover:cursor-pointer text-violet-700 hover:bg-violet-100 rounded-full p-2 transition"
+          className="absolute right-2 top-1 hover:cursor-pointer text-violet-700 hover:bg-violet-100 rounded-full p-2 transition"
         >
-          <FiSend size={20} />
+          <FiSend size={15} />
         </button>
       </div>
     </aside>
