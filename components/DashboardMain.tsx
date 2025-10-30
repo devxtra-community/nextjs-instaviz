@@ -3,11 +3,32 @@ import React from "react";
 import MetricCard from "@/components/metricCard";
 import { motion } from "framer-motion";
 import { FiUploadCloud } from "react-icons/fi";
+import { Bar, BarChart } from "recharts"
+import { ChartConfig, ChartContainer } from "@/components/ui/chart"
+
 
 type DashboardMainProps = {
   showData: boolean;
 };
+const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+]
 
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "#2563eb",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "#60a5fa",
+  },
+} satisfies ChartConfig
 export const DashboardMain: React.FC<DashboardMainProps> = ({ showData }) => {
   if (!showData)
     return (
@@ -49,13 +70,20 @@ export const DashboardMain: React.FC<DashboardMainProps> = ({ showData }) => {
         <MetricCard title="Active Users" value="1,239" icon="👥" />
         <MetricCard title="Sales Today" value="₹23,390" icon="💰" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 ">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 ">
         <div className="bg-white rounded-xl shadow p-4 md:p-7 min-h-[220px] flex flex-col justify-center items-center ">
           <div className="text-base md:text-lg font-semibold text-gray-700 mb-2">Data Insights</div>
           <div className="w-full h-32 md:h-48 bg-violet-100 rounded" />
           <div className="mt-2 text-xs text-gray-400">Visualize your CSV uploads and user metrics here.</div>
         </div>
-      </div>
+      </div> */}
+      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+        <BarChart accessibilityLayer data={chartData}>
+          <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+          <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+
     </main>
-  );
+  )
 };
