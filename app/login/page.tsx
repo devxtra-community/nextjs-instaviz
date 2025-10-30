@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   return (
@@ -7,7 +8,7 @@ export default function LoginPage() {
       {/* Left Section */}
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         {/* Logo / Header */}
-        <div className="lg:hidden mb-10 flex items-center">
+        <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold text-[#AD49E1]">Instaviz</h1>
         </div>
 
@@ -39,7 +40,6 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
               />
-             
             </div>
 
             <button
@@ -71,13 +71,32 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Section (hidden on mobile) */}
-      <div className="hidden md:flex flex-1 items-center justify-center bg-[#AD49E1]">
-        <img
-          src="/analysis-illustration.png"
+      {/* Right Section (Enhanced) */}
+      <div className="hidden md:flex flex-1 items-center justify-center relative bg-linear-to-br from-[#AD49E1] via-[#8E2DE2] to-[#4A00E0] overflow-hidden">
+        {/* Dot Pattern Overlay */}
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,_#ffffff_1px,_transparent_1px)] bg-[length:20px_20px]" />
+
+        {/* Floating Illustration */}
+        <motion.img
+          src="/giphy.gif"
           alt="Data Visualization"
-          className="max-w-md w-full object-contain"
+          className="relative z-10 max-w-md w-full md:h-1/3 object-contain drop-shadow-2xl rounded-2xl"
+          animate={{ y: [0, -15, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
+
+        {/* Motivational Text */}
+        <div className="absolute bottom-12 text-center px-4 z-20">
+          <h2 className="text-white text-3xl font-semibold drop-shadow-lg">
+            Visualize. Analyze. Grow.
+          </h2>
+          <p className="text-gray-200 text-sm mt-2">
+            Transform your data into clear, meaningful insights.
+          </p>
+        </div>
+
+        {/* Soft Gradient Glow */}
+        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent z-0" />
       </div>
     </div>
   );
