@@ -72,7 +72,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Section (Enhanced) */}
-      <div className="hidden md:flex flex-1 items-center justify-center relative bg-linear-to-br from-[#AD49E1] via-[#8E2DE2] to-[#4A00E0] overflow-hidden">
+      <div className="hidden md:flex flex-1 items-center justify-center relative bg-linear-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden">
         {/* Dot Pattern Overlay */}
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,_#ffffff_1px,_transparent_1px)] bg-[length:20px_20px]" />
 
