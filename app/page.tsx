@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
+import React from "react";
 
 export default function Page() {
-  
   return (
     <div className="bg-dot-fade min-h-screen flex flex-col">
       <div className="flex justify-center px-4">
@@ -16,7 +16,6 @@ export default function Page() {
 
             <Link href='/ourplans'>
               <li className="cursor-pointer hover:text-[#AD49E1] transition">Pricing</li>
-
             </Link>
 
             <Link href="/signup">
@@ -52,41 +51,6 @@ export default function Page() {
           </Link>
         </div>
 
-        <div className="hidden xl:block">
-          <div className="absolute top-80 left-14 transform rotate-x-[50deg] rotate-y-[2deg]">
-            <img
-              src="/pie-chart.png"
-              className="w-60 rounded-3xl bg-white rotate-38 shadow-2xl p-9"
-              alt=""
-            />
-          </div>
-
-          <div className="absolute top-[460px] left-[330px] transform rotate-x-[50deg] rotate-y-[2deg]">
-            <img
-              src="/statistics.png"
-              className="w-60 rounded-3xl bg-white rotate-38 shadow-2xl p-9"
-              alt=""
-            />
-          </div>
-
-          <div className="absolute top-[470px] right-[330px] transform rotate-x-[50deg] rotate-y-[2deg]">
-            <img
-              src="/ai.png"
-              className="w-60 rounded-3xl bg-white rotate-38 shadow-2xl p-9"
-              alt=""
-            />
-          </div>
-
-          <div className="absolute top-80 right-14 transform rotate-x-[50deg] rotate-y-[2deg]">
-            <img
-              src="/statistical-chart.png"
-              className="w-60 rounded-3xl bg-white rotate-38 shadow-2xl p-9"
-              alt=""
-            />
-          </div>
-        </div>
-
-        {/* 📱 On mobile/tablet, show one subtle image */}
         <div className="block xl:hidden mt-8">
           <img
             src="/ai.png"
