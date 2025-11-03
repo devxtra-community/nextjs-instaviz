@@ -2,6 +2,7 @@
 import Link from "next/link";
 
 export default function Page() {
+  
   return (
     <div className="bg-dot-fade min-h-screen flex flex-col">
       <div className="flex justify-center px-4">
