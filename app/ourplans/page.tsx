@@ -20,7 +20,7 @@ const plans = [
       'Natural language queries',
       'Priority support'
     ],
-    button: 'Get Started'
+    button: 'Get Starter'
   },
   {
     title: 'Pro',
@@ -42,7 +42,7 @@ const plans = [
       'Premium APIs',
       'Priority support'
     ],
-    button: 'Start 7-days Free Trial',
+    button: 'Get Pro',
     highlight: true
   },
   {
@@ -60,7 +60,7 @@ const plans = [
       '24/7 support'
     ],
     unavailable: [],
-    button: 'Start 7-days Free Trial'
+    button: 'Get Enterprise'
   }
 ];
 
