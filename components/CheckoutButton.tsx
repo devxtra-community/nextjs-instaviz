@@ -1,27 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 import axios from "@/lib/axiosInstance";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface CheckoutButtonProps {
   plan: string;
   highlight?: boolean;
+  butto:string;
 }
 
-export default function CheckoutButton({ plan, highlight }: CheckoutButtonProps) {
+export default function CheckoutButton({ plan, highlight, butto }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      // Call your backend route
       const { data } = await axios.post("/payment/create-checkout-session", { plan });
 
       if (data.url) {
-        window.location.href = data.url; // redirect to Stripe checkout
+        window.location.href = data.url; 
       } else {
         alert("Failed to start checkout. Please try again.");
       }
@@ -44,7 +41,7 @@ export default function CheckoutButton({ plan, highlight }: CheckoutButtonProps)
             : "bg-violet-200 text-violet-700 hover:bg-violet-300 disabled:bg-violet-100"
         }`}
     >
-      {loading ? "Redirecting..." : "Subscribe"}
+      {loading ? "Redirecting..." : butto}
     </button>
   );
 }

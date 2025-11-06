@@ -136,7 +136,7 @@ export default async function PlansPage() {
                     ))}
                 </ul>
 
-                <CheckoutButton plan={plan.title} highlight={plan.highlight} />
+                <CheckoutButton plan={plan.title} highlight={plan.highlight} butto={plan.button}/>
               </div>
             ))}
           </div>
