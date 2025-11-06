@@ -46,7 +46,7 @@ function Sidebar() {
         </nav>
       </div>
 
-      {/* Bottom Section (Logout Styled Like Others) */}
+      
       <div className="border-t border-[#AD49E1]/10 bg-[#AD49E1]/5 p-4">
         <button
           className="group w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-[#AD49E1] hover:text-white hover:shadow-lg backdrop-blur-sm"
