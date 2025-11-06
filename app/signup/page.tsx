@@ -204,6 +204,7 @@ export default function SignUpPage() {
                     <div className="w-full">
                         <button
                             type="button"
+                            onClick={() => window.location.href = "http://localhost:4000/auth/google"}
                             className="h-10 border border-gray-300 rounded-md w-full flex items-center justify-center gap-2 hover:bg-gray-100 transition"
                         >
                             <img src="./google.png" className="w-5 h-5 mr-1" alt="" />
