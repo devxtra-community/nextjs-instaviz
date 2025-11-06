@@ -25,6 +25,7 @@ export default function AdminDashboard() {
       />
 
       <StatsCard 
+
         title="New Clients"
         value="+3,462"
         percentage="-2%"
