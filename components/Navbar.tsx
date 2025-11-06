@@ -14,7 +14,7 @@ export function Navbar() {
         <Link href="/" className="text-2xl font-extrabold text-violet-700 tracking-tight">
           InstaviZ
         </Link>
-
+    //
         {/* 🔹 Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
           <Link
