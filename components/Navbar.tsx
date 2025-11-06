@@ -11,7 +11,7 @@ export function Navbar() {
 
       <div className="flex items-center space-x-6">
         <Link 
-          href="/"
+          href="/home"
           className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 
             before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full"
           >
