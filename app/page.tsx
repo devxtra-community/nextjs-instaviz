@@ -64,6 +64,7 @@ const Home: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </>
   );
 }
+export default Home
