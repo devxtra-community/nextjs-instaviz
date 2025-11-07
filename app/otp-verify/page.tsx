@@ -16,10 +16,16 @@ export default function VerifyOtpPage() {
     console.log("reached verifyOtp");
   console.log(otp);
 
+   if (!email) {
+      toast.error("Email not found. Please register again.");
+      router.push("/sign-up");
+      return;
+    }
   if (!otp) {
     toast.warning("Please enter the OTP");
     return;
   }
+
 
   try {
     const verifyData = await axiosInstance.post(`/user/verifyOtp?email=${email}`, { otp });
