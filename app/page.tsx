@@ -760,4 +760,3 @@ export default function LandingPage() {
   );
 };
 
-export default Home;
