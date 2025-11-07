@@ -9,11 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@radix-ui/react-slot": "^1.2.4",
-=======
     "@radix-ui/react-select": "^2.2.6",
->>>>>>> 84668431159d92b5d74041db7e51fa0cf996db2a
     "@stripe/stripe-js": "^8.3.0",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",

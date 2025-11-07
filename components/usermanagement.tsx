@@ -45,7 +45,7 @@ const cards = [
 
 export default function UserManagementDashboard() {
 return ( <><div className="bg-[#f8f9fc] min-h-screen p-6 space-y-8">
- <h1 className="text-2xl font-bold text-gray-900 mb-2">User Management</h1> 
+ <h1 className="text-2xl font-bold text-gray-900 mb-2"></h1> 
 
 
   
