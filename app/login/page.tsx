@@ -51,6 +51,7 @@ export default function LoginPage() {
 
             <button
               type="button"
+              onClick={() => window.location.href = "http://localhost:5000/auth/google"}
               className="flex w-full items-center justify-center gap-2 rounded-md border py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
             >
               <img
@@ -74,7 +75,7 @@ export default function LoginPage() {
       {/* Right Section (Enhanced) */}
       <div className="hidden md:flex flex-1 items-center justify-center relative bg-linear-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden">
         {/* Dot Pattern Overlay */}
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,_#ffffff_1px,_transparent_1px)] bg-[length:20px_20px]" />
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-size-[20px_20px]" />
 
         {/* Floating Illustration */}
         <motion.img
