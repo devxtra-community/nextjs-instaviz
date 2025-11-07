@@ -7,7 +7,7 @@ import { FiMessageSquare } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Home: React.FC = () => {
-  const [dataUploaded, setDataUploaded] = useState<boolean>(true);
+  const [dataUploaded, setDataUploaded] = useState<boolean>(false);
   const [chatOpen, setChatOpen] = useState<boolean>(false); // 👈 Mobile chat toggle
 
   return (
@@ -18,12 +18,10 @@ const Home: React.FC = () => {
         <div className="pt-13 flex flex-col md:flex-row h-screen">
           <DashboardMain showData={dataUploaded} />
           {/* Desktop Chat visible */}
-          <div className="hidden md:block">
             <ChatBar
               dataUploaded={dataUploaded}
               setDataUploaded={setDataUploaded}
             />
-          </div>
         </div>
 
         {/* Mobile Floating Chat Button */}
