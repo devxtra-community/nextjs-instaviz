@@ -164,3 +164,7 @@ h2 {
     --chart-5: oklch(0.645 0.246 16.439);
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
