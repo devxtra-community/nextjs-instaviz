@@ -2,6 +2,7 @@
 import React from "react";
 import MetricCard from "@/components/metricCard";
 import { motion } from "framer-motion";
+import UploadButton from "./UploadButton";
 import { FiUploadCloud } from "react-icons/fi";
 import { Bar, BarChart } from "recharts"
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
@@ -53,12 +54,7 @@ export const DashboardMain: React.FC<DashboardMainProps> = ({ showData }) => {
           <p className="text-md text-gray-500 text-center max-w-md">
             Start by uploading your CSV data! InstaviZ instantly turns your uploads into beautiful dashboards and insights.
           </p>
-          <motion.button
-            whileHover={{ scale: 1.01, backgroundColor: "#a78bfa" }}
-            className="px-7 py-3 bg-violet-700 text-white rounded-xl font-semibold shadow hover:bg-violet-600 transition"
-          >
-            Upload CSV to Get Started
-          </motion.button>
+          <UploadButton />
         </motion.div>
       </main>
 
