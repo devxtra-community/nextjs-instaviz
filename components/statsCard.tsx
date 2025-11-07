@@ -1,38 +1,30 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 
 interface StatsCardProps {
   title: string
   value: string
-  percentage: string
-  isPositive?: boolean
   icon: React.ReactNode
 }
 
-export default function StatsCard({
-  title,
-  value,
-  icon,
-}: StatsCardProps) {
+export default function StatsCard({ title, value, icon }: StatsCardProps) {
   return (
-    <>
-   
-     <Card className="rounded-xl bg-white h-25">
-      <CardContent className="flex items-center justify-between p-4">
+    <Card className="rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-200">
+      <CardContent className="flex items-center justify-between ">
         
-        
-        <div className=" space-y-1">
-          <p className=" text-sm text-gray-500 font-medium">{title}</p>
-          <h2 className="text-xl font-bold text-gray-900">{value}</h2>
+        {/* Left Text Block */}
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-medium text-gray-500">{title}</p>
+          <h2 className="text-2xl font-bold text-gray-900 leading-tight">
+            {value}
+          </h2>
         </div>
 
-        {/* Gradient icon box */}
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#AD49E1] text-white text-xl ">
+        {/* Icon Box */}
+        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#AD49E1]/90 text-white text-xl shadow-sm">
           {icon}
         </div>
+
       </CardContent>
     </Card>
-    </>
-   
   )
 }
