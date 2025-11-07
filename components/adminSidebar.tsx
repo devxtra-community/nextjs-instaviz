@@ -43,7 +43,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#AD49E1]/10 flex items-center justify-center backdrop-blur-sm" />
             <div>
-              <h2 className="font-semibold text-base md:text-lg">Instavizz</h2>
+              <h2 className="font-semibold text-base md:text-lg">InstaviZ</h2>
               <p className="text-[10px] md:text-xs text-[#AD49E1]/70">
                 Admin Panel
               </p>

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "@/components/admindashbordsidebar";
-import StatsCard from "@/components/StatsCard";
+import Sidebar from "@/components/adminSidebar";
+import StatsCard from "@/components/statsCard";
 import { DollarSign, Users, UserPlus, ShoppingCart, Menu } from "lucide-react";
+import {  ChartBarMultiple } from "@/components/adminChart1";
+import { ChartPieInteractive, ChartPieStacked } from "@/components/adminChart2";
 
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -72,6 +74,12 @@ export default function AdminDashboard() {
             isPositive
           />
         </div>
+       {/* Charts Row */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+  <ChartBarMultiple />
+ <ChartPieStacked/>
+</div>
+
       </div>
     </div>
   );
