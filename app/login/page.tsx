@@ -51,7 +51,7 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={() => window.location.href = "http://localhost:4000/auth/google"}
+              onClick={() => window.location.href = "http://localhost:5000/auth/google"}
               className="flex w-full items-center justify-center gap-2 rounded-md border py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
             >
               <img
