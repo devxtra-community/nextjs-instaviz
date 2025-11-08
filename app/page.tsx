@@ -10,10 +10,7 @@ import { Star, Send } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-/**
- * Landing page inspired by DevXtra layout.
- * Colors strictly: #AD49E1 and #9929d5 (primary & primary-dark)
- */
+
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -168,6 +165,7 @@ export default function LandingPage() {
               { label: "Pricing", href: "/ourplans" },
               { label: "Features", href: "#features" },
               { label: "FAQ", href: "#faq" },
+              { label: "Contact",href:"#contact"}
             ].map((link) => (
               <li key={link.href} className="relative group cursor-pointer">
                 <Link
@@ -219,25 +217,68 @@ export default function LandingPage() {
       </header>
 
       {/* Mobile dropdown */}
-      {
-        menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden w-full px-4 mt-3"
-          >
-            <div className="w-[94%] mx-auto bg-white/95 rounded-xl shadow-lg p-4 flex flex-col gap-3">
-              <Link href="/home" className="py-2 px-3 rounded hover:bg-slate-50">Home</Link>
-              <Link href="/ourplans" className="py-2 px-3 rounded hover:bg-slate-50">Pricing</Link>
-              <Link href="#features" className="py-2 px-3 rounded hover:bg-slate-50">Features</Link>
-              <Link href="#faq" className="py-2 px-3 rounded hover:bg-slate-50">FAQ</Link>
-              <Link href="/signup" className="mt-2">
-                <button style={{ background: PRIMARY }} className="w-full text-white py-2 rounded">Get Started</button>
-              </Link>
-            </div>
-          </motion.div>
-        )
-      }
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.25 }}
+          className="fixed top-[70px] left-1/2 -translate-x-1/2 z-50 w-[90%] md:hidden"
+        >
+          <div className="bg-white rounded-2xl shadow-xl p-5 flex flex-col gap-3 border border-slate-100">
+            <Link
+              href="/home"
+              onClick={() => setMenuOpen(false)}
+              className="py-2 px-3 rounded hover:bg-slate-50 transition"
+            >
+              Home
+            </Link>
+
+            <Link
+              href="/ourplans"
+              onClick={() => setMenuOpen(false)}
+              className="py-2 px-3 rounded hover:bg-slate-50 transition"
+            >
+              Pricing
+            </Link>
+
+            <Link
+              href="#features"
+              onClick={() => setMenuOpen(false)}
+              className="py-2 px-3 rounded hover:bg-slate-50 transition"
+            >
+              Features
+            </Link>
+
+            <Link
+              href="#faq"
+              onClick={() => setMenuOpen(false)}
+              className="py-2 px-3 rounded hover:bg-slate-50 transition"
+            >
+              FAQ
+            </Link>
+
+            <Link
+              href="#contact"
+              onClick={() => setMenuOpen(false)}
+              className="py-2 px-3 rounded hover:bg-slate-50 transition"
+            >
+              Contact
+            </Link>
+
+            <Link href="/signup" onClick={() => setMenuOpen(false)} className="mt-2">
+              <button
+                style={{ background: PRIMARY }}
+                className="w-full text-white py-2 rounded-xl shadow-md hover:brightness-95 transition"
+              >
+                Get Started
+              </button>
+            </Link>
+          </div>
+        </motion.div>
+      )}
+
+
 
       {/* HERO */}
       <main className="mt-12">
@@ -314,11 +355,11 @@ export default function LandingPage() {
             {/* small feature badges */}
             <div className="mt-6 flex flex-wrap gap-3">
               <div className="flex items-center gap-2 bg-white/80 border border-slate-100 rounded-full px-3 py-2 shadow-sm">
-                
+
                 <span className="text-xs text-slate-600">No-install, cloud-first</span>
               </div>
               <div className="flex items-center gap-2 bg-white/80 border border-slate-100 rounded-full px-3 py-2 shadow-sm">
-                
+
                 <span className="text-xs text-slate-600">Enterprise-ready</span>
               </div>
             </div>
@@ -602,7 +643,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="relative bg-gradient-to-br from-[#fad0ff] via-white to-[#e3cefa] border-t border-black/10 backdrop-blur-xl">
+      <footer id="contact" className="relative bg-gradient-to-br from-[#fad0ff] via-white to-[#e3cefa] border-t border-black/10 backdrop-blur-xl">
         {/* Call to Action Section */}
         <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
           {/* CTA Text */}
@@ -623,7 +664,7 @@ export default function LandingPage() {
               — all in one unified dashboard. No setup. No code. Just results.
             </p>
 
-          
+
 
             {/* CTA Button */}
             <div className="flex justify-center md:justify-start mt-6">
