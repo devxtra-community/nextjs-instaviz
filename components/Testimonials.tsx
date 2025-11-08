@@ -66,7 +66,7 @@ export default function Testimonials() {
     <section className="py-20 ">
           <div className="max-w-6xl mx-auto px-6 text-center">
             <h3 className="text-3xl font-semibold text-gray-900 mb-12">
-              What our <span className="text-[#AD49E1]">users</span> say
+              What our <span className="primary">users</span> say
             </h3>
 
             <Slider {...settings}>
@@ -93,7 +93,7 @@ export default function Testimonials() {
                           <Star
                             key={i}
                             size={18}
-                            className="text-[#AD49E1] fill-[#AD49E1]"
+                            className="primary fill-[#AD49E1]"
                           />
                         ))}
                       </div>

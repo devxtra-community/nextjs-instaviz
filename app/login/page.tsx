@@ -1,25 +1,33 @@
 "use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import Router from "next/navigation";
 
 export default function LoginPage() {
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+  async function handleLogin() {
+    console.log("button clicked");
+    console.log(email,password); 
+  }
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Section */}
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
-          <h1 className="text-4xl font-semibold text-[#AD49E1]">Instaviz</h1>
+          <h1 className="text-4xl font-semibold primary">Instaviz</h1>
         </div>
 
         {/* Form */}
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
-          <p className="mt-1 text-base text-[#AD49E1]">
+          <p className="mt-1 text-base primary">
             Please sign in to continue your analysis.
           </p>
 
-          <form className="mt-8 space-y-5">
+          <div className="mt-8 space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Email
@@ -28,6 +36,8 @@ export default function LoginPage() {
                 type="email"
                 placeholder="Enter your email"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
+                onChange={(e)=>{setEmail(e.target.value)}}
+                value={email}
               />
             </div>
 
@@ -39,12 +49,15 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
+                onChange={(e)=>{setPassword(e.target.value)}}
+                value={password}
               />
             </div>
 
             <button
+             onClick={handleLogin}
               type="submit"
-              className="w-full rounded-md bg-[#AD49E1] py-2.5 text-white font-medium hover:bg-purple-600 transition"
+              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 transition"
             >
               Sign in
             </button>
@@ -53,6 +66,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => window.location.href = "http://localhost:5000/auth/google"}
               className="flex w-full items-center justify-center gap-2 rounded-md border py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+             
             >
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -64,11 +78,11 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-600">
               Don’t have an account?{" "}
-              <Link href="/signup" className="text-[#AD49E1] hover:underline">
+              <Link href="/signup" className="primary hover:underline">
                 Sign up
               </Link>
             </p>
-          </form>
+          </div>
         </div>
       </div>
 
