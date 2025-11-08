@@ -17,7 +17,7 @@ export default function Footer() {
                 >
                     {/* Main Heading */}
                     <h4 className="text-3xl font-bold text-gray-900 leading-snug">
-                        Ready to get <span className="text-[#AD49E1]">clarity</span> from your data?
+                        Ready to get <span className="primary">clarity</span> from your data?
                     </h4>
 
                     {/* Subheading */}
@@ -74,7 +74,7 @@ export default function Footer() {
                                     className="w-full px-4 py-3 rounded-xl text-sm bg-white/60 border border-slate-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#AD49E1]/50 peer"
                                 />
                                 <label
-                                    className="absolute left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-[#AD49E1] bg-white/60 px-1"
+                                    className="absolute left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:primary bg-white/60 px-1"
                                 >
                                     Your Name
                                 </label>
@@ -94,7 +94,7 @@ export default function Footer() {
                                     className="w-full px-4 py-3 rounded-xl text-sm bg-white/60 border border-slate-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#AD49E1]/50 peer"
                                 />
                                 <label
-                                    className="absolute left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-[#AD49E1] bg-white/60 px-1"
+                                    className="absolute left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:primary bg-white/60 px-1"
                                 >
                                     Your Email
                                 </label>
@@ -114,7 +114,7 @@ export default function Footer() {
                                     className="w-full px-4 py-3 rounded-xl text-sm bg-white/60 border border-slate-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#AD49E1]/50 peer resize-none"
                                 />
                                 <label
-                                    className="absolute  left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-[#AD49E1] bg-white/60 px-1"
+                                    className="absolute  left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:primary bg-white/60 px-1"
                                 >
                                     Your Message
                                 </label>
@@ -140,17 +140,17 @@ export default function Footer() {
             {/* Bottom Bar */}
             <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
                 <p className="text-center md:text-left">
-                    © {new Date().getFullYear()} <span className="font-semibold text-[#AD49E1]">InstaviZ</span> — All rights reserved.
+                    © {new Date().getFullYear()} <span className="font-semibold primary">InstaviZ</span> — All rights reserved.
                 </p>
 
                 <div className="flex gap-6 mt-3 md:mt-0">
-                    <Link href="#" className="hover:text-[#AD49E1] transition">
+                    <Link href="#" className="hover:primary transition">
                         Terms
                     </Link>
-                    <Link href="#" className="hover:text-[#AD49E1] transition">
+                    <Link href="#" className="hover:primary transition">
                         Privacy
                     </Link>
-                    <Link href="#" className="hover:text-[#AD49E1] transition">
+                    <Link href="#" className="hover:primary transition">
                         Security
                     </Link>
                 </div>

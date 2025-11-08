@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Home: React.FC = () => {
   const [dataUploaded, setDataUploaded] = useState<boolean>(false);
-  const [chatOpen, setChatOpen] = useState<boolean>(false); // 👈 Mobile chat toggle
+  const [chatOpen, setChatOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -18,10 +18,10 @@ const Home: React.FC = () => {
         <div className="pt-13 flex flex-col md:flex-row h-screen">
           <DashboardMain showData={dataUploaded} />
           {/* Desktop Chat visible */}
-            <ChatBar
-              dataUploaded={dataUploaded}
-              setDataUploaded={setDataUploaded}
-            />
+          <ChatBar
+            dataUploaded={dataUploaded}
+            setDataUploaded={setDataUploaded}
+          />
         </div>
 
         {/* Mobile Floating Chat Button */}
@@ -66,3 +66,4 @@ const Home: React.FC = () => {
   );
 };
 
+export default Home;

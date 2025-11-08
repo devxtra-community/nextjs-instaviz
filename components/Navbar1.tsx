@@ -5,8 +5,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
-const PRIMARY = "#AD49E1";
-
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -21,7 +19,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="logo" className="w-8 h-8" />
-            <span className="font-semibold text-[#AD49E1] text-lg">InstaviZ</span>
+            <span className="font-semibold primary text-lg">InstaviZ</span>
           </div>
 
           {/* Desktop Links */}
@@ -39,7 +37,7 @@ export default function Navbar() {
                   className="transition-colors duration-300 group-hover:text-[#AD49E1]"
                 >
                   {link.label}
-                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#AD49E1] transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute left-0 -bottom-1 w-0 h-[2px] primarybg transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               </li>
             ))}
@@ -49,7 +47,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="hidden md:block text-[15px] font-medium text-gray-800 hover:text-[#AD49E1] transition"
+              className="hidden md:block text-[15px] font-medium text-gray-800 hover:primary transition"
             >
               Log in
             </Link>
@@ -99,8 +97,8 @@ export default function Navbar() {
             ))}
             <Link href="/signup" onClick={() => setMenuOpen(false)}>
               <button
-                style={{ background: PRIMARY }}
-                className="w-full text-white py-2 rounded-xl shadow-md hover:brightness-95 transition"
+               
+                className="w-full primarybg text-white py-2 rounded-xl shadow-md hover:brightness-95 transition"
               >
                 Get Started
               </button>

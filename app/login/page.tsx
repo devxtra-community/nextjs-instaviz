@@ -17,13 +17,13 @@ export default function LoginPage() {
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
-          <h1 className="text-4xl font-semibold text-[#AD49E1]">Instaviz</h1>
+          <h1 className="text-4xl font-semibold primary">Instaviz</h1>
         </div>
 
         {/* Form */}
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
-          <p className="mt-1 text-base text-[#AD49E1]">
+          <p className="mt-1 text-base primary">
             Please sign in to continue your analysis.
           </p>
 
@@ -57,7 +57,7 @@ export default function LoginPage() {
             <button
              onClick={handleLogin}
               type="submit"
-              className="w-full rounded-md bg-[#AD49E1] py-2.5 text-white font-medium hover:bg-purple-600 transition"
+              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 transition"
             >
               Sign in
             </button>
@@ -78,7 +78,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-600">
               Don’t have an account?{" "}
-              <Link href="/signup" className="text-[#AD49E1] hover:underline">
+              <Link href="/signup" className="primary hover:underline">
                 Sign up
               </Link>
             </p>
