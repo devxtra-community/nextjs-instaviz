@@ -1,13 +1,30 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { X } from "lucide-react";
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isProfile, setIsProfile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      setIsLoggedIn(true)
+    }
+    else {
+      setIsLoggedIn(false)
+    }
+  }, [])
+
 
   return (
+
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
       <div className="flex items-center justify-between px-6 py-3  mx-auto">
         {/* Logo */}
@@ -23,12 +40,58 @@ export function Navbar() {
           <Link href="/ourplans" className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full">
             Pricing
           </Link>
-          <Link href="/login" className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full">
-            Login
-          </Link>
-          <Link href="/signup" className="text-base font-medium text-white bg-violet-700 hover:bg-violet-800 rounded px-3 py-1.5 transition duration-200">
-            Signup
-          </Link>
+
+          {isLoggedIn ? (
+            <div className="relative ">
+              <Image
+                src="/google.png"
+                alt="User Profile"
+                width={35}
+                height={35}
+                className="rounded-full border p-1 border-gray-300 cursor-pointer"
+                onClick={() => setIsProfile(true)}
+              />
+
+              {isProfile && (
+                <div className="absolute top-12  right-0 bg-white border  border-gray-300 rounded-xl shadow-lg p-3 w-40 z-50">
+                  <div className="flex justify-between items-center pl-2 mb-2">
+                    <p className="font-mono font-bold text-gray-700 cursor-pointer">Profile</p>
+                    <X
+                      size={16}
+                      className="text-gray-600 hover:text-black cursor-pointer"
+                      onClick={() => setIsProfile(false)}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      setIsLoggedIn(false);
+                      setIsProfile(false);
+                    }}
+                    className="w-full text-left font-mono font-bold cursor-pointer text-red-600 hover:bg-red-50 rounded-md px-2 py-1"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+
+
+
+
+          ) : (
+
+            <div className="flex gap-4 items-center">
+              <Link href="/login" className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full">
+                Login
+              </Link>
+              <Link href="/signup" className="text-base font-medium text-white bg-violet-700 hover:bg-violet-800 rounded px-3 py-1.5 transition duration-200">
+                Signup
+              </Link>
+
+            </div>
+          )}
+
         </div>
 
         {/* Mobile Menu Button */}
@@ -69,6 +132,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </nav >
   );
 }
