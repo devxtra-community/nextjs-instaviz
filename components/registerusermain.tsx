@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "./adminSidebar";
+import Sidebar from "@/components/adminSidebar";
 import RegisteredUsersMain from "@/components/registerusermain";
 
 export default function RegisteredUsersPage() {
