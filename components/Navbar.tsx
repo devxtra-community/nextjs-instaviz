@@ -41,20 +41,18 @@ export function Navbar() {
             <div key={link.href} className="relative group">
               <Link
                 href={link.href}
-                className={`relative text-base font-medium transition duration-200 ${
-                  isActive(link.href)
+                className={`relative text-base font-medium transition duration-200 ${isActive(link.href)
                     ? "primary"
                     : "text-gray-700 hover:primary"
-                }`}
+                  }`}
               >
                 {link.label}
                 {/* Underline animation */}
                 <span
-                  className={`absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ${
-                    isActive(link.href)
+                  className={`absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ${isActive(link.href)
                       ? "w-full primarybg"
                       : "w-0 group-hover:w-full primarybg"
-                  }`}
+                    }`}
                 ></span>
               </Link>
             </div>
@@ -99,23 +97,21 @@ export function Navbar() {
             </div>
           ) : (
             <div className="flex gap-4 items-center">
-              <Link
-                href="/login"
-                className={`relative text-base font-medium transition duration-200 ${
-                  isActive("/login")
-                    ? "primary"
-                    : "text-gray-700 hover:primary"
-                }`}
-              >
-                Login
-                <span
-                  className={`absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ${
-                    isActive("/login")
-                      ? "w-full primarybg"
-                      : "w-0 hover:w-full primarybg"
-                  }`}
-                ></span>
-              </Link>
+              <div className="relative group">
+                <Link
+                  href="/login"
+                  className={`relative text-base font-medium transition duration-200 ${isActive("/login") ? "primary" : "text-gray-700 hover:primary"
+                    }`}
+                >
+                  Login
+                  <span
+                    className={`absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ${isActive("/login")
+                        ? "w-full primarybg"
+                        : "w-0 group-hover:w-full primarybg"
+                      }`}
+                  ></span>
+                </Link>
+              </div>
 
               <Link
                 href="/signup"
@@ -124,6 +120,7 @@ export function Navbar() {
                 Signup
               </Link>
             </div>
+
           )}
         </div>
 
@@ -158,11 +155,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`text-base font-medium transition duration-200 ${
-                    isActive(link.href)
+                  className={`text-base font-medium transition duration-200 ${isActive(link.href)
                       ? "primary"
                       : "hover:primary text-gray-700"
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
