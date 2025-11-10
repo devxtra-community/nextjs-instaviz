@@ -16,7 +16,6 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
     setLoading(true);
     try {
       const { data } = await axios.post("/payment/create-checkout-session", { plan });
-
       if (data.url) {
         window.location.href = data.url; 
       } else {

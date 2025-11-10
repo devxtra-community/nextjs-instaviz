@@ -18,7 +18,6 @@ export default function Navbar() {
           rounded-full border border-white/40 shadow-md
           bg-white/30 backdrop-blur-lg"
         >
-          {/* Logo */}
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="logo" className="w-8 h-8" />
             <span className="font-semibold text-[#AD49E1] text-lg">InstaviZ</span>
