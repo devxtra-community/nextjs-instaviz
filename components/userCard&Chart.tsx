@@ -194,6 +194,7 @@ return ( <><div className="bg-[#f8f9fc] min-h-screen p-6 space-y-8">
             <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} />
             <Tooltip
               contentStyle={{
+
                 backgroundColor: "#AD49E1",
                 border: "none",
                 color: "#fff",

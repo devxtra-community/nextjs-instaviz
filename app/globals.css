@@ -164,3 +164,18 @@ h2 {
     --chart-5: oklch(0.645 0.246 16.439);
   }
 }
+
+.dashboard {
+  background-color: #e44d11; 
+
+}
+
+.dashboard h1,
+.dashboard h2,
+.dashboard h3 {
+  color: #0f172a; 
+}
+
+.dashboard p {
+  color: #334155;
+}
