@@ -5,7 +5,7 @@ import { ArrowRight, Mail, Lock, User } from "lucide-react";
 import Link from "next/link";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
-import { Toaster,toast } from "sonner";
+import { Toaster, toast } from "sonner";
 
 
 export default function SignUpPage() {
@@ -17,69 +17,69 @@ export default function SignUpPage() {
     confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string|string[]>("");
-  const [success, setSuccess] = useState<string|string[]>("");
+  const [error, setError] = useState<string | string[]>("");
+  const [success, setSuccess] = useState<string | string[]>("");
 
 
   function validateForm() {
-  if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-    setError("All fields are required.");
-    return false;
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError("All fields are required.");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return false;
+    }
+
+    setError("");
+    return true;
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(formData.email)) {
-    setError("Please enter a valid email address.");
-    return false;
+
+  async function handleSubmit() {
+
+
+    if (!validateForm()) return;
+
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.post("/user/register", formData);
+      setSuccess(response.data.message);
+      console.log(response.data);
+      if (response.data.otp === true) {
+        toast("OTP has been sent your Email")
+        setTimeout(() => {
+          router.push(`/otp-verify?email=${formData.email}`)
+        }, 2000)
+      }
+    } catch (err: any) {
+      console.error("Registration error:", err.response?.data || err.message);
+
+      const data = err.response?.data;
+
+      if (data?.errors && Array.isArray(data.errors)) {
+        setError(data.errors);
+      } else {
+        setError([data?.message || "Something went wrong. Please try again."]);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  if (formData.password.length < 6) {
-    setError("Password must be at least 6 characters long.");
-    return false;
-  }
 
-  if (formData.password !== formData.confirmPassword) {
-    setError("Passwords do not match.");
-    return false;
-  }
-
-  setError("");
-  return true;
-}
-
-
-async function handleSubmit() {
-
-
-  if (!validateForm()) return;
-
- try {
-  setIsLoading(true);
-  const response = await axiosInstance.post("/user/register", formData);
-  setSuccess(response.data.message);
-  console.log(response.data);
-  if(response.data.otp===true){
-    toast("OTP has been sent your Email")
-    setTimeout(()=>{
-      router.push(`/otp-verify?email=${formData.email}`)
-    },2000)
-  }
-} catch (err:any) {
-  console.error("Registration error:", err.response?.data || err.message);
-
-  const data = err.response?.data;
-
-  if (data?.errors && Array.isArray(data.errors)) {
-    setError(data.errors); 
-  } else {
-    setError([data?.message || "Something went wrong. Please try again."]);
-  }
-} finally {
-  setIsLoading(false);
-}
-}
-
- 
 
   return (
     <div className="h-screen w-full flex overflow-hidden bg-white text-gray-900">
@@ -123,7 +123,7 @@ async function handleSubmit() {
       {/* ---------- RIGHT PANEL ---------- */}
       <div className="w-full lg:w-1/2 flex flex-col justify-start items-center px-6 sm:px-12 py-6 bg-white overflow-y-auto">
         <div className="max-w-md w-full mt-8 sm:mt-6 mb-6">
-           <Toaster richColors position="top-center" />
+          <Toaster richColors position="top-center" />
           {/* Header */}
           <div className="mb-8 text-center lg:text-left">
             <h2 className="text-3xl font-bold mb-2">Create your account</h2>
@@ -133,7 +133,7 @@ async function handleSubmit() {
           </div>
 
           {/* Form */}
-          <div  className="space-y-5">
+          <div className="space-y-5">
             {/* Name */}
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-semibold">
@@ -167,7 +167,7 @@ async function handleSubmit() {
                   type="email"
                   placeholder="Email"
                   value={formData.email}
-                  onChange={(e)=>setFormData({...formData,email:e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
                   required
                 />
@@ -187,7 +187,7 @@ async function handleSubmit() {
                   type="password"
                   placeholder="••••••••"
                   value={formData.password}
-                  onChange={(e)=>{setFormData({...formData,password:e.target.value})}}
+                  onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }}
                   className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
                   required
                 />
@@ -210,7 +210,7 @@ async function handleSubmit() {
                   type="password"
                   placeholder="••••••••"
                   value={formData.confirmPassword}
-                  onChange={(e)=>{setFormData({...formData,confirmPassword:e.target.value})}}
+                  onChange={(e) => { setFormData({ ...formData, confirmPassword: e.target.value }) }}
                   className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
                   required
                 />
@@ -242,7 +242,7 @@ async function handleSubmit() {
 
             {/* Submit */}
             <button
-            onClick={handleSubmit}
+              onClick={handleSubmit}
               type="submit"
               disabled={isLoading}
               className="w-full h-11 bg-[#AD49E1] text-white font-semibold rounded-md hover:bg-purple-600 transition flex items-center justify-center gap-2"
@@ -260,11 +260,11 @@ async function handleSubmit() {
               )}
             </button>
             {error && (
-  <p className="text-red-500 text-sm font-medium text-center mt-2">{error}</p>
-)}
-{success && (
-  <p className="text-green-600 text-sm font-medium text-center mt-2">{success}</p>
-)}
+              <p className="text-red-500 text-sm font-medium text-center mt-2">{error}</p>
+            )}
+            {success && (
+              <p className="text-green-600 text-sm font-medium text-center mt-2">{success}</p>
+            )}
           </div>
 
           {/* Sign In */}
@@ -287,19 +287,19 @@ async function handleSubmit() {
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
-                    {/* Social Sign Up */}
-                    <div className="w-full mb-4">
-                        <button
-                            type="button"
-                             onClick={() => window.location.href = "http://localhost:5000/auth/google"}
-                            className="h-11 border border-gray-300 rounded-md w-full flex items-center justify-center gap-2 hover:bg-gray-100 transition"
-                        >
-                            <img src="./google.png" className="w-5 h-5 mr-1" alt="" />
-                            Sign up with Google
-                        </button>
-                    </div>
-                </div>
-            </div>
+          {/* Social Sign Up */}
+          <div className="w-full mb-4">
+            <button
+              type="button"
+              onClick={() => window.location.href = "http://localhost:5000/auth/google"}
+              className="h-11 border border-gray-300 rounded-md w-full flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+            >
+              <img src="./google.png" className="w-5 h-5 mr-1" alt="" />
+              Sign up with Google
+            </button>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

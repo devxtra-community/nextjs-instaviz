@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,16 +12,12 @@ export function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(false);
 
+  const pathname = usePathname();
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-
-    if (token) {
-      setIsLoggedIn(true)
-    }
-    else {
-      setIsLoggedIn(false)
-    }
-  }, [])
+    setIsLoggedIn(!!token);
+  }, [pathname]);
 
 
   return (
