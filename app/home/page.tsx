@@ -1,14 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import { ChatBar } from "@/components/ChatBar";
-import { DashboardMain } from "@/components/DashboardMain";
+import DashboardMain  from "@/components/DashboardMain";
 import { Navbar } from "@/components/Navbar";
 import { FiMessageSquare } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Home: React.FC = () => {
-  const [dataUploaded, setDataUploaded] = useState<boolean>(false);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
+  const [dataUploaded, setDataUploaded] = useState<boolean>(true);
+  const [chatOpen, setChatOpen] = useState<boolean>(false); // 👈 Mobile chat toggle
 
   return (
     <>

@@ -54,7 +54,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 }) => {
   if (!dataUploaded) {
     return (
-      <aside className=" w-full md:w-96 bg-white p-4 flex flex-col items-center justify-center mt-4 md:mt-0 border-t md:border-l border-black/10 md:ml-1 shadow-sm min-h-[220px] sm:min-h-[260px]">
+      <aside className=" w-full md:w-96 bg-white p-4 flex flex-col items-center justify-center mt-4 md:mt-0 border-t md:border-l border-black/10 md:ml-1  min-h-[220px] sm:min-h-[260px]">
         <Sparkle />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -74,7 +74,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   }
 
   return (
-    <aside className="w-full md:w-96 h-[60vh] md:h-full bg-white p-3 md:p-4 flex flex-col justify-between mt-4 md:mt-0 border-t md:border-l border-black/10 md:ml-1 shadow-sm rounded-t-2xl md:rounded-none">
+    <aside className="w-full md:w-96 h-[60vh] md:h-full bg-white p-3 md:p-4 flex flex-col justify-between mt-4 md:mt-0 border-t md:border-l border-black/10 md:ml-1  rounded-t-2xl md:rounded-none">
       <div className="flex-1 overflow-y-auto mb-3 space-y-3 pr-1 scrollbar-thin scrollbar-thumb-violet-200">
         <div className="text-base md:text-lg font-semibold text-violet-700 mb-2 md:mb-3">
           <h1>Ask InstaviZ AI</h1>
