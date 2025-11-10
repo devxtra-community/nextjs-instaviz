@@ -5,17 +5,17 @@ import { Zap, BarChart3, ShieldCheck, ArrowRight } from "lucide-react";
 export default function Features() {
   const features = [
     {
-      icon: <Zap className="w-6 h-6 text-[#AD49E1]" />,
+      icon: <Zap className="w-6 h-6 primary" />,
       title: "Instant Data Uploads",
       desc: "Upload datasets securely and visualize results instantly, powered by our optimized AI engine.",
     },
     {
-      icon: <BarChart3 className="w-6 h-6 text-[#AD49E1]" />,
+      icon: <BarChart3 className="w-6 h-6 primary" />,
       title: "Smart Visualizations",
       desc: "AI automatically suggests charts for your data. Visual clarity, zero setup.",
     },
     {
-      icon: <ShieldCheck className="w-6 h-6 text-[#AD49E1]" />,
+      icon: <ShieldCheck className="w-6 h-6 primary" />,
       title: "Secure & Reliable",
       desc: "Your data is protected with enterprise-grade encryption and privacy-first design.",
     },
@@ -71,7 +71,7 @@ export default function Features() {
                     <a
                       href="#"
                       className="inline-flex items-center gap-2 text-sm font-medium 
-                             text-[#AD49E1] hover:text-[#9929d5] transition-all duration-200"
+                             primary hover:text-[#9929d5] transition-all duration-200"
                     >
                       Learn more <ArrowRight size={14} />
                     </a>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, User, Users, UserCircle } from "lucide-react";
 
 export default function HeroSection() {
-    const PRIMARY = "#AD49E1";
+    
 
     return (
         <main className="mt-7 overflow-hidden flex flex-col items-center justify-center text-center md:text-left">
@@ -12,13 +12,13 @@ export default function HeroSection() {
                 <div className="flex items-center space-x-2 py-3">
                     {/* Avatar group */}
                     <div className="flex -space-x-3">
-                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-[#AD49E1] flex items-center justify-center text-white">
+                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-md primarybg flex items-center justify-center text-white">
                             <User size={16} />
                         </div>
-                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-[#9929d5] flex items-center justify-center text-white">
+                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-md primarybg flex items-center justify-center text-white">
                             <Users size={16} />
                         </div>
-                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-[#AD49E1] flex items-center justify-center text-white">
+                        <div className="w-8 h-8 rounded-full border-2 border-white shadow-md primarybg flex items-center justify-center text-white">
                             <UserCircle size={16} />
                         </div>
                     </div>
@@ -40,7 +40,7 @@ export default function HeroSection() {
                         className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-center md:text-left"
                     >
                         Turn messy data into{" "}
-                        <span style={{ color: PRIMARY }}>actionable visuals</span> in seconds
+                        <span className=" primary">actionable visuals</span> in seconds
                     </motion.h1>
 
                     <motion.p
@@ -60,8 +60,7 @@ export default function HeroSection() {
                     >
                         <Link href="/home">
                             <button
-                                style={{ background: PRIMARY }}
-                                className="px-5 py-3 rounded-md text-white font-medium shadow-md hover:brightness-95 transition flex items-center gap-2"
+                                className="px-5 primarybg py-3 rounded-md text-white font-medium shadow-md hover:brightness-95 transition flex items-center gap-2"
                             >
                                 Try It Free
                                 <ArrowRight size={16} />

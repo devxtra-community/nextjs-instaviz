@@ -18,7 +18,7 @@ export default function Stats() {
           transition={{ duration: 0.6 }}
         >
           <h4 className="text-3xl md:text-4xl font-semibold text-gray-900">
-            Trusted by teams <span className="text-[#AD49E1]">worldwide</span>
+            Trusted by teams <span className="primary">worldwide</span>
           </h4>
           <p className="mt-3 text-gray-600 text-base max-w-2xl mx-auto">
             From startups to enterprises — delivering fast, secure, and reliable performance globally.

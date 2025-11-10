@@ -39,7 +39,7 @@ export default function FAQSection() {
                 {/* Heading */}
                 <div className="text-center mb-12">
                     <h3 className="text-3xl font-semibold text-gray-900">
-                        Frequently <span className="text-[#AD49E1]">Asked</span> Questions
+                        Frequently <span className="primary">Asked</span> Questions
                     </h3>
                     <p className="text-gray-500 mt-2 text-sm md:text-base">
                         Everything you need to know about InstaviZ, all in one place.
@@ -72,9 +72,9 @@ export default function FAQSection() {
                                         className="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300"
                                     >
                                         {isOpen ? (
-                                            <X size={18} className="text-[#AD49E1]" />
+                                            <X size={18} className="primary" />
                                         ) : (
-                                            <Plus size={18} className="text-[#AD49E1]" />
+                                            <Plus size={18} className="primary" />
                                         )}
                                     </motion.div>
                                 </div>
