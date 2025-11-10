@@ -6,7 +6,7 @@ import axios from "@/lib/axiosInstance";
 interface CheckoutButtonProps {
   plan: string;
   highlight?: boolean;
-  butto:string;
+  butto: string;
 }
 
 export default function CheckoutButton({ plan, highlight, butto }: CheckoutButtonProps) {
@@ -17,7 +17,7 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
     try {
       const { data } = await axios.post("/payment/create-checkout-session", { plan });
       if (data.url) {
-        window.location.href = data.url; 
+        window.location.href = data.url;
       } else {
         alert("Failed to start checkout. Please try again.");
       }
@@ -36,8 +36,8 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
       className={`mt-auto px-6 py-2 text-xs sm:text-base rounded-xl font-semibold shadow cursor-pointer w-full transition
         ${
           highlight
-            ? "bg-violet-700 text-white hover:bg-violet-800 disabled:bg-violet-400"
-            : "bg-violet-200 text-violet-700 hover:bg-violet-300 disabled:bg-violet-100"
+            ? "primarybg text-white hover:brightness-110 disabled:opacity-70"
+            : "bg-[#f3e8ff] primary hover:bg-[#ead6ff] disabled:opacity-60"
         }`}
     >
       {loading ? "Redirecting..." : butto}

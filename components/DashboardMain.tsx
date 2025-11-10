@@ -44,14 +44,17 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
           transition={{ duration: 0.8 }}
           className="max-w-lg"
         >
-          <h1 className="text-3xl font-bold text-[#AD49E1] mb-3">
+          <h1 className="text-3xl font-bold primary mb-3">
             Start Visualizing Smarter
           </h1>
           <p className="text-gray-500 leading-relaxed mb-6 text-[15px]">
             InstaviZ turns your spreadsheets into interactive dashboards —
             powered by intelligent AI for instant insights.
           </p>
-          <button className="bg-gradient-to-r from-[#AD49E1] to-[#9929D5] text-white px-6 py-2.5 rounded-lg font-medium hover:brightness-110 transition-all duration-300">
+          <button
+            className="primarybg text-white px-6 py-2.5 rounded-lg font-medium 
+                       hover:brightness-110 transition-all duration-300"
+          >
             Upload Your First Dataset
           </button>
         </motion.div>
@@ -64,7 +67,7 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
       {/* Header */}
       <div className="mb-4">
         <h1 className="text-[1.6rem] md:text-[1.9rem] font-semibold text-gray-800 leading-tight">
-          Welcome back, <span className="text-[#AD49E1]">Analyst</span>
+          Welcome back, <span className="primary">Analyst</span>
         </h1>
         <p className="text-gray-500 text-[13px]">
           Live snapshot powered by InstaviZ Intelligence Engine.
@@ -108,7 +111,7 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
             <h3 className="text-[15px] font-semibold text-gray-800">
               Growth & Engagement Trends
             </h3>
-            <FiTrendingUp className="text-[#AD49E1]" size={18} />
+            <FiTrendingUp className="primary" size={18} />
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={chartData}>
@@ -145,7 +148,7 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
             <h3 className="text-[15px] font-semibold text-gray-800">
               Usage Distribution
             </h3>
-            <FiPieChart className="text-[#AD49E1]" size={18} />
+            <FiPieChart className="primary" size={18} />
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
@@ -154,7 +157,9 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
                 dataKey="value"
                 outerRadius={75}
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
               >
                 {pieData.map((_, i) => (
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -165,12 +170,18 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
           </ResponsiveContainer>
         </motion.div>
       </div>
+
       {/* AI Summary Section */}
       <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
-        <h3 className="font-semibold text-[#AD49E1] mb-2">Dataset Summary</h3>
+        <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
-          <li>• The dataset contains <b>12,480 rows</b> and <b>18 columns</b>.</li>
-          <li>• <b>234</b> missing values were identified, primarily in “Region” and “Revenue” fields.</li>
+          <li>
+            • The dataset contains <b>12,480 rows</b> and <b>18 columns</b>.
+          </li>
+          <li>
+            • <b>234</b> missing values were identified, primarily in “Region”
+            and “Revenue” fields.
+          </li>
         </ul>
       </div>
     </main>
