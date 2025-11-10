@@ -2,14 +2,40 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import Router from "next/navigation";
+import axiosInstance from "@/lib/axiosInstance";
+import { Toaster,toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 
 export default function LoginPage() {
+  const router = useRouter()
+
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   async function handleLogin() {
-    console.log("button clicked");
-    console.log(email,password); 
+    try{
+      console.log("button clicked");
+    console.log(email,password);
+      const loginData = {
+        email,
+        password
+      }
+     const LoginResponse = await axiosInstance.post("/user/login", loginData)
+      
+     console.log(LoginResponse);
+      if(LoginResponse.data.success){
+        localStorage.setItem("accessToken",LoginResponse.data.accessToken)
+        router.push("/home")
+      }
+
+    }catch(err:any){
+      console.log(err.response.data.message);
+      toast.error(`${err.response.data.message}`)
+      console.log(err);
+      
+    }
+     
+
   }
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -18,11 +44,13 @@ export default function LoginPage() {
         {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
+           <Toaster richColors position="top-center" />
         </div>
 
         {/* Form */}
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
+
           <p className="mt-1 text-base primary">
             Please sign in to continue your analysis.
           </p>
