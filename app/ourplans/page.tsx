@@ -1,12 +1,20 @@
 import { Navbar } from "@/components/Navbar";
 import CheckoutButton from "../../components/CheckoutButton"; 
+import CheckoutButton from "../../components/CheckoutButton"; 
 
 const plans = [
   {
     title: "Starter",
+    title: "Starter",
     price: 15,
     billed: "$180 billed yearly",
+    billed: "$180 billed yearly",
     features: [
+      "Connect 2 data sources",
+      "Export as basic PNG/JPG",
+      "Community support",
+      "Up to 3 dashboards",
+      "Standard data refresh",
       "Connect 2 data sources",
       "Export as basic PNG/JPG",
       "Community support",
@@ -19,16 +27,32 @@ const plans = [
       "Advanced export formats",
       "Natural language queries",
       "Priority support",
+      "Custom branding",
+      "Team collaboration",
+      "Advanced export formats",
+      "Natural language queries",
+      "Priority support",
     ],
+    button: "Get Starter",
     button: "Get Starter",
   },
   {
+    title: "Pro",
     title: "Pro",
     price: 29,
     oldPrice: 39,
     label: "Save 25%",
     billed: "$348 billed yearly",
+    label: "Save 25%",
+    billed: "$348 billed yearly",
     features: [
+      "Up to 10 data sources",
+      "Export to PDF, PNG, JPG",
+      "Email reports (schedule)",
+      "Unlimited dashboards",
+      "Team collaboration",
+      "Natural language queries",
+      "Advanced chart types",
       "Up to 10 data sources",
       "Export to PDF, PNG, JPG",
       "Email reports (schedule)",
@@ -40,12 +64,25 @@ const plans = [
     unavailable: ["White-labeling", "Premium APIs", "Priority support"],
     button: "Get Pro",
     highlight: true,
+    unavailable: ["White-labeling", "Premium APIs", "Priority support"],
+    button: "Get Pro",
+    highlight: true,
   },
   {
     title: "Enterprise",
+    title: "Enterprise",
     price: 59,
     billed: "$708 billed yearly",
+    billed: "$708 billed yearly",
     features: [
+      "Unlimited data sources",
+      "Custom branding",
+      "White-label reporting",
+      "Access control/RBAC",
+      "Premium & public APIs",
+      "Advanced visualizations",
+      "Dedicated onboarding",
+      "24/7 support",
       "Unlimited data sources",
       "Custom branding",
       "White-label reporting",
@@ -58,8 +95,11 @@ const plans = [
     unavailable: [],
     button: "Get Enterprise",
   },
+    button: "Get Enterprise",
+  },
 ];
 
+export default async function PlansPage() {
 export default async function PlansPage() {
   return (
     <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4 pt-24">
@@ -119,7 +159,9 @@ export default async function PlansPage() {
                   {plan.billed}
                 </div>
 
+
                 <ul className="text-gray-800 text-xs sm:text-sm space-y-2 mb-4 w-full">
+                  {plan.features.map((f) => (
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center">
                       <span className="mr-2 primary">✔</span>{" "}
@@ -129,10 +171,17 @@ export default async function PlansPage() {
 
                   {plan.unavailable.length > 0 &&
                     plan.unavailable.map((f) => (
+                  ))}
+
+                  {plan.unavailable.length > 0 &&
+                    plan.unavailable.map((f) => (
                       <li key={f} className="flex items-center opacity-60">
                         <span className="mr-2 text-gray-400">✘</span>{" "}
                         <span>{f}</span>
+                        <span className="mr-2 text-gray-400">✘</span>{" "}
+                        <span>{f}</span>
                       </li>
+                    ))}
                     ))}
                 </ul>
 
@@ -147,5 +196,6 @@ export default async function PlansPage() {
         </div>
       </div>
     </div>
+  );
   );
 }

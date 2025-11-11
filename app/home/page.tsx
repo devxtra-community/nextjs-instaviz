@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Home: React.FC = () => {
   const [dataUploaded, setDataUploaded] = useState<boolean>(true);
-  const [chatOpen, setChatOpen] = useState<boolean>(false); 
+  const [chatOpen, setChatOpen] = useState<boolean>(false); // 👈 Mobile chat toggle
 
   return (
     <>
