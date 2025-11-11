@@ -11,48 +11,71 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(false);
-
   const pathname = usePathname();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, [pathname]);
 
+  // Function to highlight active link
+  const isActive = (path: string) => pathname === path;
 
   return (
-
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
-      <div className="flex items-center justify-between px-6 py-3  mx-auto">
+      <div className="flex items-center justify-between px-6 py-3 mx-auto">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold text-violet-700 tracking-tight">
+        <Link
+          href="/"
+          className="text-2xl font-extrabold primary tracking-tight hover:opacity-90 transition"
+        >
           InstaviZ
         </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link href="/home" className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full">
-            Dashboard
-          </Link>
-          <Link href="/ourplans" className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full">
-            Pricing
-          </Link>
+          {[
+            { label: "Dashboard", href: "/home" },
+            { label: "Pricing", href: "/ourplans" },
+          ].map((link) => (
+            <div key={link.href} className="relative group">
+              <Link
+                href={link.href}
+                className={`relative text-base font-medium transition duration-200 ${isActive(link.href)
+                    ? "primary"
+                    : "text-gray-700 hover:primary"
+                  }`}
+              >
+                {link.label}
+                {/* Underline animation */}
+                <span
+                  className={`absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ${isActive(link.href)
+                      ? "w-full primarybg"
+                      : "w-0 group-hover:w-full primarybg"
+                    }`}
+                ></span>
+              </Link>
+            </div>
+          ))}
 
+          {/* Profile / Auth Buttons */}
           {isLoggedIn ? (
-            <div className="relative ">
+            <div className="relative">
               <Image
                 src="/google.png"
                 alt="User Profile"
                 width={35}
                 height={35}
-                className="rounded-full border p-1 border-gray-300 cursor-pointer"
+                className="rounded-full border p-1 border-gray-300 cursor-pointer hover:brightness-105 transition"
                 onClick={() => setIsProfile(true)}
               />
 
               {isProfile && (
-                <div className="absolute top-12  right-0 bg-white border  border-gray-300 rounded-xl shadow-lg p-3 w-40 z-50">
+                <div className="absolute top-12 right-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 w-40 z-50">
                   <div className="flex justify-between items-center pl-2 mb-2">
-                    <p className="font-mono font-bold text-gray-700 cursor-pointer">Profile</p>
+                    <p className="font-mono font-bold text-gray-700 cursor-pointer">
+                      Profile
+                    </p>
                     <X
                       size={16}
                       className="text-gray-600 hover:text-black cursor-pointer"
@@ -72,29 +95,39 @@ export function Navbar() {
                 </div>
               )}
             </div>
-
-
-
-
           ) : (
-
             <div className="flex gap-4 items-center">
-              <Link href="/login" className="relative text-base font-medium text-gray-700 hover:text-violet-700 transition duration-200 before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 before:bg-violet-700 before:transition-all before:duration-300 hover:before:w-full">
-                Login
-              </Link>
-              <Link href="/signup" className="text-base font-medium text-white bg-violet-700 hover:bg-violet-800 rounded px-3 py-1.5 transition duration-200">
+              <div className="relative group">
+                <Link
+                  href="/login"
+                  className={`relative text-base font-medium transition duration-200 ${isActive("/login") ? "primary" : "text-gray-700 hover:primary"
+                    }`}
+                >
+                  Login
+                  <span
+                    className={`absolute left-0 -bottom-1 h-[2px] rounded-full transition-all duration-300 ${isActive("/login")
+                        ? "w-full primarybg"
+                        : "w-0 group-hover:w-full primarybg"
+                      }`}
+                  ></span>
+                </Link>
+              </div>
+
+              <Link
+                href="/signup"
+                className="text-base font-medium text-white primarybg hover:brightness-110 rounded px-3 py-1.5 transition duration-200"
+              >
                 Signup
               </Link>
-
             </div>
-          )}
 
+          )}
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          onClick={() => setMenuOpen(prev => !prev)}
-          className="md:hidden text-violet-700 hover:text-violet-800 focus:outline-none"
+          onClick={() => setMenuOpen((prev) => !prev)}
+          className="md:hidden primary hover:brightness-110 focus:outline-none"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
         >
@@ -113,22 +146,34 @@ export function Navbar() {
             className="md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-100 shadow-sm overflow-hidden w-full"
           >
             <div className="flex flex-col space-y-3 py-4 px-6 text-gray-700">
-              <Link href="/home" onClick={() => setMenuOpen(false)} className="text-base font-medium hover:text-violet-700 transition">
-                Dashboard
-              </Link>
-              <Link href="/ourplans" onClick={() => setMenuOpen(false)} className="text-base font-medium hover:text-violet-700 transition">
-                Pricing
-              </Link>
-              <Link href="/login" onClick={() => setMenuOpen(false)} className="text-base font-medium hover:text-violet-700 transition">
-                Login
-              </Link>
-              <Link href="/signup" onClick={() => setMenuOpen(false)} className="text-base font-medium text-white bg-violet-700 hover:bg-violet-800 rounded px-3 py-1.5 transition">
+              {[
+                { label: "Dashboard", href: "/home" },
+                { label: "Pricing", href: "/ourplans" },
+                { label: "Login", href: "/login" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-base font-medium transition duration-200 ${isActive(link.href)
+                      ? "primary"
+                      : "hover:primary text-gray-700"
+                    }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                href="/signup"
+                onClick={() => setMenuOpen(false)}
+                className="text-base font-medium text-white primarybg hover:brightness-110 rounded px-3 py-1.5 transition"
+              >
                 Signup
               </Link>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav >
+    </nav>
   );
 }
