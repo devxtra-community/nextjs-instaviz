@@ -15,7 +15,8 @@ export function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const token2 = localStorage.getItem("accessToken");
+    setIsLoggedIn(!!token || !!token2);
   }, [pathname]);
 
   // Function to highlight active link
