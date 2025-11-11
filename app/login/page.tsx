@@ -44,12 +44,12 @@ export default function LoginPage() {
         {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
-           <Toaster richColors position="top-center" />
         </div>
 
         {/* Form */}
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
+           <Toaster richColors position="top-center" />
 
           <p className="mt-1 text-base primary">
             Please sign in to continue your analysis.
