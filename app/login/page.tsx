@@ -41,7 +41,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Section */}
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
-        {/* Logo / Header */}
+        
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
         </div>
