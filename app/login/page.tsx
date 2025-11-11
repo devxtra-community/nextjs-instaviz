@@ -46,7 +46,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
         </div>
 
-        {/* Form */}
+       
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
            <Toaster richColors position="top-center" />
