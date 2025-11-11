@@ -17,8 +17,8 @@ const Sparkle = () => (
       ease: "easeInOut",
       repeatType: "loop",
     }}
-    className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
-    className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
+    // className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
+    // className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
   >
     <path
       d="M27 7L30.2877 21.7123L45 25L30.2877 28.2877L27 43L23.7123 28.2877L9 25L23.7123 21.7123L27 7Z"

@@ -47,7 +47,7 @@ export default function VerifyOtpPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-purple-200 text-white px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-purple-600 to-purple-200 text-white px-4">
       <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-md text-center border border-purple-400/30">
         <h1 className="text-3xl font-bold mb-2">Verify OTP</h1>
         <p className="text-purple-200 mb-8 text-sm">Enter the 6-digit code sent to your email</p>
