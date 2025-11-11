@@ -87,6 +87,7 @@ export function Navbar() {
                   <button
                     onClick={() => {
                       localStorage.removeItem("token");
+                      localStorage.removeItem("accessToken");
                       setIsLoggedIn(false);
                       setIsProfile(false);
                     }}
