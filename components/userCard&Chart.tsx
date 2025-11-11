@@ -39,7 +39,7 @@ const cards = [
 { title: "Registered Users", value: "12.4K", percentage: "+8.2%", icon: <Users /> },
 { title: "Guest Users", value: "8.9K", percentage: "-2.1%", icon: <UserCog /> },
 { title: "Logged Users", value: "6.3K", percentage: "+5.5%", icon: <UserCheck /> },
-{ title: "Banned Users", value: "340", percentage: "-1.2%", icon: <UserX /> },
+// { title: "Banned Users", value: "340", percentage: "-1.2%", icon: <UserX /> },
 { title: "Premium Users", value: "2.4K", percentage: "+12.8%", icon: <Star /> },
 ]
 
@@ -49,8 +49,8 @@ return ( <><div className="bg-[#f8f9fc] min-h-screen p-6 space-y-8">
 
 
   
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-4">
-    {cards.slice(0, 3).map((card, index) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    {cards.slice(0, 4).map((card, index) => (
       <Card
         key={index}
         className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100"
@@ -75,8 +75,8 @@ return ( <><div className="bg-[#f8f9fc] min-h-screen p-6 space-y-8">
     ))}
   </div>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
-    {cards.slice(3).map((card, index) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4  ">
+    {cards.slice(4).map((card, index) => (
       <Card
         key={index + 3}
         className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100"

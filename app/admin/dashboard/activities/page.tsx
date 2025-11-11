@@ -17,7 +17,7 @@ export default function ActivitiesPage() {
 
       <ActivityTabs />
 
-      <div className="mt-6 space-y-8 max-w-7xl mx-auto">
+      <div className="mt-6 space-y-8 max-w-9xl mx-auto">
         <ActivityStatsCards />
         <UploadTrendChart />
         

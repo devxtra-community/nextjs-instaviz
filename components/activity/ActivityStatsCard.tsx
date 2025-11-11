@@ -17,7 +17,7 @@ export default function ActivityStatsCards() {
       {stats.map((s, i) => (
         <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
           <Card className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition">
-            <CardContent className="p-4">
+            <CardContent className="p-2">
               <div className="flex justify-between items-center">
                 <p className="text-xs text-gray-500">{s.title}</p>
                 <div className="w-8 h-8 rounded-lg bg-[#AD49E1]/10 flex items-center justify-center text-[#AD49E1]">
@@ -25,7 +25,10 @@ export default function ActivityStatsCards() {
                 </div>
               </div>
               <h2 className="text-xl font-bold text-gray-900 mt-1">{s.value}</h2>
-              {s.change && <p className="text-xs font-medium text-green-500">{s.change}</p>}
+             <p className={`text-xs font-medium ${s.change ? "text-green-500" : "text-transparent"}`}>
+  {s.change ?? "placeholder"}
+</p>
+
             </CardContent>
           </Card>
         </motion.div>

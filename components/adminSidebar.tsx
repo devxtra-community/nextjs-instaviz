@@ -22,7 +22,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const menuItems = [
     { icon: Users, label: "User Actions", href: "/admin/dashboard/user" },
     { icon: Activity, label: "Activities", href: "/admin/dashboard/activities" },
-    { icon: Coins, label: "Tokens", href: "/admin/dashboard/tokens" },
+    { icon: Coins, label: "Tokens", href: "/admin/dashboard/token" },
     { icon: TrendingUp, label: "Insights", href: "/admin/dashboard/insights" },
     { icon: Calendar, label: "Plans", href: "/admin/dashboard/plans" },
     { icon: CreditCard, label: "Payments", href: "/admin/dashboard/payments" },

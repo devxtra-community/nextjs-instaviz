@@ -12,7 +12,7 @@ export default function User() {
         User Management
       </h1>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-9xl mx-auto">
         <Userstatscard />
       </div>
     </>
