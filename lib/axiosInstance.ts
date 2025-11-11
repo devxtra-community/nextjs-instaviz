@@ -1,5 +1,5 @@
 import axios from "axios";
-
+//interceptor need to be added
 const axiosInstance = axios.create({
     baseURL:"http://localhost:5000",
     withCredentials:true
@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use((response)=>{
         if(error.response.status===401 && !ogRequest.retry){
             ogRequest.retry=true
             try{
-                console.log("inside try ,t");
+                console.log("inside tryt");
                 const refreshToken = await axios.post("http://localhost:5000/user/newRefreshToken",
                     {},
                     {withCredentials:true}
