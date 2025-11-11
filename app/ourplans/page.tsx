@@ -119,6 +119,7 @@ export default async function PlansPage() {
                   {plan.billed}
                 </div>
 
+
                 <ul className="text-gray-800 text-xs sm:text-sm space-y-2 mb-4 w-full">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center">
@@ -126,6 +127,7 @@ export default async function PlansPage() {
                       <span>{f}</span>
                     </li>
                   ))}
+
 
                   {plan.unavailable.length > 0 &&
                     plan.unavailable.map((f) => (
