@@ -10,7 +10,6 @@ const Charts = dynamic(() => import("@/components/chart"), {
   loading: () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 animate-pulse">
       <div className="bg-white rounded-xl border border-[#ede4fa] p-5 h-[260px]" />
-      <div className="bg-white rounded-xl border border-[#ede4fa] p-5 h-[260px]" />
     </div>
   ),
 });
