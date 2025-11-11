@@ -10,7 +10,7 @@ import Footer1 from "@/components/Footer1";
 export default function Page() {
   return (
     //just checking
-    <div className="min-h-screen text-slate-800 bg-gradient-to-b from-white to-[#fff7ff] font-sans">
+    <div className="min-h-screen text-slate-800 bg-linear-to-b from-white to-[#fff7ff] font-sans">
       <Navbar1 />
       <HeroSection />
       <Features />
