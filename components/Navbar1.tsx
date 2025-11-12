@@ -54,7 +54,7 @@ export default function Navbar() {
             <Link href="/signup" className="hidden md:inline-block">
               <button
                 style={{ background: "linear-gradient(90deg, #AD49E1, #9929d5)" }}
-                className="text-white px-5 py-2 font-medium rounded-full shadow-sm hover:brightness-95 transition"
+                className="text-white px-5 py-2 font-medium rounded-full shadow-sm hover:brightness-95 transition cursor-pointer"
               >
                 Sign up
               </button>

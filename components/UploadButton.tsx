@@ -82,7 +82,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
             <motion.button
                 whileHover={{ scale: 1.01, backgroundColor: "#a78bfa" }}
                 onClick={handleButtonClick}
-                className="px-7 py-3 bg-violet-700 text-white rounded-xl font-semibold shadow hover:bg-violet-600 transition"
+                className="px-7 py-3 bg-violet-700 text-white rounded-xl font-semibold shadow cursor-pointer hover:bg-violet-600 transition"
             >
                 Upload File
             </motion.button>

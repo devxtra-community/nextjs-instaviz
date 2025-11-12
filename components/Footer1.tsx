@@ -31,7 +31,7 @@ export default function Footer() {
                     {/* CTA Button */}
                     <div className="flex justify-center md:justify-start mt-6">
                         <Link href="/home">
-                            <button className="relative overflow-hidden text-white font-medium px-8 py-3 rounded-xl shadow-md transition-all duration-300  hover:brightness-110 bg-gradient-to-r from-[#AD49E1] to-[#9929d5]">
+                            <button className="relative overflow-hidden text-white font-medium px-8 py-3 rounded-xl shadow-md transition-all duration-300  cursor-pointer  hover:brightness-110 bg-gradient-to-r from-[#AD49E1] to-[#9929d5]">
                                 Start Free
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
                             </button>
