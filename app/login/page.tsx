@@ -13,6 +13,9 @@ export default function LoginPage() {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   async function handleLogin() {
+    console.log("inside handleLogin");
+    console.log("Env", process.env.NEXT_PUBLIC_API);
+    
     try{
       console.log("button clicked");
     console.log(email,password);
