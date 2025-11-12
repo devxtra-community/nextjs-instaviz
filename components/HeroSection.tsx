@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, User, Users, UserCircle } from "lucide-react";
 
 export default function HeroSection() {
-    
+
 
     return (
         <main className="mt-7 overflow-hidden flex flex-col items-center justify-center text-center md:text-left">
@@ -60,7 +60,7 @@ export default function HeroSection() {
                     >
                         <Link href="/home">
                             <button
-                                className="px-5 primarybg py-3 rounded-md text-white font-medium shadow-md hover:brightness-95 transition flex items-center gap-2"
+                                className="px-5 primarybg py-3 rounded-md text-white font-medium shadow-md cursor-pointer hover:brightness-95 transition flex items-center gap-2"
                             >
                                 Try It Free
                                 <ArrowRight size={16} />
@@ -69,7 +69,7 @@ export default function HeroSection() {
 
                         <a
                             href="#features"
-                            className="px-4 py-3 rounded-md border border-slate-200 text-sm font-medium hover:bg-slate-50 transition"
+                            className="px-4 py-3 rounded-md border border-slate-200 text-sm font-medium hover:bg-slate-50 cursor-pointer transition"
                         >
                             See Features
                         </a>
