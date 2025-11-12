@@ -10,39 +10,18 @@ export default function DeviceUsageCard() {
   const [mobilePercent, setMobilePercent] = useState(0);
 
   useEffect(() => {
-    async function fetchDevices() {
+    async function fetchDeviceStats() {
       try {
-        //  fetch from backend
-        const response = await axiosInstance.get("admin/dashboard/device");
+        const res = await axiosInstance.get("/admin/dashboard/device");
 
-        //  correct extraction
-        const devices = response.data.devices || [];
-
-        let desktop = 0;
-        let mobile = 0;
-
-        devices.forEach((item: any) => {
-          //  correct field name from DB (userAgent)
-          const ua = item.userAgent?.toLowerCase() || "";
-
-          if (ua.includes("mobile") || ua.includes("android") || ua.includes("iphone")) {
-            mobile++;
-          } else {
-            desktop++;
-          }
-        });
-
-        const total = desktop + mobile;
-        if (total > 0) {
-          setDesktopPercent(Math.round((desktop / total) * 100));
-          setMobilePercent(Math.round((mobile / total) * 100));
-        }
+        setMobilePercent(res.data.mobile);
+        setDesktopPercent(res.data.desktop);
       } catch (err) {
-        console.log("Error fetching device data:", err);
+        console.log("Error fetching device stats:", err);
       }
     }
 
-    fetchDevices();
+    fetchDeviceStats();
   }, []);
 
   return (
