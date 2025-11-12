@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { LogOutIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -52,12 +52,12 @@ export function Navbar() {
               />
 
               {isProfile && (
-                <div className="absolute top-12  right-0 bg-white border  border-gray-300 rounded-xl shadow-lg p-3 w-40 z-50">
+                <div className="absolute top-12  right-0 bg-white border  border-gray-300 rounded-xl shadow-lg p-3 w-50 h-40 z-50">
                   <div className="flex justify-between items-center pl-2 mb-2">
-                    <p className="font-mono font-bold text-gray-700 cursor-pointer">Profile</p>
+                    <img src='/user.jpg' className=" w-[50%] rounded-full  cursor-pointer"></img>
                     <X
-                      size={16}
-                      className="text-gray-600 hover:text-black cursor-pointer"
+                      size={18}
+                      className="text-gray-700 hover:text-black cursor-pointer "
                       onClick={() => setIsProfile(false)}
                     />
                   </div>
@@ -68,9 +68,9 @@ export function Navbar() {
                       setIsProfile(false);
                       router.push("/");
                     }}
-                    className="w-full text-left font-mono font-bold cursor-pointer text-red-600 hover:bg-red-50 rounded-md px-2 py-1"
+                    className="w-full flex gap-2 text-left font-serif font-bold cursor-pointer text-red-600 hover:bg-red-50 rounded-md px-2 py-1"
                   >
-                    Logout
+                    Sign Out <LogOutIcon size={20} />
                   </button>
 
                 </div>

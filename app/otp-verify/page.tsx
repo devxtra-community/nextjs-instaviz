@@ -31,7 +31,7 @@ export default function VerifyOtpPage() {
     const verifyData = await axiosInstance.post(`/user/verifyOtp?email=${email}`, { otp });
 
     toast.success( "Account created successfully!");
-    setTimeout(() => router.push("/home"), 1500);
+    setTimeout(() => router.push("/login"), 1500);
   } 
   catch (error: any) {
     console.log("Error verifying OTP:", error);
