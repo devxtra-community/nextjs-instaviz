@@ -6,11 +6,13 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { X } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(false);
+
+  const router = useRouter()
 
   const pathname = usePathname();
 
@@ -64,11 +66,13 @@ export function Navbar() {
                       localStorage.removeItem("token");
                       setIsLoggedIn(false);
                       setIsProfile(false);
+                      router.push("/");
                     }}
                     className="w-full text-left font-mono font-bold cursor-pointer text-red-600 hover:bg-red-50 rounded-md px-2 py-1"
                   >
                     Logout
                   </button>
+
                 </div>
               )}
             </div>

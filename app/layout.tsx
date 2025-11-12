@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NoBackNavigation from "./providers/NoBackNavigation";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,10 +29,7 @@ export default function RootLayout({ children }: any) {
         />
       </head>
       <body>
-
-        <NoBackNavigation>
-          {children}
-        </NoBackNavigation>
+        {children}
       </body>
     </html>
   );
