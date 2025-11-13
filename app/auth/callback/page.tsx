@@ -1,30 +1,12 @@
+// app/auth/callback/page.js
 "use client"
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react'
+import { Suspense } from "react"
+import GoogleCallbackPage from "./GoogleCallbackPage"
 
-export default function GoogleCallbackPage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-
-    useEffect(() => {
-
-        const token = searchParams.get("token");
-
-        if (token) {
-            localStorage.setItem("token", token)
-            router.push('/home')
-        }
-        else {
-            router.push('/signup')
-        }
-
-    }, [router, searchParams])
-
-    return (
-        <div className="h-screen flex items-center justify-center">
-            <p className="text-gray-500 text-lg">Signing you in with Google...</p>
-        </div>
-    )
+export default function CallbackPageWrapper() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <GoogleCallbackPage />
+    </Suspense>
+  )
 }
-
-

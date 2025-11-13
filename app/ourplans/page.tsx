@@ -64,7 +64,7 @@ export default async function PlansPage() {
   return (
     <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4 pt-24">
       <Navbar />
-      <h1 className="text-3xl font-bold text-center mb-1 text-violet-800">
+      <h1 className="text-3xl font-bold text-center mb-1 primary">
         Our Plans
       </h1>
 
@@ -79,10 +79,10 @@ export default async function PlansPage() {
                   w-full min-w-[85vw] sm:min-w-[20rem] sm:w-80
                   hover:shadow-md cursor-pointer
                   ${plan.highlight
-                    ? "bg-white border-2 border-violet-400 relative"
-                    : "bg-white border border-violet-200"}
+                    ? "bg-white border-2 border-[#AD49E1] relative"
+                    : "bg-white border border-[#e8d7fa]"}
                   ${idx === 0 ? "opacity-95" : ""}
-                  ${idx === 2 ? "border-2 border-violet-700 relative" : ""}
+                  ${idx === 2 ? "border-2 border-[#9929D5] relative" : ""}
                 `}
                 style={idx === 1 ? { zIndex: 2 } : { zIndex: 1 }}
               >
@@ -90,20 +90,20 @@ export default async function PlansPage() {
                   <span
                     className={`absolute top-6 right-6 px-3 py-1 text-xs rounded-full font-semibold
                     ${plan.highlight
-                      ? "bg-violet-100 text-violet-900"
+                      ? "bg-[#f5e8ff] primary"
                       : idx === 2
-                      ? "bg-violet-800 text-white"
-                      : "bg-violet-100 text-violet-800"}`}
+                      ? "primarybg text-white"
+                      : "bg-[#f5e8ff] primary"}`}
                   >
                     {plan.label}
                   </span>
                 )}
 
-                <div className="text-xl sm:text-2xl font-bold mb-2 text-violet-700">
+                <div className="text-xl sm:text-2xl font-bold mb-2 primary">
                   {plan.title}
                 </div>
 
-                <div className="text-2xl sm:text-3xl font-extrabold flex items-end space-x-1 sm:space-x-2 text-violet-800">
+                <div className="text-2xl sm:text-3xl font-extrabold flex items-end space-x-1 sm:space-x-2 primary">
                   {plan.oldPrice && (
                     <span className="line-through text-base sm:text-lg text-gray-400">
                       ${plan.oldPrice}
@@ -115,17 +115,19 @@ export default async function PlansPage() {
                   </span>
                 </div>
 
-                <div className="text-xs sm:text-sm text-violet-400 mb-4">
+                <div className="text-xs sm:text-sm primary mb-4">
                   {plan.billed}
                 </div>
+
 
                 <ul className="text-gray-800 text-xs sm:text-sm space-y-2 mb-4 w-full">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center">
-                      <span className="mr-2 text-violet-500">✔</span>{" "}
+                      <span className="mr-2 primary">✔</span>{" "}
                       <span>{f}</span>
                     </li>
                   ))}
+
 
                   {plan.unavailable.length > 0 &&
                     plan.unavailable.map((f) => (
@@ -136,7 +138,11 @@ export default async function PlansPage() {
                     ))}
                 </ul>
 
-                <CheckoutButton plan={plan.title} highlight={plan.highlight} butto={plan.button}/>
+                <CheckoutButton
+                  plan={plan.title}
+                  highlight={plan.highlight}
+                  butto={plan.button}
+                />
               </div>
             ))}
           </div>

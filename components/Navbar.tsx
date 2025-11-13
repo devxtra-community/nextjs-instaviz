@@ -110,7 +110,7 @@ export function Navbar() {
       <div className="flex items-center justify-between px-6 py-3 mx-auto">
         <Link
           href="/"
-          className="text-2xl font-extrabold text-violet-700 tracking-tight"
+          className="text-2xl font-extrabold primary tracking-tight"
         >
           InstaviZ
         </Link>
@@ -118,17 +118,20 @@ export function Navbar() {
         <div className="hidden md:flex items-center space-x-6">
           <Link
             href="/home"
-            className="text-base font-medium text-gray-700 hover:text-violet-700 transition"
+            className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
           >
             Dashboard
+            <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </Link>
           <Link
             href="/ourplans"
-            className="text-base font-medium text-gray-700 hover:text-violet-700 transition"
+            className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
           >
             Pricing
+            <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </Link>
 
+          {/* Profile / Auth Buttons */}
           {isLoggedIn ? (
             <div className="relative">
               <Image
@@ -151,7 +154,7 @@ export function Navbar() {
                       className="rounded-full  cursor-pointer"
                     />
                     <button
-                      className="font-light text-lg text-gray-700 hover:text-violet-700 hover:underline"
+                      className="font-light text-lg text-gray-700 hoverColor hover:underline transition transform duration-200"
                       onClick={updateProfile}
                     >
                       Change your profile picture
@@ -177,13 +180,14 @@ export function Navbar() {
             <div className="flex gap-4 items-center">
               <Link
                 href="/login"
-                className="text-base font-medium text-gray-700 hover:text-violet-700 transition"
+                className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
               >
                 Login
+                <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1]  scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
               <Link
                 href="/signup"
-                className="text-base font-medium text-white bg-violet-700 hover:bg-violet-800 rounded px-3 py-1.5 transition"
+                className="text-base font-medium text-white rounded px-3 py-1.5  primarybg transition"
               >
                 Signup
               </Link>

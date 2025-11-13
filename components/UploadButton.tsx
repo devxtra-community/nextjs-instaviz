@@ -1,22 +1,38 @@
 // components/UploadButton.tsx
+
 import React, { useRef, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 
 interface UploadButtonProps {
-    onFileSelected?: (file: File, response?: any) => void;
+    onFileSelected?: (file: File, responseOrError?: any) => void;
     accept?: string;
     uploadUrl?: string;
 }
 
 const UploadButton: React.FC<UploadButtonProps> = ({
     onFileSelected,
-    accept = "*/*",
+    accept = ".csv,text/csv",
     uploadUrl = "/upload/fileupload",
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const handleButtonClick = () => fileInputRef.current?.click();
+    const handleButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    // Helper to validate CSV
+    const isCsvFile = (file: File) => {
+        const name = file.name.toLowerCase();
+        if (!name.endsWith(".csv")) {
+            return false;
+        }
+        const type = file.type;
+        if (type && !(type === "text/csv" || type === "application/vnd.ms-excel")) {
+            return false;
+        }
+        return true;
+    };
 
     const uploadSingleFile = async (file: File) => {
         const formData = new FormData();
@@ -45,6 +61,14 @@ const UploadButton: React.FC<UploadButtonProps> = ({
         if (!files || files.length === 0) return;
 
         const file = files[0];
+
+        // validation for csv
+        if (!isCsvFile(file)) {
+            alert("Only CSV files are allowed.");
+            e.target.value = "";
+            return;
+        }
+
         try {
             await uploadSingleFile(file);
         } catch (_) {
@@ -56,9 +80,8 @@ const UploadButton: React.FC<UploadButtonProps> = ({
     return (
         <>
             <motion.button
-                whileHover={{ scale: 1.01, backgroundColor: "#a78bfa" }}
                 onClick={handleButtonClick}
-                className="px-7 py-3 bg-violet-700 text-white rounded-xl font-semibold shadow cursor-pointer hover:bg-violet-600 transition"
+                className="px-7 py-3 primarybg text-white rounded-xl font-semibold hover:cursor-pointer hover:brightness-105"
             >
                 Upload File
             </motion.button>

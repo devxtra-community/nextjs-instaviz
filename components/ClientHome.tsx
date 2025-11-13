@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ChatBar } from "@/components/ChatBar";
-import { DashboardMain } from "@/components/DashboardMain";
+import DashboardMain from "@/components/DashboardMain";
 import { Navbar } from "@/components/Navbar";
 import { FiMessageSquare } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";

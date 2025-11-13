@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState } from "react";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
@@ -45,41 +46,15 @@ export default function VerifyOtpPage() {
     
     
   }
+=======
+import { Suspense } from "react";
+import VerifyOtpPage from "./VerifyOtpPage";
+>>>>>>> dev
 
+export default function Page() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-purple-200 text-white px-4">
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-md text-center border border-purple-400/30">
-        <h1 className="text-3xl font-bold mb-2">Verify OTP</h1>
-        <p className="text-purple-200 mb-8 text-sm">Enter the 6-digit code sent to your email</p>
-
-        <div className="flex justify-center mb-8">
-          <Toaster richColors position="top-center" />
-          <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-            </InputOTPGroup>
-            <InputOTPSeparator />
-            <InputOTPGroup>
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-
-        <Button
-        onClick={verifyOtp}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-lg transition-colors duration-300"
-        >
-          Verify
-        </Button>
-      </div>
-
-      <p className="text-purple-200 mt-6 text-xs">
-        Didn’t receive a code? <span className="underline cursor-pointer text-white hover:text-purple-200">Resend</span>
-      </p>
-    </div>
+    <Suspense fallback={<p className="text-center mt-10 text-gray-400">Loading...</p>}>
+      <VerifyOtpPage />
+    </Suspense>
   );
 }
