@@ -46,7 +46,6 @@ export function Navbar() {
     }
   }, [pathname]);
 
-  // ✅ Fetch user profile (to get profile image)
   useEffect(() => {
     if (!userId) return;
 
@@ -83,7 +82,7 @@ export function Navbar() {
           const { imageUrl } = response.data;
           console.log(imageUrl);
           setProfilePic(imageUrl);
-          alert("✅ Profile picture updated!");
+          alert("Profile picture updated!");
         } catch (error: any) {
           console.error(
             "Upload failed:",
