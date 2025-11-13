@@ -81,7 +81,7 @@ export default function Testimonials() {
                       scale: isCenter ? 1.05 : 0.9,
                     }}
                     transition={{ duration: 0.6 }}
-                    className=""
+                    className="cursor-pointer"
                   >
                     <div
                       className={` bg-white px-10 py-10  transition-all duration-500 

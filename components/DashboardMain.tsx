@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import MetricCard from "@/components/metricCard";
 import dynamic from "next/dynamic";
+import UploadButton from "./UploadButton";
 
 // ✅ Dynamically import Recharts section (client-only rendering)
 const Charts = dynamic(() => import("@/components/chart"), {
@@ -31,12 +32,7 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
             InstaviZ turns your spreadsheets into interactive dashboards —
             powered by intelligent AI for instant insights.
           </p>
-          <button
-            className="primarybg text-white px-6 py-2.5 rounded-lg font-medium 
-                       hover:brightness-110 transition-all duration-300"
-          >
-            Upload Your First Dataset
-          </button>
+          <UploadButton />
         </motion.div>
       </main>
     );
