@@ -1,18 +1,19 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com", 
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ymhpjbqatqaqarydzijp.supabase.co", 
+        pathname: "/**",
+      },
+    ],
+  },
+};
 
-const nextConfig: NextConfig = {
-  /* config options here */
-    images: {
-      // allow this exact Google-hostname
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'lh3.googleusercontent.com',
-          pathname: '/**',
-        },
-      ],
-      // alternatively you can use `domains: ['lh3.googleusercontent.com']`
-    },
-  };
-
-  export default nextConfig;
+module.exports = nextConfig;
