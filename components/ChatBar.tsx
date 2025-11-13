@@ -15,7 +15,7 @@ const Sparkle = () => (
       duration: 2.5,
       repeat: Infinity,
       ease: "easeInOut",
-      repeatType: "loop",
+      repeatType: "loop"
     }}
     // className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
     // className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
