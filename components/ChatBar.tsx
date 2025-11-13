@@ -15,7 +15,7 @@ const Sparkle = () => (
       duration: 2.5,
       repeat: Infinity,
       ease: "easeInOut",
-      repeatType: "loop"
+      repeatType: "loop",
     }}
     className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
   >
@@ -66,7 +66,8 @@ export const ChatBar: React.FC<ChatBarProps> = ({
             Upload a file to chat with InstaviZ AI
           </h2>
           <p className="text-xs sm:text-sm text-gray-500">
-            InstaviZ AI is ready to answer all your questions. Upload your CSV data first to get started!
+            InstaviZ AI is ready to answer all your questions. Upload your CSV
+            data first to get started!
           </p>
         </motion.div>
       </aside>
@@ -89,7 +90,9 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         <div className="flex items-start gap-2 mt-1">
           <VioletAIAvatar />
           <div className="bg-gray-50 text-gray-800 px-3 py-1.5 rounded-xl shadow text-xs sm:text-sm max-w-[80%]">
-            Sure! Your uploaded CSV mostly contains sales and user engagement data. Most activity comes from social media and organic search, and your bounce rate dropped 10% this week.
+            Sure! Your uploaded CSV mostly contains sales and user engagement
+            data. Most activity comes from social media and organic search, and
+            your bounce rate dropped 10% this week.
           </div>
         </div>
       </div>

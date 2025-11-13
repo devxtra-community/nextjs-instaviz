@@ -5,6 +5,7 @@ interface MetricCardProps {
   value: string | number;
   icon: React.ReactNode;
 }
+
 function MetricCard({ title, value, icon }: MetricCardProps) {
   return (
     <div className="bg-gray-200 rounded-xl  p-3 flex items-center gap-2 min-w-[120px]">
@@ -16,6 +17,5 @@ function MetricCard({ title, value, icon }: MetricCardProps) {
     </div>
   );
 }
-
 
 export default MetricCard;
