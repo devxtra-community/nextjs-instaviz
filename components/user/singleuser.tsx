@@ -38,6 +38,9 @@ export default function UserProfilePage() {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("Active");
+  const [singletoken, setSingletoken] = useState<any>(null);
+
+
 
   const fetchUserSinglePage = async () => {
     try {
@@ -63,6 +66,23 @@ export default function UserProfilePage() {
       console.error("Error updating status:", err);
     }
   };
+
+const singleusertoken = async () => { 
+  try {
+    const res = await axiosInstance.get(`/admin/dashboard/singltoken/${id}`);
+    console.log("single user token fetched");
+    console.log(res);
+    setSingletoken(res.data.singletoken);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+  useEffect(()=>{
+    singleusertoken()
+  },[])
+
 
   useEffect(() => {
     if (id) fetchUserSinglePage();
@@ -102,12 +122,12 @@ export default function UserProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] p-4 md:p-5">
-      {/* Page Title */}
+    
       <h1 className="text-2xl font-semibold text-gray-800 mb-5 tracking-tight">
         User Profile
       </h1>
 
-      {/* Header Section */}
+
       <div className="rounded-2xl shadow-sm overflow-hidden mb-6 bg-gradient-to-r from-[#AD49E1] via-[#C56BE8] to-[#E19BFF] text-white">
         <div className="flex flex-col md:flex-row items-center gap-6 p-6">
           <div className="relative w-28 h-28">
@@ -144,15 +164,15 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      {/* Stats Section */}
+    
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-        {/* Tokens */}
+        
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Available Tokens
           </h3>
           <div className="flex justify-between items-center">
-            <p className="text-3xl font-bold text-gray-900">27</p>
+            <p className="text-3xl font-bold text-gray-900">{singletoken ?? 0}</p>
             <div className="w-28 h-12">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={tokenData}>
@@ -166,7 +186,7 @@ export default function UserProfilePage() {
           </p>
         </div>
 
-        {/* Account Status */}
+      
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Account Status
@@ -204,7 +224,6 @@ export default function UserProfilePage() {
           </p>
         </div>
 
-        {/* Activity Chart */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Avg. Active Time

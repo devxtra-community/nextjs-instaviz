@@ -27,9 +27,7 @@ export default function UserManagementDashboard() {
     { name: string; users: number }[]
   >([]);
 
-  // ===========================
-  // Fetch user counts
-  // ===========================
+
   useEffect(() => {
     async function fetchCounts() {
       try {
@@ -47,9 +45,7 @@ export default function UserManagementDashboard() {
     fetchCounts();
   }, []);
 
-  // ===========================
-  // Fetch monthly users
-  // ===========================
+
   useEffect(() => {
     async function fetchMonthlyNewUsers() {
       try {
@@ -57,7 +53,7 @@ export default function UserManagementDashboard() {
 
         const usersPerMonth = res.data.usersPerMonth || [];
 
-        // Define all months
+      
         const months = [
           "Jan",
           "Feb",
@@ -73,7 +69,7 @@ export default function UserManagementDashboard() {
           "Dec",
         ];
 
-        // Convert backend data into month-based structure
+        
         const formatted = months.map((monthName, index) => {
           const found = usersPerMonth.find(
             (item: any) => item._id?.month === index + 1
@@ -93,9 +89,7 @@ export default function UserManagementDashboard() {
     fetchMonthlyNewUsers();
   }, []);
 
-  // ===========================
-  // Cards
-  // ===========================
+
   const cards = [
     {
       title: "All Users",
@@ -140,7 +134,7 @@ export default function UserManagementDashboard() {
         User Management Dashboard
       </h1>
 
-      {/* Cards */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card, index) => {
           const CardContentWrapper = (
@@ -183,9 +177,9 @@ export default function UserManagementDashboard() {
         })}
       </div>
 
-      {/* Graphs */}
+    
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Monthly Users */}
+  
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
