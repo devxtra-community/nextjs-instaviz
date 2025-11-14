@@ -3,8 +3,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { LogOutIcon, X } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { jwtDecode } from "jwt-decode";
@@ -21,24 +21,33 @@ export function Navbar() {
   const [isProfile, setIsProfile] = useState(false);
   const [profilePic, setProfilePic] = useState("/user.jpg");
   const [userId, setUserId] = useState<string>("");
+  const [name, setName] = useState("");
 
   const router = useRouter();
   const pathname = usePathname();
 
-  // ✅ Extract userId from token
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const googleToken = localStorage.getItem("token");
+    const normalToken = localStorage.getItem("accessToken");
+
+    let finalToken = googleToken || normalToken;
+
+    if (!finalToken) {
       setIsLoggedIn(false);
       return;
     }
 
     setIsLoggedIn(true);
+
     try {
-      const decoded = jwtDecode<DecodedToken>(token);
-      const idFromToken = decoded.id || decoded.userId;
+      const decoded = jwtDecode<any>(finalToken);
+      console.log("Decoded token:", decoded);
+
+      const idFromToken =
+        decoded.id || decoded.googleId || decoded.userId || null;
+
       if (idFromToken) {
-        setUserId(idFromToken);
+        setUserId(idFromToken.toString());
       }
     } catch (err) {
       console.error("JWT decode failed:", err);
@@ -52,6 +61,7 @@ export function Navbar() {
     (async () => {
       try {
         const res = await axiosInstance.get(`/user/${userId}`);
+        setName(res.data.user.name);
         if (res.data?.user?.picture) {
           setProfilePic(res.data.user.picture);
         }
@@ -88,7 +98,7 @@ export function Navbar() {
             "Upload failed:",
             error.response?.data || error.message
           );
-          alert("❌ Failed to upload image");
+          alert(" Failed to upload image");
         }
       };
       reader.readAsDataURL(file);
@@ -96,12 +106,16 @@ export function Navbar() {
     input.click();
   }
 
-  // ✅ Logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setIsProfile(false);
-    router.push("/");
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      setIsProfile(false);
+      router.push("/home");
+    } catch (error) {
+      console.log("Logout failed:", error);
+    }
   };
 
   return (
@@ -130,7 +144,6 @@ export function Navbar() {
             <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </Link>
 
-          {/* Profile / Auth Buttons */}
           {isLoggedIn ? (
             <div className="relative">
               <Image
@@ -138,42 +151,57 @@ export function Navbar() {
                 alt="User Profile"
                 width={45}
                 height={45}
-                className="rounded-full border p-1 border-gray-300 cursor-pointer"
-                onClick={() => setIsProfile(true)}
+                className="rounded-full border border-violet-300 cursor-pointer hover:scale-105 transition-all"
+                onClick={() => setIsProfile((prev) => !prev)}
               />
 
-              {isProfile && (
-                <div className="absolute top-12 right-0 bg-white border border-gray-300 rounded-xl shadow-lg p-3 w-80 h-56 z-50">
-                  <div className="flex flex-col gap-3 items-center pl-2 mb-2">
-                    <Image
-                      src={profilePic}
-                      alt="User Profile"
-                      width={50}
-                      height={50}
-                      className="rounded-full  cursor-pointer"
-                    />
-                    <button
-                      className="font-light text-lg text-gray-700 hoverColor hover:underline transition transform duration-200"
-                      onClick={updateProfile}
-                    >
-                      Change your profile picture
-                    </button>
-                    <div className="absolute top-3 right-3">
-                      <X
-                        size={23}
-                        className="text-gray-700 hover:text-black cursor-pointer"
-                        onClick={() => setIsProfile(false)}
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex justify-center gap-2 text-left font-serif font-bold cursor-pointer text-red-600 hover:bg-red-50 rounded-md px-2 py-1"
+              <AnimatePresence>
+                {isProfile && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -5 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute top-13 right-0 bg-white backdrop-blur-xl border shadow-2xs border-gray-300 rounded-2xl w-72 p-5 z-50"
                   >
-                    Sign Out <LogOutIcon size={20} />
-                  </button>
-                </div>
-              )}
+                    <button
+                      onClick={() => setIsProfile(false)}
+                      className="absolute top-3 right-3 text-gray-500 hover:text-black transition cursor-pointer"
+                    >
+                      <X size={20} />
+                    </button>
+
+                    <div className="flex flex-col items-center gap-3 mt-2">
+                      <Image
+                        src={profilePic}
+                        alt="User Profile"
+                        width={65}
+                        height={65}
+                        className="rounded-full border border-gray-300 shadow-sm"
+                      />
+                      <p className="font-medium">{name}</p>
+
+                      <button
+                        onClick={updateProfile}
+                        className="text-sm  text-gray-600 hoverColor font-medium hover:underline transition cursor-pointer"
+                      >
+                        Change profile picture
+                      </button>
+                    </div>
+
+                    <div className="my-4 border-t border-gray-200" />
+
+                    {/* Logout button */}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full bg-red-50  text-red-600 py-2 rounded-lg font-semibold hover:bg-red-100 transition flex items-center justify-center cursor-pointer gap-2"
+                    >
+                      <LogOutIcon size={18} />
+                      Log Out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <div className="flex gap-4 items-center">
