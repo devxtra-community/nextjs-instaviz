@@ -3,38 +3,42 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import axiosInstance from "@/lib/axiosInstance";
-import { Toaster,toast } from "sonner";
+import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
+import GoogleButton from "@/components/GoogleButton";
 
 
 export default function LoginPage() {
   const router = useRouter()
 
-  const [email,setEmail] = useState("")
-  const [password,setPassword] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   async function handleLogin() {
+    console.log("inside handleLogin");
+    console.log("Env", process.env.NEXT_PUBLIC_API);
+    
     try{
       console.log("button clicked");
-    console.log(email,password);
+      console.log(email, password);
       const loginData = {
         email,
         password
       }
-     const LoginResponse = await axiosInstance.post("/auth/login", loginData)
-  
-     console.log(LoginResponse);
-      if(LoginResponse.data.success){
-        localStorage.setItem("accessToken",LoginResponse.data.accessToken)
+      const LoginResponse = await axiosInstance.post("/user/login", loginData)
+
+      console.log(LoginResponse);
+      if (LoginResponse.data.success) {
+        localStorage.setItem("accessToken", LoginResponse.data.accessToken)
         router.push("/home")
       }
 
-    }catch(err:any){
+    } catch (err: any) {
       console.log(err.response.data.message);
       toast.error(`${err.response.data.message}`)
       console.log(err);
-      
+
     }
-     
+
 
   }
   return (
@@ -44,7 +48,7 @@ export default function LoginPage() {
         {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
-           <Toaster richColors position="top-center" />
+          <Toaster richColors position="top-center" />
         </div>
 
         {/* Form */}
@@ -64,7 +68,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="Enter your email"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
-                onChange={(e)=>{setEmail(e.target.value)}}
+                onChange={(e) => { setEmail(e.target.value) }}
                 value={email}
               />
             </div>
@@ -77,32 +81,20 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
-                onChange={(e)=>{setPassword(e.target.value)}}
+                onChange={(e) => { setPassword(e.target.value) }}
                 value={password}
               />
             </div>
 
             <button
-             onClick={handleLogin}
+              onClick={handleLogin}
               type="submit"
-              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 transition"
+              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 cursor-pointer transition"
             >
               Sign in
             </button>
 
-            <button
-              type="button"
-              onClick={() => window.location.href = "http://localhost:5000/auth/google"}
-              className="flex w-full items-center justify-center gap-2 rounded-md border py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-             
-            >
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="h-5 w-5"
-              />
-              Sign in with Google
-            </button>
+            <GoogleButton />
 
             <p className="text-center text-sm text-gray-600">
               Don’t have an account?{" "}
