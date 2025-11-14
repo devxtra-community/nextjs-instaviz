@@ -55,7 +55,7 @@ export default function SignUpPage() {
 
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post("/user/register", formData);
+      const response = await axiosInstance.post("/auth/register", formData);
       setSuccess(response.data.message);
       console.log(response.data);
       if (response.data.otp === true) {
