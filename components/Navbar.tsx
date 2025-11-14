@@ -134,14 +134,14 @@ export function Navbar() {
             className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
           >
             Dashboard
-            <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+            <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </Link>
           <Link
             href="/ourplans"
             className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
           >
             Pricing
-            <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+            <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1] hover:text-[#ad49e1] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
           </Link>
 
           {isLoggedIn ? (
@@ -210,7 +210,7 @@ export function Navbar() {
                 className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
               >
                 Login
-                <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#ad49e1]  scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+                <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1]  scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
               <Link
                 href="/signup"
