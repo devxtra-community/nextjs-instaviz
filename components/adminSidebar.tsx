@@ -13,6 +13,7 @@ import {
   X,
   LayoutDashboard
 } from "lucide-react";
+import { adminLogout } from "@/lib/adminLogout";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -93,7 +94,8 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         {/* Logout */}
         <div className="border-t border-[#AD49E1]/10 bg-[#AD49E1]/5 p-3">
-          <button className="group w-full flex items-center px-4 py-2 rounded-lg hover:bg-[#AD49E1] hover:text-white transition">
+          <button onClick={adminLogout}
+          className="group w-full flex items-center px-4 py-2 rounded-lg hover:bg-[#AD49E1] hover:text-white transition">
             <LogOut size={20} className="group-hover:text-white" />
             <span
               className={`

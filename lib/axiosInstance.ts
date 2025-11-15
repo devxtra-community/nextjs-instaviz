@@ -1,7 +1,7 @@
 import axios from "axios";
 //interceptor need to be added
 const axiosInstance = axios.create({
-    baseURL:"http://localhost:5000",
+    baseURL:process.env.NEXT_PUBLIC_API,
     withCredentials:true
 })
 axiosInstance.interceptors.request.use((config)=>{
@@ -9,6 +9,8 @@ axiosInstance.interceptors.request.use((config)=>{
 
     const accessToken = localStorage.getItem("accessToken")
     if(accessToken){
+        console.log("inside if accesstoen");
+        
         config.headers.Authorization = `bearer ${accessToken}`
     }
     return config
@@ -28,7 +30,7 @@ axiosInstance.interceptors.response.use((response)=>{
             ogRequest.retry=true
             try{
                 console.log("inside tryt");
-                const refreshToken = await axios.post("http://localhost:5000/user/newRefreshToken",
+                const refreshToken = await axios.post(`${process.env.NEXT_PUBLIC_API}/user/newRefreshToken`,
                     {},
                     {withCredentials:true}
                 );

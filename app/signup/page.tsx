@@ -6,6 +6,7 @@ import Link from "next/link";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import GoogleButton from "@/components/GoogleButton";
 
 
 export default function SignUpPage() {
@@ -55,7 +56,7 @@ export default function SignUpPage() {
 
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post("/user/register", formData);
+      const response = await axiosInstance.post("/auth/register", formData);
       setSuccess(response.data.message);
       console.log(response.data);
       if (response.data.otp === true) {
@@ -245,7 +246,7 @@ export default function SignUpPage() {
               onClick={handleSubmit}
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-[#AD49E1] text-white font-semibold rounded-md hover:bg-purple-600 transition flex items-center justify-center gap-2"
+              className="w-full h-11 bg-[#AD49E1] text-white font-semibold rounded-md hover:bg-purple-600 cursor-pointer  transition flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -288,16 +289,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Social Sign Up */}
-          <div className="w-full mb-4">
-            <button
-              type="button"
-              onClick={() => window.location.href = "http://localhost:5000/auth/google"}
-              className="h-11 border border-gray-300 rounded-md w-full flex items-center justify-center gap-2 hover:bg-gray-100 transition"
-            >
-              <img src="./google.png" className="w-5 h-5 mr-1" alt="" />
-              Sign up with Google
-            </button>
-          </div>
+          <GoogleButton />
         </div>
       </div>
     </div>

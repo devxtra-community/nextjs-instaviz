@@ -21,7 +21,8 @@ export default function Stats() {
             Trusted by teams <span className="primary">worldwide</span>
           </h4>
           <p className="mt-3 text-gray-600 text-base max-w-2xl mx-auto">
-            From startups to enterprises — delivering fast, secure, and reliable performance globally.
+            From startups to enterprises — delivering fast, secure, and reliable
+            performance globally.
           </p>
         </motion.div>
 
@@ -40,7 +41,9 @@ export default function Stats() {
                   {stat.value}
                 </div>
               </div>
-              <p className="text-sm md:text-base text-gray-600 font-medium tracking-wide">{stat.label}</p>
+              <p className="text-sm md:text-base text-gray-600 font-medium tracking-wide">
+                {stat.label}
+              </p>
             </motion.div>
           ))}
         </div>

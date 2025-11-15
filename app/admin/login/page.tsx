@@ -1,8 +1,9 @@
 "use client";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import axiosInstance from "@/lib/axiosInstance";
+import axiosAdmin from "@/lib/axiosAdmin";   // ✅ FIXED
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -16,13 +17,14 @@ export default function AdminLoginPage() {
     try {
       const loginData = { email, password };
 
-      const res = await axiosInstance.post(
-        "/admin/login",
-        loginData,
-        { withCredentials: true }
-      );
+      const res = await axiosAdmin.post("/admin/login", loginData, {
+        withCredentials: true,
+      });
 
       if (res.data.success) {
+        
+        localStorage.setItem("adminAccessToken", res.data.accessToken);
+
         router.push("/admin/dashboard");
       }
     } catch (err: any) {
@@ -32,7 +34,6 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         
         <div className="lg:hidden mb-6 flex items-center">

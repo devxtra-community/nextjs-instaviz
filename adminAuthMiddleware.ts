@@ -11,11 +11,16 @@ export async function middleware(req: NextRequest) {
   if (!isAdminRoute) return NextResponse.next();
   if (isLoginPage) return NextResponse.next();
 
-  const token = req.cookies.get("adminAccessToken")?.value;
+  // Read accessToken from Authorization header
+  const authHeader = req.headers.get("authorization");
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
 
   if (!token) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
+
   try {
     const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
@@ -23,8 +28,9 @@ export async function middleware(req: NextRequest) {
     if (payload.role !== "admin") {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
+
     return NextResponse.next();
-  } catch {
+  } catch (err) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 }
