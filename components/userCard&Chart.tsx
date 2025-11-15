@@ -31,7 +31,7 @@ export default function UserManagementDashboard() {
   useEffect(() => {
     async function fetchCounts() {
       try {
-        const res = await axiosAdmin.get("/admin/dashboard/getallusers");
+        const res = await axiosAdmin.get("/admin/getallusers");
         setCounts({
           totalCount: res.data.totalCount || 0,
           guestCount: res.data.guestCount || 0,
@@ -49,7 +49,7 @@ export default function UserManagementDashboard() {
   useEffect(() => {
     async function fetchMonthlyNewUsers() {
       try {
-        const res = await axiosAdmin.get("/admin/dashboard/newuserpermonth");
+        const res = await axiosAdmin.get("/admin/newuserpermonth");
 
         const usersPerMonth = res.data.usersPerMonth || [];
 
@@ -96,7 +96,7 @@ export default function UserManagementDashboard() {
       value: counts.totalCount,
       percentage: "+8.2%",
       icon: <Users />,
-      href: "/admin/dashboard/user/allusers",
+      href: "/admin/user/allusers",
     },
     {
       title: "Guest Users",

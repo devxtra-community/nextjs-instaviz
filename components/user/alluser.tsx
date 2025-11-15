@@ -10,10 +10,10 @@ export default function AllUsers() {
   const [alluser, setalluser] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch all users
+ 
   const alluserstopage = async () => {
     try {
-      const responsedata = await axiosAdmin.get("/admin/dashboard/alluserspage");
+      const responsedata = await axiosAdmin.get("/admin/alluserspage");
       console.log("inside response", responsedata.data.alluser);
 
       const users = responsedata.data.alluser.map((u: any) => ({
@@ -33,14 +33,14 @@ export default function AllUsers() {
     alluserstopage();
   }, []);
 
-  // Filter users based on search input
+
   const filteredUsers = alluser.filter((u) =>
     u.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="min-h-screen p-6 md:p-8">
-      {/* Header and Search */}
+   
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h1 className="text-3xl font-bold tracking-tight">All Users</h1>
 
@@ -62,7 +62,7 @@ export default function AllUsers() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-8">
           {filteredUsers.map((u, i) => (
-            <Link key={i} href={`/admin/dashboard/user/allusers/${u._id}`}>
+            <Link key={i} href={`/admin/user/allusers/${u._id}`}>
               <div className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition-transform">
                 <div className="relative mb-3 h-16 w-16">
                   {u.avatar ? (

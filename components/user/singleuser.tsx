@@ -44,7 +44,7 @@ export default function UserProfilePage() {
 
   const fetchUserSinglePage = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/dashboard/singleuser/${id}`);
+      const res = await axiosAdmin.get(`/admin/singleuser/${id}`);
       console.log("Single user fetched:", res.data.singleuser);
       setUser(res.data.singleuser);
       setStatus(res.data.singleuser?.status || "Active");
@@ -57,7 +57,7 @@ export default function UserProfilePage() {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      await axiosAdmin.put(`/admin/dashboard/update-status/${id}`, {
+      await axiosAdmin.put(`/admin/update-status/${id}`, {
         status: newStatus,
       });
       setStatus(newStatus);
@@ -69,7 +69,7 @@ export default function UserProfilePage() {
 
 const singleusertoken = async () => { 
   try {
-    const res = await axiosAdmin.get(`/admin/dashboard/singltoken/${id}`);
+    const res = await axiosAdmin.get(`/admin/singltoken/${id}`);
     console.log("single user token fetched");
     console.log(res);
     setSingletoken(res.data.singletoken);
