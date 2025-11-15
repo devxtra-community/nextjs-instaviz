@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Monitor, Smartphone } from "lucide-react";
-import axiosInstance from "@/lib/axiosInstance";
+
+import axiosAdmin from "@/lib/axiosAdmin";
 
 export default function DeviceUsageCard() {
   const [desktopPercent, setDesktopPercent] = useState(0);
@@ -12,7 +13,7 @@ export default function DeviceUsageCard() {
   useEffect(() => {
     async function fetchDeviceStats() {
       try {
-        const res = await axiosInstance.get("/admin/dashboard/device");
+        const res = await axiosAdmin.get("/admin/device");
 
         setMobilePercent(res.data.mobile);
         setDesktopPercent(res.data.desktop);

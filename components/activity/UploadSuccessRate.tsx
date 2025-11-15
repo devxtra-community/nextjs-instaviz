@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import axiosInstance from "@/lib/axiosInstance";
+import axiosAdmin from "@/lib/axiosAdmin";   
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -12,12 +12,13 @@ export default function UploadSuccessRate() {
   useEffect(() => {
     const fetchSuccessRate = async () => {
       try {
-        const res = axiosInstance.get("/admin/uploadsuccess");
-        setSuccessRate((await res).data.successRate);
-      } catch (err: any) {
+        const res = await axiosAdmin.get("/admin/uploadsuccess");  
+        setSuccessRate(res.data.successRate);
+      } catch (err) {
         console.log("Error fetching rate:", err);
       }
     };
+
     fetchSuccessRate();
   }, []);
 
@@ -27,6 +28,7 @@ export default function UploadSuccessRate() {
         <CardHeader>
           <CardTitle>Upload Success Rate</CardTitle>
         </CardHeader>
+
         <CardContent>
           <div className="text-center mb-4">
             <h2 className="text-4xl font-bold text-[#AD49E1]">
@@ -34,6 +36,7 @@ export default function UploadSuccessRate() {
             </h2>
             <p className="text-gray-500 text-sm">overall success rate</p>
           </div>
+
           <Progress value={successRate} className="h-3" />
         </CardContent>
       </Card>

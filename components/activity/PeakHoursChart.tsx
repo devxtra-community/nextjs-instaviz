@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axiosInstance from "@/lib/axiosInstance";
+import axiosAdmin from "@/lib/axiosAdmin";  
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -22,8 +22,8 @@ export default function PeakHoursChart() {
   useEffect(() => {
     const fetchPeakHours = async () => {
       try {
-        const res = await axiosInstance.get("/admin/peakhours");
-        setHours(res.data); 
+        const res = await axiosAdmin.get("/admin/peakhours");  
+        setHours(res.data);
       } catch (err) {
         console.log("Peak Hours Fetch Error:", err);
         setError("Failed to load chart data");

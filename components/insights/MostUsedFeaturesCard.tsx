@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
-import axiosInstance from "@/lib/axiosInstance";
+
+import axiosAdmin from "@/lib/axiosAdmin";
 
 export default function MostUsedFeaturesCard() {
   const [features, setFeatures] = useState<
@@ -13,7 +14,7 @@ export default function MostUsedFeaturesCard() {
   useEffect(() => {
     async function fetchFeatureStats() {
       try {
-        const res = await axiosInstance.get("/admin/dashboard/feature-stats");
+        const res = await axiosAdmin.get("/admin/featurestats");
         setFeatures(res.data.result || res.data);
       } catch (err) {
         console.log("Error fetching feature stats:", err);

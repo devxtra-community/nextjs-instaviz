@@ -5,7 +5,7 @@ import UserGrowthCard from "@/components/insights/UserGrowthCard";
 import ActiveIdleCard from "@/components/insights/ActiveIdleCard";
 import MostUsedFeaturesCard from "@/components/insights/MostUsedFeaturesCard";
 import DeviceUsageCard from "@/components/insights/DeviceUsageCard";
-import WeeklyActivityHeatCard from "@/components/insights/WeeklyActivityHeatCard";
+
 
 export default function InsightsPage() {
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function InsightsPage() {
         <DeviceUsageCard />
       </div>
 
-      <WeeklyActivityHeatCard />
+     
     </>
   );
 }

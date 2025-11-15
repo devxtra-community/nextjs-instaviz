@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import axiosInstance from "@/lib/axiosInstance";
+import axiosAdmin from "@/lib/axiosAdmin";  
 import { Upload, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -14,13 +14,15 @@ const icons: any = {
 };
 
 export default function ActivityStatsCards() {
-  const [stats , setStats] = useState<any[]>([])
-  useEffect(()=>{
-    const fetchStats = async ()=>{
-      try{
-const res = await axiosInstance.get('/admin/uploadstats')
-const data = res.data  
-const formattedStats = [
+  const [stats, setStats] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axiosAdmin.get("/admin/uploadstats")
+        const data = res.data;
+
+        const formattedStats = [
           {
             title: "Total Uploads",
             value: data.total,
@@ -55,7 +57,12 @@ const formattedStats = [
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {stats.map((s, i) => (
-        <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.1 }}
+        >
           <Card className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition">
             <CardContent className="p-2">
               <div className="flex justify-between items-center">
@@ -65,8 +72,6 @@ const formattedStats = [
                 </div>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mt-1">{s.value}</h2>
-            
-
             </CardContent>
           </Card>
         </motion.div>
