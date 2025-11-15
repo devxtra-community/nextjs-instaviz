@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use((response)=>{
             ogRequest.retry=true
             try{
                 console.log("inside tryt");
-                const refreshToken = await axios.post(`${process.env.NEXT_PUBLIC_API}/user/newRefreshToken`,
+                const refreshToken = await axios.post(`${process.env.NEXT_PUBLIC_API}/auth/newRefreshToken`,
                     {},
                     {withCredentials:true}
                 );
