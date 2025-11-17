@@ -43,7 +43,7 @@ axiosInstance.interceptors.response.use((response)=>{
             }catch(err){
                 console.log("catch in interceptor worked");
                 localStorage.clear();
-                window.location.href = "/login"
+                // window.location.href = "/login"
                 
 
             }
