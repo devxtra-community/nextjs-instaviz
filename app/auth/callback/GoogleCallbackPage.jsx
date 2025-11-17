@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function GoogleCallbackPage() {
   const router = useRouter();
@@ -12,9 +12,9 @@ export default function GoogleCallbackPage() {
 
     if (token) {
       localStorage.setItem("token", token);
-      router.push('/home');
+      router.push("/home");
     } else {
-      router.push('/signup');
+      router.push("/signup");
     }
   }, [router, searchParams]);
 

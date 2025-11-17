@@ -21,10 +21,13 @@ export function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProfile, setIsProfile] = useState(false);
   const [mobileProfile, setMobileProfile] = useState(false);
+  const [checkPassword, setCheckPassword] = useState(false);
   const [profilePic, setProfilePic] = useState("/user.jpg");
   const [userId, setUserId] = useState<string>("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const router = useRouter();
   const pathname = usePathname();
@@ -44,8 +47,6 @@ export function Navbar() {
 
     try {
       const decoded = jwtDecode<any>(finalToken);
-      console.log("Decoded token:", decoded);
-
       const idFromToken =
         decoded.id || decoded.googleId || decoded.userId || null;
 
@@ -53,7 +54,6 @@ export function Navbar() {
         setUserId(idFromToken.toString());
       }
     } catch (err) {
-      console.error("JWT decode failed:", err);
       setIsLoggedIn(false);
     }
   }, [pathname]);
@@ -91,10 +91,8 @@ export function Navbar() {
             userId,
             image: base64Image,
           });
-          console.log(response);
 
           const { imageUrl } = response.data;
-          console.log(imageUrl);
           setProfilePic(imageUrl);
           toast.success("Profile image is uploaded");
         } catch (error: any) {
@@ -106,12 +104,38 @@ export function Navbar() {
     input.click();
   }
 
+  const changePassword = async () => {
+    if (!oldPassword || !newPassword) {
+      return toast.warning("Please fill both fields.");
+    }
+
+    try {
+      const res = await axiosInstance.post("/user/newpassword", {
+        userId, // IMPORTANT
+        oldPassword,
+        newPassword,
+      });
+
+      toast.success(res.data.message);
+
+      setCheckPassword(false);
+      setOldPassword("");
+      setNewPassword("");
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message ||
+          "Something went wrong while updating password."
+      );
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await axiosInstance.post("/auth/logout");
       localStorage.clear();
       setIsLoggedIn(false);
       setIsProfile(false);
+      setMobileProfile(false);
       router.push("/home");
     } catch (error) {
       console.log("Logout failed:", error);
@@ -120,7 +144,9 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
-      <Toaster richColors position="top-center" />
+      <Toaster richColors position="top-center" className="z-50" />
+      <Toaster richColors position="top-center" className="z-999 hidden:md" />
+      
       <div className="flex items-center justify-between px-6 py-3 mx-auto">
         <Link
           href="/"
@@ -212,11 +238,69 @@ export function Navbar() {
                           {email}
                         </p>
 
-                        <button className="py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition cursor-pointer">
+                        <button
+                          className="py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition cursor-pointer"
+                          onClick={() => setCheckPassword(true)}
+                        >
                           <span className="text-red-500">Change</span> password
                         </button>
                       </div>
                     </div>
+
+                    {checkPassword && (
+                      <div
+                        className="absolute top-60 inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
+                        onClick={() => setCheckPassword(false)}
+                      >
+                        <div
+                          className="bg-white w-[90%] max-w-md p-8 rounded-3xl border border-gray-300 relative animate-[fadeIn_0.25s_ease]"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            onClick={() => setCheckPassword(false)}
+                            className="absolute top-4 right-4 text-black transition"
+                          >
+                            ✕
+                          </button>
+
+                          <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                            Change Password
+                          </h2>
+
+                          <div className="flex flex-col gap-4">
+                            <input
+                              className="p-3 border border-gray-300 rounded-xl outline-none focus:ring-1 focus:ring-[#dfadfa] focus:border-[#e2b4fa] transition"
+                              placeholder="Old Password"
+                              type="password"
+                              onChange={(e) => setOldPassword(e.target.value)}
+                            />
+
+                            <input
+                              className="p-3 border border-gray-300 rounded-xl outline-none focus:ring-1 focus:ring-[#dfadfa] focus:border-[#e2b4fa] transition"
+                              placeholder="New Password"
+                              type="password"
+                              onChange={(e) => setNewPassword(e.target.value)}
+                            />
+                          </div>
+
+                          <div className="flex justify-end gap-3 mt-8">
+                            <button
+                              className="px-5 py-2 rounded-xl bg-[#F8B55F] text-gray-70 transition"
+                              onClick={() => setCheckPassword(false)}
+                            >
+                              Cancel
+                            </button>
+
+                            <button
+                              className="px-6 py-2 rounded-xl text-white primarybg transition shadow-sm"
+                              onClick={changePassword}
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="my-4 border-t border-gray-200" />
 
@@ -260,7 +344,6 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* MOBILE MENU */}
       <AnimatePresence>
         {menuOpen && !mobileProfile && (
           <motion.div
@@ -363,10 +446,63 @@ export function Navbar() {
               <p className="text-gray-600 text-lg">{email}</p>
             </div>
 
-            <div className="flex flex-col items-center gap-4 bg-white py-6 border-b-2 rounded-2xl shadow-sm">
-              <button className="w-56 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-lg font-medium transition">
+            <div className="flex flex-col items-center gap-4 bg-white py-6 border-b-2 rounded-2xl">
+              <button
+                className="w-56 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-lg font-medium transition"
+                onClick={() => setCheckPassword(true)}
+              >
                 Change Password
               </button>
+
+              {checkPassword && (
+                <div
+                  className="absolute top-70 inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
+                  onClick={() => setCheckPassword(false)}
+                >
+                  <div
+                    className="bg-white w-[90%] max-w-md p-8 rounded-3xl border border-gray-300 relative animate-[fadeIn_0.25s_ease]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      onClick={() => setCheckPassword(false)}
+                      className="absolute top-4 right-4 text-black transition"
+                    >
+                      ✕
+                    </button>
+
+                    <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                      Change Password
+                    </h2>
+
+                    <div className="flex flex-col gap-4">
+                      <input
+                        className="p-3 border border-gray-300 rounded-xl outline-none focus:ring-1 focus:ring-[#dfadfa] focus:border-[#e2b4fa] transition"
+                        placeholder="Old Password"
+                        type="password"
+                      />
+
+                      <input
+                        className="p-3 border border-gray-300 rounded-xl outline-none focus:ring-1 focus:ring-[#dfadfa] focus:border-[#e2b4fa] transition"
+                        placeholder="New Password"
+                        type="password"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 mt-8">
+                      <button
+                        className="px-5 py-2 rounded-xl bg-[#F8B55F] text-gray-70 transition"
+                        onClick={() => setCheckPassword(false)}
+                      >
+                        Cancel
+                      </button>
+
+                      <button className="px-6 py-2 rounded-xl text-white primarybg transition shadow-sm">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <button
                 onClick={handleLogout}
