@@ -28,7 +28,7 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
   if (!charts || charts.length === 0) {
     return (
       <p className="text-gray-400 text-sm mt-4">
-        No charts available. Upload a dataset first.
+        There is no charts available for your current file upload.
       </p>
     );
   }

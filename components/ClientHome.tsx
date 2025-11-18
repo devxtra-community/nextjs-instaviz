@@ -9,97 +9,89 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProfileCard from "@/components/SkeletonModel";
 
 const ClientHome: React.FC = () => {
-    const [dataUploaded, setDataUploaded] = useState<boolean>(false);
-    const [chatOpen, setChatOpen] = useState<boolean>(false);
-    const [loading, setLoading] = useState(true);
+  const [dataUploaded, setDataUploaded] = useState<boolean>(false);
+  const [chatOpen, setChatOpen] = useState<boolean>(false);
 
-    useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 1000);
-        return () => clearTimeout(timer);
-    }, []);
+  // Initial skeleton loader
+  const [initialLoad, setInitialLoad] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setInitialLoad(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
-    // Auto-open chat ONLY on desktop after a file upload
-    useEffect(() => {
-        if (dataUploaded) {
-            const isDesktop = window.innerWidth >= 768;
-
-            if (isDesktop) {
-                // Desktop → chat panel always visible, no need to toggle chatOpen
-                setChatOpen(false); // IMPORTANT: keep mobile chat closed
-            } else {
-                // Mobile → do NOT auto open
-                setChatOpen(false);
-            }
-        }
-    }, [dataUploaded]);
-
-
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen bg-gray-50">
-                <ProfileCard />
-            </div>
-        );
+  useEffect(() => {
+    if (dataUploaded) {
+      setChatOpen(false);
     }
+  }, [dataUploaded]);
 
+  if (initialLoad) {
     return (
-        <div className="min-h-screen  relative overflow-hidden">
-            <Navbar />
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <ProfileCard />
+      </div>
+    );
+  }
 
-            <div className="flex flex-col md:flex-row md:pr-96">
+  return (
+    <div className="min-h-screen relative overflow-hidden">
 
-                {/* FIXED — pass setDataUploaded */}
-                <DashboardMain
-                    showData={dataUploaded}
-                    setDataUploaded={setDataUploaded}
-                />
+      {/* TOP NAV */}
+      <Navbar />
 
-                <ChatBar
-                    dataUploaded={dataUploaded}
-                    setDataUploaded={setDataUploaded}
-                />
+      <div className="flex flex-col md:flex-row md:pr-96">
+
+        {/* ONLY DashboardMain should show loader */}
+        <DashboardMain
+          showData={dataUploaded}
+          setDataUploaded={setDataUploaded}
+        />
+
+        <ChatBar
+          dataUploaded={dataUploaded}
+          setDataUploaded={setDataUploaded}
+        />
+      </div>
+
+      {/* Mobile Floating Chat Button */}
+      <button
+        onClick={() => setChatOpen(!chatOpen)}
+        className="fixed bottom-5 right-5 md:hidden bg-violet-600 text-white p-3 rounded-full shadow-lg z-40 hover:bg-violet-700 transition"
+      >
+        <FiMessageSquare size={22} />
+      </button>
+
+      {/* Mobile Slide-up Chat */}
+      <AnimatePresence>
+        {chatOpen && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            className="fixed bottom-0 left-0 right-0 bg-white z-50 rounded-t-2xl p-3 sm:p-4 flex flex-col"
+          >
+            <div className="flex justify-between items-center pb-2 mb-2">
+              <h2 className="text-violet-700 font-semibold text-sm sm:text-base">
+                InstaviZ AI Chat
+              </h2>
+              <button
+                onClick={() => setChatOpen(false)}
+                className="text-gray-500 hover:text-violet-600 text-sm font-medium"
+              >
+                Close
+              </button>
             </div>
 
-            {/* Mobile Floating Chat Button */}
-            <button
-                onClick={() => setChatOpen(!chatOpen)}
-                className="fixed bottom-5 right-5 md:hidden bg-violet-600 text-white p-3 rounded-full shadow-lg z-40 hover:bg-violet-700 transition"
-            >
-                <FiMessageSquare size={22} />
-            </button>
-
-            {/* Mobile Slide-up Chat */}
-            <AnimatePresence>
-                {chatOpen && (
-                    <motion.div
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        exit={{ y: "100%" }}
-                        transition={{ type: "spring", stiffness: 120, damping: 18 }}
-                        className="fixed bottom-0 left-0 right-0 bg-white z-50 rounded-t-2xl p-3 sm:p-4 flex flex-col"
-                    >
-                        <div className="flex justify-between items-center pb-2 mb-2">
-                            <h2 className="text-violet-700 font-semibold text-sm sm:text-base">
-                                InstaviZ AI Chat
-                            </h2>
-                            <button
-                                onClick={() => setChatOpen(false)}
-                                className="text-gray-500 hover:text-violet-600 text-sm font-medium"
-                            >
-                                Close
-                            </button>
-                        </div>
-
-                        <ChatBar
-                            dataUploaded={dataUploaded}
-                            setDataUploaded={setDataUploaded}
-                        />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
-    );
+            <ChatBar
+              dataUploaded={dataUploaded}
+              setDataUploaded={setDataUploaded}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default ClientHome;

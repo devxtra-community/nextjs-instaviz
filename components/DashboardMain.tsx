@@ -6,6 +6,7 @@ import MetricCard from "@/components/metricCard";
 import dynamic from "next/dynamic";
 import UploadButton from "./UploadButton";
 import { useAnalysis } from "@/context/AnalysisContext";
+import FullLoader from "@/components/FullLoader";
 
 // Dynamically load chart component
 const Charts = dynamic(() => import("@/components/chart"), {
@@ -24,12 +25,16 @@ export default function DashboardMain({
   showData: boolean;
   setDataUploaded: (val: boolean) => void;
 }) {
-  const { analysisData } = useAnalysis();
+  const { analysisData, loading } = useAnalysis();
 
-  // When no file is uploaded yet
+  // BEFORE FILE UPLOAD
   if (!showData || !analysisData) {
     return (
-      <main className="flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+      <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+
+        {/* LOCAL LOADER only for this section */}
+        {loading && <FullLoader />}
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -45,19 +50,22 @@ export default function DashboardMain({
           </p>
 
           <UploadButton onUploadSuccess={() => setDataUploaded(true)} />
-
         </motion.div>
       </main>
     );
   }
 
-  // Extract values from response
+  // AFTER FILE UPLOAD & DATA AVAILABLE
   const metrics = analysisData.data.metrics;
   const charts = analysisData.data.charts;
   const summary = analysisData.data.summary;
 
   return (
-    <main className="flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8 ">
+    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8">
+
+      {/* LOCAL LOADER sits over DashboardMain ONLY */}
+      {loading && <FullLoader />}
+
       {/* Header */}
       <div className="mb-4">
         <h1 className="text-[1.6rem] md:text-[1.9rem] font-semibold text-gray-800 leading-tight">
@@ -91,10 +99,8 @@ export default function DashboardMain({
         />
       </div>
 
-      {/* AI Generated Charts */}
       <Charts charts={charts} />
 
-      {/* AI Summary */}
       <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">

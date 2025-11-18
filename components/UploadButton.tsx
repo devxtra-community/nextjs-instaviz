@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useRef, ChangeEvent, useState } from "react";
+import React, { useRef, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAnalysis } from "@/context/AnalysisContext";
 
 interface UploadButtonProps {
     onFileSelected?: (file: File, responseOrError?: any) => void;
-    onUploadSuccess?: () => void;       // NEW
+    onUploadSuccess?: () => void;
     accept?: string;
     uploadUrl?: string;
 }
@@ -20,10 +20,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { setAnalysisData } = useAnalysis();
-
-    const [uploading, setUploading] = useState(false);
-    const [progress, setProgress] = useState(0);
+    const { setAnalysisData, setLoading } = useAnalysis(); // GLOBAL LOADING
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
@@ -31,9 +28,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 
     const isCsvFile = (file: File) => {
         const name = file.name.toLowerCase();
-        if (!name.endsWith(".csv")) return false;
-        const type = file.type;
-        return type === "text/csv" || type === "application/vnd.ms-excel";
+        return name.endsWith(".csv");
     };
 
     const uploadSingleFile = async (file: File) => {
@@ -41,32 +36,22 @@ const UploadButton: React.FC<UploadButtonProps> = ({
         formData.append("file", file);
 
         try {
-            setUploading(true);
-            setProgress(10);
+            setLoading(true); // ⬅ SHOW FULL-SCREEN LOADER
 
             const response = await axiosInstance.post(uploadUrl, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
-                onUploadProgress: (e) => {
-                    const percent = Math.round((e.loaded / e.total!) * 100);
-                    setProgress(percent);
-                },
             });
 
-            // store analysis globally
+            // Save the full API+AI response globally
             setAnalysisData(response.data);
 
-            // optional callback
             onFileSelected?.(file, response);
-            onUploadSuccess?.(); // 🚀 TRIGGER UI CHANGE
-
-            setUploading(false);
-            setProgress(100);
-
-            console.log("Upload Response:", response);
+            onUploadSuccess?.();
         } catch (err) {
-            console.log("Upload Failed:", err);
+            console.error("Upload failed", err);
             onFileSelected?.(file, err);
-            setUploading(false);
+        } finally {
+            setLoading(false); // ⬅ HIDE LOADER
         }
     };
 
@@ -85,7 +70,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
         try {
             await uploadSingleFile(file);
         } finally {
-            e.target.value = "";
+            e.target.value = ""; // reset input
         }
     };
 
@@ -98,6 +83,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
                 Upload File
             </motion.button>
 
+            {/* Hidden Input */}
             <input
                 type="file"
                 ref={fileInputRef}
@@ -105,15 +91,6 @@ const UploadButton: React.FC<UploadButtonProps> = ({
                 accept={accept}
                 style={{ display: "none" }}
             />
-
-            {uploading && (
-                <div className="w-full mt-4 bg-gray-200 rounded-full h-2">
-                    <div
-                        className="primarybg h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${progress}%` }}
-                    />
-                </div>
-            )}
         </div>
     );
 };
