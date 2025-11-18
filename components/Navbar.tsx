@@ -144,9 +144,12 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
-      <Toaster richColors position="top-center" className="z-50" />
-      <Toaster richColors position="top-center" className="z-999 hidden:md" />
-      
+      <Toaster
+        richColors
+        position="top-center"
+        toastOptions={{ className: "z-[9999]" }}
+      />
+
       <div className="flex items-center justify-between px-6 py-3 mx-auto">
         <Link
           href="/"
@@ -401,6 +404,25 @@ export function Navbar() {
                   </div>
                 </button>
               )}
+              {!isLoggedIn && (
+                <div className="flex flex-col gap-3">
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="text-lg font-medium text-gray-700 hover:text-[#ad49e1]"
+                  >
+                    Login
+                  </Link>
+
+                  <Link
+                    href="/signup"
+                    onClick={() => setMenuOpen(false)}
+                    className="text-lg w-28 font-medium text-white text-center rounded-xl py-2 primarybg transition"
+                  >
+                    Signup
+                  </Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -496,7 +518,7 @@ export function Navbar() {
                         Cancel
                       </button>
 
-                      <button className="px-6 py-2 rounded-xl text-white primarybg transition shadow-sm">
+                      <button className="px-6 py-2 rounded-xl text-white primarybg transition shadow-sm" onClick={changePassword}>
                         Save
                       </button>
                     </div>
