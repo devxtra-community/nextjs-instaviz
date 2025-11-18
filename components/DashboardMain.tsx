@@ -18,12 +18,12 @@ const Charts = dynamic(() => import("@/components/chart"), {
 export default function DashboardMain({ showData }: { showData: boolean }) {
   if (!showData) {
     return (
-      <main className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+      <main className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-lg"
+          className="max-w-lg"  
         >
           <h1 className="text-3xl font-bold primary mb-3">
             Start Visualizing Smarter
@@ -78,7 +78,7 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
       <Charts />
 
       {/* AI Summary Section */}
-      <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
+      <div className="mt-6 bg-linear-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
           <li>
