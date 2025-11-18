@@ -18,6 +18,23 @@ const ClientHome: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    // Auto-open chat ONLY on desktop after a file upload
+    useEffect(() => {
+        if (dataUploaded) {
+            const isDesktop = window.innerWidth >= 768;
+
+            if (isDesktop) {
+                // Desktop → chat panel always visible, no need to toggle chatOpen
+                setChatOpen(false); // IMPORTANT: keep mobile chat closed
+            } else {
+                // Mobile → do NOT auto open
+                setChatOpen(false);
+            }
+        }
+    }, [dataUploaded]);
+
+
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gray-50">
@@ -27,12 +44,17 @@ const ClientHome: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+        <div className="min-h-screen  relative overflow-hidden">
             <Navbar />
-            {/* Desktop Layout */}
-            <div className="pt-13 flex flex-col md:flex-row h-screen">
-                <DashboardMain showData={dataUploaded} />
-                {/* Desktop Chat visible */}
+
+            <div className="flex flex-col md:flex-row md:pr-96">
+
+                {/* FIXED — pass setDataUploaded */}
+                <DashboardMain
+                    showData={dataUploaded}
+                    setDataUploaded={setDataUploaded}
+                />
+
                 <ChatBar
                     dataUploaded={dataUploaded}
                     setDataUploaded={setDataUploaded}
@@ -47,7 +69,7 @@ const ClientHome: React.FC = () => {
                 <FiMessageSquare size={22} />
             </button>
 
-            {/* Mobile Chat Slide-up Drawer */}
+            {/* Mobile Slide-up Chat */}
             <AnimatePresence>
                 {chatOpen && (
                     <motion.div

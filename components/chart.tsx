@@ -1,7 +1,8 @@
 "use client";
+
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   PieChart,
   Pie,
   Cell,
@@ -11,98 +12,118 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { FiTrendingUp, FiPieChart } from "react-icons/fi";
 import { motion } from "framer-motion";
-import React from "react";
 
-const COLORS = ["#AD49E1", "#B46FE9", "#CDA5F2", "#E5D6FA"];
+const COLORS = ["#AD49E1", "#B46FE9", "#CDA5F2", "#E5D6FA", "#D7B6FA"];
 
-export default function Charts() {
-  const chartData = [
-    { month: "Jan", growth: 12, users: 240 },
-    { month: "Feb", growth: 18, users: 320 },
-    { month: "Mar", growth: 25, users: 380 },
-    { month: "Apr", growth: 21, users: 350 },
-    { month: "May", growth: 28, users: 420 },
-    { month: "Jun", growth: 33, users: 470 },
-  ];
+interface ChartConfig {
+  type: "bar" | "pie";
+  x: string; // column name
+  y: string; // numeric or count
+  title: string;
+  data: any[]; // AI-generated data array
+}
 
-  const pieData = [
-    { name: "AI Charts", value: 48 },
-    { name: "Insights", value: 27 },
-    { name: "Exports", value: 15 },
-    { name: "Collaboration", value: 10 },
-  ];
+export default function Charts({ charts }: { charts: ChartConfig[] }) {
+  if (!charts || charts.length === 0) {
+    return (
+      <p className="text-gray-400 text-sm mt-4">
+        No charts available. Upload a dataset first.
+      </p>
+    );
+  }
+
+  // Extract both charts
+  const barChart = charts.find((c) => c.type === "bar");
+  const pieChart = charts.find((c) => c.type === "pie");
+
+  // NORMALIZATION — Convert AI response into Recharts format
+  const normalizeBarData = (chart: ChartConfig | undefined) => {
+    if (!chart || !chart.data) return [];
+    return chart.data.map((row: any) => ({
+      [chart.x]: row.xValue,
+      [chart.y]: row.yValue,
+    }));
+  };
+
+  const normalizePieData = (chart: ChartConfig | undefined) => {
+    if (!chart || !chart.data) return [];
+    return chart.data.map((row: any) => ({
+      [chart.x]: row.xValue,
+      value: row.value, // Recharts uses "value" for pie
+    }));
+  };
+
+  const barData = normalizeBarData(barChart);
+  const pieData = normalizePieData(pieChart);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      {/* Line Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[15px] font-semibold text-gray-800">
-            Growth & Engagement Trends
-          </h3>
-          <FiTrendingUp className="primary" size={18} />
-        </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3e8ff" />
-            <XAxis dataKey="month" stroke="#bbb" fontSize={11} />
-            <YAxis stroke="#bbb" fontSize={11} />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="growth"
-              stroke="#AD49E1"
-              strokeWidth={2.5}
-              dot={{ r: 3 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="users"
-              stroke="#9929D5"
-              strokeWidth={2.5}
-              dot={{ r: 3 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </motion.div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
 
-      {/* Pie Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[15px] font-semibold text-gray-800">
-            Usage Distribution
+      {/* ================= BAR CHART ================= */}
+      {barChart && barData.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
+        >
+          <h3 className="text-[15px] font-semibold text-gray-800 mb-2">
+            {barChart.title}
           </h3>
-          <FiPieChart className="primary" size={18} />
-        </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              outerRadius={75}
-              labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            >
-              {pieData.map((_, i) => (
-                <Cell key={i} fill={COLORS[i % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
-      </motion.div>
+
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f3e8ff" />
+              <XAxis dataKey={barChart.x} stroke="#bbb" fontSize={11} />
+              <YAxis stroke="#bbb" fontSize={11} />
+              <Tooltip />
+              <Bar
+                dataKey={barChart.y}
+                fill="#AD49E1"
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
+      )}
+
+      {/* ================= PIE CHART ================= */}
+      {pieChart && pieData.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
+        >
+          <h3 className="text-[15px] font-semibold text-gray-800 mb-2">
+            {pieChart.title}
+          </h3>
+
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"         // always "value" for pie chart
+                nameKey={pieChart.x}    // category label
+                outerRadius={90}
+                labelLine={false}
+                label={({ name, percent }) => {
+                  const short =
+                    name.length > 18 ? name.substring(0, 18) + "…" : name;
+
+                  return `${short} ${(percent * 100).toFixed(0)}%`;
+                }}
+              >
+                {pieData.map((_: any, i: number) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </motion.div>
+      )}
     </div>
   );
 }

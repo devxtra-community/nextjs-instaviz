@@ -1,11 +1,13 @@
 "use client";
+
 import React from "react";
 import { motion } from "framer-motion";
 import MetricCard from "@/components/metricCard";
 import dynamic from "next/dynamic";
 import UploadButton from "./UploadButton";
+import { useAnalysis } from "@/context/AnalysisContext";
 
-// ✅ Dynamically import Recharts section (client-only rendering)
+// Dynamically load chart component
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
   loading: () => (
@@ -15,10 +17,19 @@ const Charts = dynamic(() => import("@/components/chart"), {
   ),
 });
 
-export default function DashboardMain({ showData }: { showData: boolean }) {
-  if (!showData) {
+export default function DashboardMain({
+  showData,
+  setDataUploaded,
+}: {
+  showData: boolean;
+  setDataUploaded: (val: boolean) => void;
+}) {
+  const { analysisData } = useAnalysis();
+
+  // When no file is uploaded yet
+  if (!showData || !analysisData) {
     return (
-      <main className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+      <main className="flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -32,14 +43,21 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
             InstaviZ turns your spreadsheets into interactive dashboards —
             powered by intelligent AI for instant insights.
           </p>
-          <UploadButton />
+
+          <UploadButton onUploadSuccess={() => setDataUploaded(true)} />
+
         </motion.div>
       </main>
     );
   }
 
+  // Extract values from response
+  const metrics = analysisData.data.metrics;
+  const charts = analysisData.data.charts;
+  const summary = analysisData.data.summary;
+
   return (
-    <main className="flex-1 flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8">
+    <main className="flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8 ">
       {/* Header */}
       <div className="mb-4">
         <h1 className="text-[1.6rem] md:text-[1.9rem] font-semibold text-gray-800 leading-tight">
@@ -50,44 +68,39 @@ export default function DashboardMain({ showData }: { showData: boolean }) {
         </p>
       </div>
 
-      {/* KPI Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <MetricCard
           title="Total Rows"
-          value="12,480"
+          value={metrics.total_rows}
           description="Records processed"
         />
         <MetricCard
           title="Total Columns"
-          value="18"
+          value={metrics.total_columns}
           description="Attributes detected"
         />
         <MetricCard
           title="Missing Values"
-          value="234"
+          value={metrics.missing_values}
           description="Incomplete entries"
         />
         <MetricCard
           title="Charts Generated"
-          value="2"
+          value={metrics.charts_generated}
           description="Visuals auto-created"
         />
       </div>
 
-      {/* ✅ Charts Section (Client Rendered) */}
-      <Charts />
+      {/* AI Generated Charts */}
+      <Charts charts={charts} />
 
-      {/* AI Summary Section */}
+      {/* AI Summary */}
       <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
-          <li>
-            • The dataset contains <b>12,480 rows</b> and <b>18 columns</b>.
-          </li>
-          <li>
-            • <b>234</b> missing values were identified, primarily in “Region”
-            and “Revenue” fields.
-          </li>
+          {summary.map((point: string, i: number) => (
+            <li key={i}>• {point}</li>
+          ))}
         </ul>
       </div>
     </main>
