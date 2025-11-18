@@ -17,10 +17,11 @@ export default function LoginPage() {
     try {
       const loginData = {
         email,
-        password,
-      };
-      const LoginResponse = await axiosInstance.post("/auth/login", loginData);
+        password
+      }
+      const LoginResponse = await axiosInstance.post("/auth/login", loginData)
 
+      console.log(LoginResponse);
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
         router.push("/home");
