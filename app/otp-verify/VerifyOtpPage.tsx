@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axiosInstance";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Toaster, toast } from "sonner"; 
+import { Toaster, toast } from "sonner";
 
 export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
@@ -26,13 +31,18 @@ export default function VerifyOtpPage() {
     }
 
     try {
-      const verifyData = await axiosInstance.post(`/auth/verifyOtp?email=${email}`, { otp });
-
-      toast.success("Account created successfully!");
-      setTimeout(() => router.push("/home"), 1500);
-    } catch (error:any) {
+      const verifyData = await axiosInstance.post(
+        `/auth/verifyOtp?email=${email}`,
+        { otp }
+      );
+      if (verifyData.data.success) {
+        toast.success("Account created successfully!");
+        setTimeout(() => router.push("/login"), 1500);
+      }
+    } catch (error: any) {
       console.log("Error verifying OTP:", error);
-      const errorMessage = error.response?.data?.message || "Something went wrong. Try again.";
+      const errorMessage =
+        error.response?.data?.message || "Something went wrong. Try again.";
       toast.error(errorMessage);
     }
   }
@@ -41,7 +51,9 @@ export default function VerifyOtpPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-purple-600 to-purple-200 text-white px-4">
       <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-md text-center border border-purple-400/30">
         <h1 className="text-3xl font-bold mb-2">Verify OTP</h1>
-        <p className="text-purple-200 mb-8 text-sm">Enter the 6-digit code sent to your email</p>
+        <p className="text-purple-200 mb-8 text-sm">
+          Enter the 6-digit code sent to your email
+        </p>
 
         <div className="flex justify-center mb-8">
           <Toaster richColors position="top-center" />
@@ -69,7 +81,10 @@ export default function VerifyOtpPage() {
       </div>
 
       <p className="text-purple-200 mt-6 text-xs">
-        Didn’t receive a code? <span className="underline cursor-pointer text-white hover:text-purple-200">Resend</span>
+        Didn’t receive a code?{" "}
+        <span className="underline cursor-pointer text-white hover:text-purple-200">
+          Resend
+        </span>
       </p>
     </div>
   );
