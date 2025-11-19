@@ -35,10 +35,10 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
-        
+{/*         
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Admin Panel</h1>
-        </div>
+        </div> */}
 
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Admin Login</h2>
@@ -102,7 +102,7 @@ export default function AdminLoginPage() {
           bg-[size:20px_20px]" />
 
         <motion.img
-          src="/admin-secure.gif"
+          src="/giphy.gif"
           alt="Admin Security"
           className="relative z-10 max-w-md w-full object-contain drop-shadow-2xl rounded-2xl"
           animate={{ y: [0, -15, 0] }}

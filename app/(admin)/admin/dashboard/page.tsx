@@ -1,25 +1,66 @@
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import StatsCard from "@/components/statsCard";
-import { DollarSign, Users, UserPlus, ShoppingCart } from "lucide-react";
+import { DollarSign, HardDrive, TrendingUp } from "lucide-react";
 import { ChartBarMultiple } from "@/components/adminChart1";
 import { ChartPieStacked } from "@/components/adminChart2";
+import axiosAdmin from "@/lib/axiosAdmin";
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    dataGenerated: 0,
+    conversionRate: 0,
+  });
+
   useEffect(() => {
-    document.getElementById("mobile-page-title")!.textContent = "Admin Dashboard";
+    document.getElementById("mobile-page-title")!.textContent =
+      "Admin Dashboard";
+
+    fetchDashboardStats();
   }, []);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const res = await axiosAdmin.get("/admin/dashboard");
+      setStats(res.data);
+    } catch (error) {
+      console.log("Error fetching dashboard stats:", error);
+    }
+  };
+
   return (
     <>
-      {/* Title (shows only on desktop) */}
-      <h1 className="text-2xl font-semibold mb-6 hidden md:block">Admin Dashboard</h1>
+      {/* Page Title */}
+      <h1 className="text-2xl font-semibold mb-6 hidden md:block">
+        Admin Dashboard
+      </h1>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard title="Today's Money" value="$53,000" icon={<DollarSign />} />
-        <StatsCard title="Today's Users" value="2,300" icon={<Users />} />
-        <StatsCard title="New Clients" value="+3,462" icon={<UserPlus />} />
-        <StatsCard title="Sales" value="$103,430" icon={<ShoppingCart />} />
+      {/* 3 Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        {/* Revenue */}
+        <StatsCard
+          title="Total Revenue"
+          value={`₹${stats.totalRevenue}`}
+          icon={<DollarSign />}
+        />
+
+        {/* Total Data Generated */}
+        <StatsCard
+          title="Data Generated"
+          value={String(stats.dataGenerated)}
+          icon={<HardDrive />}
+        />
+
+        {/* Conversion Rate */}
+        <StatsCard
+          title="Conversion Rate"
+          value={`${stats.conversionRate}%`}
+          icon={<TrendingUp />}
+        />
+
       </div>
 
       {/* Charts */}
