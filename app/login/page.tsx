@@ -7,19 +7,14 @@ import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/GoogleButton";
 
-
 export default function LoginPage() {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   async function handleLogin() {
-    console.log("inside handleLogin");
-    console.log("Env", process.env.NEXT_PUBLIC_API);
-    
-    try{
-      console.log("button clicked");
-      console.log(email, password);
+
+    try {
       const loginData = {
         email,
         password
@@ -28,27 +23,21 @@ export default function LoginPage() {
 
       console.log(LoginResponse);
       if (LoginResponse.data.success) {
-        localStorage.setItem("accessToken", LoginResponse.data.accessToken)
-        router.push("/home")
+        localStorage.setItem("accessToken", LoginResponse.data.accessToken);
+        router.push("/home");
       }
-
     } catch (err: any) {
-      console.log(err.response.data.message);
-      toast.error(`${err.response.data.message}`)
-      console.log(err);
-
+      toast.error(`${err.response.data.message}`);
     }
-
-
   }
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Section */}
+      <Toaster richColors position="top-center" />
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
-          <Toaster richColors position="top-center" />
         </div>
 
         {/* Form */}
@@ -68,7 +57,9 @@ export default function LoginPage() {
                 type="email"
                 placeholder="Enter your email"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
-                onChange={(e) => { setEmail(e.target.value) }}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 value={email}
               />
             </div>
@@ -81,7 +72,9 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
-                onChange={(e) => { setPassword(e.target.value) }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 value={password}
               />
             </div>
