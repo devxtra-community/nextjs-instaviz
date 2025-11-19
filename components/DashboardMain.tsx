@@ -8,7 +8,7 @@ import UploadButton from "./UploadButton";
 import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
 
-// Dynamically load chart component
+// Dynamically load Chart component
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
   loading: () => (
@@ -27,12 +27,11 @@ export default function DashboardMain({
 }) {
   const { analysisData, loading } = useAnalysis();
 
-  // BEFORE FILE UPLOAD
+  // BEFORE UPLOAD
   if (!showData || !analysisData) {
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
 
-        {/* LOCAL LOADER only for this section */}
         {loading && <FullLoader />}
 
         <motion.div
@@ -55,15 +54,16 @@ export default function DashboardMain({
     );
   }
 
-  // AFTER FILE UPLOAD & DATA AVAILABLE
+  // AFTER UPLOAD
   const metrics = analysisData.data.metrics;
+
   const charts = analysisData.data.charts;
+
   const summary = analysisData.data.summary;
 
   return (
-    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8">
+    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8 top-2">
 
-      {/* LOCAL LOADER sits over DashboardMain ONLY */}
       {loading && <FullLoader />}
 
       {/* Header */}
@@ -76,31 +76,18 @@ export default function DashboardMain({
         </p>
       </div>
 
+      {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard
-          title="Total Rows"
-          value={metrics.total_rows}
-          description="Records processed"
-        />
-        <MetricCard
-          title="Total Columns"
-          value={metrics.total_columns}
-          description="Attributes detected"
-        />
-        <MetricCard
-          title="Missing Values"
-          value={metrics.missing_values}
-          description="Incomplete entries"
-        />
-        <MetricCard
-          title="Charts Generated"
-          value={metrics.charts_generated}
-          description="Visuals auto-created"
-        />
+        <MetricCard title="Total Rows" value={metrics.total_rows} description="Records processed" />
+        <MetricCard title="Total Columns" value={metrics.total_columns} description="Attributes detected" />
+        <MetricCard title="Missing Values" value={metrics.missing_values} description="Incomplete entries" />
+        <MetricCard title="Charts Generated" value={charts.length} description="Visuals auto-created" />
       </div>
 
+      {/* All charts (upload + chat-created) */}
       <Charts charts={charts} />
 
+      {/* Summary */}
       <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">

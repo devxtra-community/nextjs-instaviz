@@ -7,13 +7,31 @@ type AnalysisContextType = {
   setAnalysisData: (val: any) => void;
   loading: boolean;
   setLoading: (val: boolean) => void;
+
+  // Add dynamic chart
+  addNewChart: (chart: any) => void;
 };
 
 const AnalysisContext = createContext<AnalysisContextType | null>(null);
 
 export const AnalysisProvider = ({ children }: { children: React.ReactNode }) => {
   const [analysisData, setAnalysisData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false); // ⬅ GLOBAL LOADING STATE
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // append chart to existing dashboard
+  const addNewChart = (chart: any) => {
+    setAnalysisData((prev: any) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        data: {
+          ...prev.data,
+          charts: [...prev.data.charts, chart],  // ⬅ add chart to end
+        },
+      };
+    });
+  };
 
   return (
     <AnalysisContext.Provider
@@ -22,6 +40,7 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
         setAnalysisData,
         loading,
         setLoading,
+        addNewChart,
       }}
     >
       {children}

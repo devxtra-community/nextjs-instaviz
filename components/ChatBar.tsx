@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import { motion } from "framer-motion";
 import VioletAIAvatar from "./VioletAIAvatar";
+import { useAnalysis } from "@/context/AnalysisContext";
+import axiosInstance from "@/lib/axiosInstance";
 
 type ChatBarProps = {
   dataUploaded: boolean;
@@ -18,35 +20,47 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   >([]);
   const [input, setInput] = useState("");
 
+  const { addNewChart, setLoading } = useAnalysis();
+
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    setMessages((p) => [...p, { role: "user", text: input }]);
     const userText = input;
     setInput("");
 
+    // Add user bubble
+    setMessages((prev) => [...prev, { role: "user", text: userText }]);
+
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        body: JSON.stringify({ message: userText }),
-        headers: { "Content-Type": "application/json" },
-      });
+      setLoading(true);
 
-      const data = await res.json();
+      const res = await axiosInstance.post("/chat", { message: userText });
 
-      setMessages((p) => [...p, { role: "ai", text: data.reply }]);
+      const data = res.data;
+
+      // Add AI reply
+      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+
+      // Add chart (if available)
+      if (data.chart) {
+        addNewChart(data.chart);
+      }
     } catch (err) {
-      setMessages((p) => [
-        ...p,
-        { role: "ai", text: "Error: Unable to get response." },
+      console.error("Chat error:", err);
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: "❌ Error communicating with server." },
       ]);
+    } finally {
+      setLoading(false);
     }
   };
+
 
   if (!dataUploaded) {
     return (
       <aside className="w-full md:w-96 h-[93vh] fixed right-0 top-12 flex flex-col bg-white p-4 border-t md:border-l border-gray-200">
-
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -68,23 +82,21 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     <aside className="w-full md:w-96 h-[93vh] fixed right-0 top-12 flex flex-col bg-white p-4 border-t md:border-l border-gray-200">
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-thin scrollbar-thumb-[#EBDCFB]">
+      <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-hide">
         <h1 className="text-lg font-semibold primary mb-2">Ask InstaviZ AI</h1>
 
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`flex ${
-              m.role === "user" ? "justify-end" : "justify-start"
-            } gap-2`}
+            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
+              } gap-2`}
           >
             {m.role === "ai" && <VioletAIAvatar />}
             <div
-              className={`px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] ${
-                m.role === "user"
+              className={`px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] ${m.role === "user"
                   ? "bg-[#f7edff] primary"
                   : "bg-gray-50 text-gray-800"
-              }`}
+                }`}
             >
               {m.text}
             </div>
