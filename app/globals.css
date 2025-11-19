@@ -79,7 +79,19 @@ h2 {
   background-color: #ad49e1;
 }
 .hoverColor:hover {
-  color: #ad49e1;
+  color: #b958ed;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 :root {
