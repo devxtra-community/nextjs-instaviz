@@ -1,41 +1,62 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API,
   withCredentials: true,
 });
 
+let isRefreshing = false;
+let waitingQueue: Array<(token: string | null) => void> = [];
+function addToQueue(cb: (token: string | null) => void) {
+  waitingQueue.push(cb);
+}
+function runQueue(newToken: string | null) {
+  waitingQueue.forEach((ele) => ele(newToken));
+  waitingQueue = [];
+}
 
 axiosInstance.interceptors.request.use((config) => {
-    console.log("insise axios req interceptor");
-    
+  console.log("insise axios req interceptor");
+
   const accessToken = localStorage.getItem("accessToken");
 
   if (accessToken) {
     console.log("user has token");
-    
+
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
 
   return config;
 });
 
-
 axiosInstance.interceptors.response.use(
   (response) => response,
-  
 
   async (error) => {
     console.log("inside axios ressponse");
-    
-    const ogRequest = error.config;
-    const accessToken = localStorage.getItem("accessToken"); 
 
+    const ogRequest = error.config;
+    const accessToken = localStorage.getItem("accessToken");
 
     if (error.response?.status === 401 && accessToken && !ogRequest.retry) {
-        console.log("inside requesting for new newaccesstoken");
-        
+      console.log("inside requesting for new newaccesstoken");
+      console.log("detected 401");
+      if (isRefreshing) {
+        console.log("one req is already refreshing");
+        return new Promise((resolve, reject) => {
+          addToQueue((newToken) => {
+            if (!newToken) {
+              resolve(Promise.reject(error));
+              return;
+            }
+            ogRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(axiosInstance(ogRequest));
+          });
+        });
+      }
+
       ogRequest.retry = true;
+      isRefreshing = true;
 
       try {
         const refreshResp = await axios.post(
@@ -47,14 +68,23 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = refreshResp.data.newAccessToken;
 
         localStorage.setItem("accessToken", newAccessToken);
+        runQueue(newAccessToken);
+        isRefreshing= false;
         ogRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return axiosInstance(ogRequest);
       } catch (err) {
         console.log("inside axios error");
-        
-        localStorage.clear();
-        window.location.href = "/login";
+        runQueue(null);
+        isRefreshing=false
+        const error = err as AxiosError;
+        const status = error?.response?.status;
+        if (status == 401) {
+          localStorage.clear();
+          window.location.href = "/login";
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
       }
     }
 

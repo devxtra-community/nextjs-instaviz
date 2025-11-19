@@ -46,6 +46,14 @@ export default function VerifyOtpPage() {
       toast.error(errorMessage);
     }
   }
+  async function resend() {
+    console.log("inside resend otp");
+    
+    const resendOtp =  await axiosInstance.post(`/auth/resendOtp?email=${email}`)
+    console.log(resendOtp);
+    
+    
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-purple-600 to-purple-200 text-white px-4">
@@ -82,7 +90,7 @@ export default function VerifyOtpPage() {
 
       <p className="text-purple-200 mt-6 text-xs">
         Didn’t receive a code?{" "}
-        <span className="underline cursor-pointer text-white hover:text-purple-200">
+        <span onClick={()=>{resend()}} className="underline cursor-pointer text-white hover:text-purple-200">
           Resend
         </span>
       </p>
