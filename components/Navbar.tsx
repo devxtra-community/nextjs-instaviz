@@ -119,7 +119,7 @@ export function Navbar() {
           </Link>
 
           {isLoggedIn ? (
-            <div className="relative">
+            <div className="relative ">
               <Image
                 src={profilePic}
                 alt="User Profile"
