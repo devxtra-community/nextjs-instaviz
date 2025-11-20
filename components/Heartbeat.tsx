@@ -1,52 +1,50 @@
 "use client";
+
 import { useEffect } from "react";
+import axiosAdmin from "@/lib/axiosAdmin";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function Heartbeat() {
   useEffect(() => {
-    const sessionId = localStorage.getItem("sessionId");
-    if (!sessionId) return;
+    let interval: NodeJS.Timeout;
 
-    let isActive = true; // Track if tab is active
-
-    const sendHeartbeat = () => {
-      if (!isActive) return; // ❗ Don't send heartbeat when tab not active
-
-      fetch("http://localhost:5000/session/heartbeat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ sessionId })
-      })
-        .then(res => res.json())
-        .then(data => {
-          console.log("Active for:", data.totalActiveSeconds, "seconds");
-        });
+    const startSession = async () => {
+      try {
+        await axiosInstance.post("/session/start");
+      } catch (err) {
+        console.error("startSession failed:", err);
+      }
     };
 
-    // ▶ Start immediately
-    sendHeartbeat();
-
-    // ▶ Send every 15 seconds ONLY when active
-    const interval = setInterval(sendHeartbeat, 15000);
-
-    // 📌 TAB VISIBILITY (user switches tab)
-    const handleVisibilityChange = () => {
-      isActive = !document.hidden;
+    const sendHeartbeat = async () => {
+      try {
+        await axiosInstance.post("/session/heartbeat");
+      } catch (err) {
+        console.error("Heartbeat failed:", err);
+      }
     };
 
-    // 📌 WINDOW FOCUS / BLUR
-    const handleFocus = () => (isActive = true);
-    const handleBlur = () => (isActive = false);
+    const passSession = async () => {
+      await startSession();
+      await sendHeartbeat();
+      interval = setInterval(sendHeartbeat, 15000);
+    };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("focus", handleFocus);
-    window.addEventListener("blur", handleBlur);
+    passSession()
+
+    const handleBeforeUnload = () => {
+
+      navigator.sendBeacon(
+        `${process.env.NEXT_PUBLIC_API ?? "http://localhost:5000"}/session/heartbeat`,
+        new Blob([], { type: "application/json" })
+      );
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      clearInterval(interval);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("blur", handleBlur);
+      if (interval) clearInterval(interval);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 

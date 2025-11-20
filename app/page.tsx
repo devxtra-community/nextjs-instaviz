@@ -5,14 +5,10 @@ import Stats from "@/components/Stats";
 import Testimonials from "@/components/Testimonials";
 import FAQSection from "@/components/FAQSection";
 import Footer1 from "@/components/Footer1";
-import Heartbeat from "@/components/Heartbeat";   
 
 export default function Page() {
   return (
     <div className="min-h-screen text-slate-800 bg-linear-to-b from-white to-[#fff7ff] font-sans">
-      
-      <Heartbeat />   
-
       <Navbar1 />
       <HeroSection />
       <Features />
