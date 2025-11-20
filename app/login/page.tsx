@@ -6,14 +6,15 @@ import axiosInstance from "@/lib/axiosInstance";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/GoogleButton";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   async function handleLogin() {
-
     try {
       const loginData = {
         email,
@@ -55,7 +56,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-purple-400"
                 onChange={(e) => {
                   setEmail(e.target.value);
                 }}
@@ -63,25 +64,37 @@ export default function LoginPage() {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-purple-400"
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
                 value={password}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute  bottom-2 right-2 primary cursor-pointer "
+              >
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+              </button>
             </div>
+            <p className="text-right text-sm mt-1">
+              <Link href="/forgot-password" className="primary hover:underline">
+                Forgot Password?
+              </Link>
+            </p>
 
             <button
               onClick={handleLogin}
               type="submit"
-              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 cursor-pointer transition"
+              className="w-full rounded-md primarybg py-2.5 text-white font-medium cursor-pointer transition"
             >
               Sign in
             </button>

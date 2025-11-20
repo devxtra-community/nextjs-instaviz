@@ -5,47 +5,97 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { Toaster,toast } from "sonner";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function ForgotPasswordFlow() {
-  const [step, setStep] = useState(1); // 1=email, 2=otp, 3=new password
+   const router = useRouter();
+  const [step, setStep] = useState(1); 
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleEmailSubmit = async (e:any) => {
-    e.preventDefault();
-    setLoading(true);
-    // CALL API → /forgot-password
-    setTimeout(() => {
-      setLoading(false);
+const handleEmailSubmit = async (e: any) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const res = await axiosInstance.post("/auth/forgotPassword", { email });
+
+   
+    if (res.data.success) {
+       toast.success(res.data.message || "OTP sent successfully");
       setStep(2);
-    }, 1000);
-  };
+    }
 
-  const handleOtpSubmit = async (e:any) => {
-    e.preventDefault();
-    setLoading(true);
-    // CALL API → verify OTP
-    setTimeout(() => {
-      setLoading(false);
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+const handleOtpSubmit = async (e: any) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const res = await axiosInstance.post("/auth/verifyForgotOtp", {
+      email,
+      otp,
+    });
+
+    
+
+    if (res.data.success) {
+      toast.success(res.data.message || "OTP verified");
+
       setStep(3);
-    }, 1000);
-  };
+    }
 
-  const handlePasswordSubmit = async (e:any) => {
-    e.preventDefault();
-    setLoading(true);
-    // CALL API → reset-password
-    setTimeout(() => {
-      setLoading(false);
-      alert("Password changed successfully!");
-    }, 1000);
-  };
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Invalid OTP");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  const handlePasswordSubmit = async (e: any) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const res = await axiosInstance.post("/auth/resetPassword", {
+      email,
+      newPassword,
+      confirmPassword
+    });
+
+    toast.success(res.data.message || "Password changed successfully!");
+
+    if (res.data.success) {
+      router.push("/login"); 
+    }
+
+  } catch (err: any) {
+    console.log("catch in resetforgottpass worked");
+    
+    toast.error(`${err.response.data.message}`);
+   
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-purple-50 p-4">
+       <Toaster richColors position="top-center" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
