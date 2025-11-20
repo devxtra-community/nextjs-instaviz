@@ -146,13 +146,13 @@ export function Navbar() {
           </Link>
 
           {isLoggedIn ? (
-            <div className="relative">
+            <div className="relative ">
               <Image
                 src={profilePic}
                 alt="User Profile"
                 width={45}
                 height={45}
-                className="rounded-full border border-violet-300 cursor-pointer hover:scale-105 transition-all"
+                className="rounded-full border border-violet-300 cursor-pointer hover:scale-105 transition-all w-10 h-10"
                 onClick={() => setIsProfile((prev) => !prev)}
               />
 
