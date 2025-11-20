@@ -15,8 +15,8 @@ export default function DeviceUsageCard() {
       try {
         const res = await axiosAdmin.get("/admin/device");
 
-        setMobilePercent(res.data.mobile);
-        setDesktopPercent(res.data.desktop);
+        setMobilePercent(res.data.mobilePercentage);
+        setDesktopPercent(res.data.desktopPercentage);
       } catch (err) {
         console.log("Error fetching device stats:", err);
       }
