@@ -9,6 +9,10 @@ export default function GoogleCallbackPage() {
 
   useEffect(() => {
     const token = searchParams.get("token");
+    const sessionId = searchParams.get("sessionId");
+      if (sessionId) {
+      localStorage.setItem("sessionId", sessionId);
+    }
 
     if (token) {
       localStorage.setItem("accessToken", token);
