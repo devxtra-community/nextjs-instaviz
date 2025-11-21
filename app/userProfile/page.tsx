@@ -170,7 +170,7 @@ export default function ProfilePage() {
 
     localStorage.clear();
     toast.success("Logged out");
-    router.push("/login");
+    router.push("/home");
   } catch (err) {
     toast.error("Logout failed");
   }
