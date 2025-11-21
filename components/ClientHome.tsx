@@ -12,18 +12,16 @@ const ClientHome: React.FC = () => {
   const [dataUploaded, setDataUploaded] = useState<boolean>(false);
   const [chatOpen, setChatOpen] = useState<boolean>(false);
 
-  // Initial skeleton loader
+  // Shared Chat State
+  const [messages, setMessages] = useState<
+    { role: "user" | "ai"; text: string }[]
+  >([]);
+
   const [initialLoad, setInitialLoad] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => setInitialLoad(false), 800);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (dataUploaded) {
-      setChatOpen(false);
-    }
-  }, [dataUploaded]);
 
   if (initialLoad) {
     return (
@@ -35,33 +33,38 @@ const ClientHome: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-
-      {/* TOP NAV */}
       <Navbar />
 
-      <div className="flex flex-col md:flex-row md:pr-96">
+      <div className="flex flex-row md:pr-96">
 
-        {/* ONLY DashboardMain should show loader */}
+        {/* Dashboard */}
         <DashboardMain
           showData={dataUploaded}
           setDataUploaded={setDataUploaded}
         />
 
-        <ChatBar
-          dataUploaded={dataUploaded}
-          setDataUploaded={setDataUploaded}
-        />
+        {/* Desktop ChatBar (ALWAYS mounted) */}
+        <div className="hidden md:block">
+          <ChatBar
+            dataUploaded={dataUploaded}
+            setDataUploaded={setDataUploaded}
+            messages={messages}
+            setMessages={setMessages}
+            mobile={false}
+          />
+
+        </div>
       </div>
 
-      {/* Mobile Floating Chat Button */}
+      {/* Mobile Floating Button */}
       <button
         onClick={() => setChatOpen(!chatOpen)}
-        className="fixed bottom-5 right-5 md:hidden bg-violet-600 text-white p-3 rounded-full shadow-lg z-40 hover:bg-violet-700 transition"
+        className="fixed bottom-5 right-5 md:hidden primarybg text-white p-3 rounded-full shadow-lg z-40"
       >
         <FiMessageSquare size={22} />
       </button>
 
-      {/* Mobile Slide-up Chat */}
+      {/* Mobile Chat Sheet */}
       <AnimatePresence>
         {chatOpen && (
           <motion.div
@@ -69,27 +72,32 @@ const ClientHome: React.FC = () => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 120, damping: 18 }}
-            className="fixed bottom-0 left-0 right-0 bg-white z-50 rounded-t-2xl p-3 sm:p-4 flex flex-col"
+            className="fixed bottom-0 left-0 right-0 bg-white z-50 rounded-t-2xl p-3 md:hidden h-[55vh] shadow-lg"
           >
-            <div className="flex justify-between items-center pb-2 mb-2">
-              <h2 className="text-violet-700 font-semibold text-sm sm:text-base">
-                InstaviZ AI Chat
-              </h2>
+            <div className="flex justify-between items-center pb-2 border-b">
+              <h2 className="text-violet-700 font-semibold">InstaviZ AI Chat</h2>
               <button
                 onClick={() => setChatOpen(false)}
-                className="text-gray-500 hover:text-violet-600 text-sm font-medium"
+                className="text-gray-500 text-sm"
               >
-                Close
+                ✕
               </button>
             </div>
 
+            {/* Mobile uses same ChatBar component */}
             <ChatBar
               dataUploaded={dataUploaded}
               setDataUploaded={setDataUploaded}
+              messages={messages}
+              setMessages={setMessages}
+              mobile={true}
+              onClose={() => setChatOpen(false)}
             />
           </motion.div>
         )}
       </AnimatePresence>
+
+
     </div>
   );
 };
