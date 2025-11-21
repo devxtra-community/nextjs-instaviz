@@ -7,40 +7,38 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function ProfilePage() {
+  console.log("inside useEffect");
+  async function getsession() {
+    const logged = await axiosInstance.get("/auth/getAllSessions");
+    console.log(logged.data);
+    setDevices(logged.data.sessions);
+  }
   useEffect(() => {
-    console.log("inside useEffect");
-    async function getsession() {
-      const logged = await axiosInstance.get("/auth/getAllSessions");
-      console.log(logged.data);
-       setDevices(logged.data.sessions);
-    }
     getsession();
   }, []);
 
   function parseUserAgent(ua: string) {
-  let os = "Unknown OS";
-  let device = "Unknown Device";
-  let browser = "Unknown Browser";
+    let os = "Unknown OS";
+    let device = "Unknown Device";
+    let browser = "Unknown Browser";
 
+    if (ua.includes("Windows")) os = "Windows";
+    else if (ua.includes("Mac OS X")) os = "macOS";
+    else if (ua.includes("Android")) os = "Android";
+    else if (ua.includes("iPhone")) os = "iPhone";
 
-  if (ua.includes("Windows")) os = "Windows";
-  else if (ua.includes("Mac OS X")) os = "macOS";
-  else if (ua.includes("Android")) os = "Android";
-  else if (ua.includes("iPhone")) os = "iPhone";
+    if (ua.includes("Chrome")) browser = "Chrome";
+    else if (ua.includes("Firefox")) browser = "Firefox";
+    else if (ua.includes("Safari") && !ua.includes("Chrome"))
+      browser = "Safari";
 
+    if (os === "Windows") device = "Windows PC";
+    if (os === "macOS") device = "MacBook / iMac";
+    if (os === "Android") device = "Android Phone";
+    if (os === "iPhone") device = "iPhone";
 
-  if (ua.includes("Chrome")) browser = "Chrome";
-  else if (ua.includes("Firefox")) browser = "Firefox";
-  else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
-
-
-  if (os === "Windows") device = "Windows PC";
-  if (os === "macOS") device = "MacBook / iMac";
-  if (os === "Android") device = "Android Phone";
-  if (os === "iPhone") device = "iPhone";
-
-  return { device, browser, os };
-}
+    return { device, browser, os };
+  }
 
   const router = useRouter();
 
@@ -53,16 +51,27 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-const [devices, setDevices] = useState<any[]>([]);
+  const [devices, setDevices] = useState<any[]>([]);
 
-  const logoutDevice = (id: string) => {
-    setDevices((prev) => prev.filter((d) => d.id !== id));
-    toast.success("Logged out from device");
+  const logoutDevice = async (id: string) => {
+    console.log("clicked logoutdevice", id);
+
+    try {
+      const resp = await axiosInstance.post("/auth/logoutDevice", {
+        sessionId: id,
+      });
+      console.log(resp.data);
+
+      getsession();
+      toast.success("Logged out from this device");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to logout device");
+    }
   };
 
   const logoutAllDevices = () => {
-    setDevices((prev) => prev.filter((d) => d.current));
-    toast.success("Logged out from all other devices");
+    console.log("clicked logout all devices");
+    
   };
 
   useEffect(() => {
@@ -248,33 +257,32 @@ const [devices, setDevices] = useState<any[]>([]);
           </button>
 
           <div className="space-y-4">
-           {devices.map((d) => {
-  const { device, browser, os } = parseUserAgent(d.userAgent);
+            {devices.map((d) => {
+              const { device, browser, os } = parseUserAgent(d.userAgent);
 
-  return (
-    <div key={d._id} className="border p-4 rounded-xl">
-      <p className="font-semibold">{device}</p>
+              return (
+                <div key={d._id} className="border p-4 rounded-xl">
+                  <p className="font-semibold">{device}</p>
 
-      <p className="text-sm text-gray-600">
-        {browser} • {os}
-      </p>
+                  <p className="text-sm text-gray-600">
+                    {browser} • {os}
+                  </p>
 
-      <p className="text-xs text-gray-500">IP: {d.ip}</p>
+                  <p className="text-xs text-gray-500">IP: {d.ip}</p>
 
-      <p className="text-xs text-gray-400">
-        Last active: {new Date(d.lastActiveAt).toLocaleString()}
-      </p>
+                  <p className="text-xs text-gray-400">
+                    Last active: {new Date(d.lastActiveAt).toLocaleString()}
+                  </p>
 
-      <button
-        onClick={() => logoutDevice(d._id)}
-        className="mt-3 px-3 py-1 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 transition"
-      >
-        Logout this device
-      </button>
-    </div>
-  );
-})}
-
+                  <button
+                    onClick={() => logoutDevice(d._id)}
+                    className="mt-3 px-3 py-1 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 transition"
+                  >
+                    Logout this device
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
