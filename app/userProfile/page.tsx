@@ -22,9 +22,9 @@ export default function ProfilePage() {
     let device = "Unknown Device";
     let browser = "Unknown Browser";
 
-    if (ua.includes("Windows")) os = "Windows";
-    else if (ua.includes("Mac OS X")) os = "macOS";
-    else if (ua.includes("Android")) os = "Android";
+    if (ua.includes("Windows NT")) os = "Windows";
+    else if (ua.includes("Macintosh")) os = "macOS";
+    else if (ua.includes("Android") && ua.includes("Mobile")) os = "Android";
     else if (ua.includes("iPhone")) os = "iPhone";
 
     if (ua.includes("Chrome")) browser = "Chrome";
@@ -33,9 +33,9 @@ export default function ProfilePage() {
       browser = "Safari";
 
     if (os === "Windows") device = "Windows PC";
-    if (os === "macOS") device = "MacBook / iMac";
-    if (os === "Android") device = "Android Phone";
-    if (os === "iPhone") device = "iPhone";
+    else if (os === "macOS") device = "MacBook / iMac";
+    else if (os === "Android") device = "Android Phone";
+    else if (os === "iPhone") device = "iPhone";
 
     return { device, browser, os };
   }
@@ -71,7 +71,6 @@ export default function ProfilePage() {
 
   const logoutAllDevices = () => {
     console.log("clicked logout all devices");
-    
   };
 
   useEffect(() => {
