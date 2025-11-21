@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  
   async function handleLogin() {
     try {
       const loginData = {
@@ -22,6 +23,7 @@ export default function LoginPage() {
       };
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
+      localStorage.setItem("sessionId", LoginResponse.data.sessionId);
       
 
       if (LoginResponse.data.success) {

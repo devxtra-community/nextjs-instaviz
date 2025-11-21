@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function ProfilePage() {
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   console.log("inside useEffect");
   async function getsession() {
     const logged = await axiosInstance.get("/auth/getAllSessions");
@@ -15,6 +16,10 @@ export default function ProfilePage() {
   }
   useEffect(() => {
     getsession();
+  }, []);
+  useEffect(() => {
+    const id = localStorage.getItem("sessionId");
+    setCurrentSessionId(id);
   }, []);
 
   function parseUserAgent(ua: string) {
@@ -155,16 +160,22 @@ export default function ProfilePage() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post("/auth/logout");
-      localStorage.clear();
-      toast.success("Logged out");
-      router.push("/home");
-    } catch {
-      toast.error("Logout failed");
+ const handleLogout = async () => {
+  try {
+    const id = localStorage.getItem("sessionId"); 
+
+    if (id) {
+      await axiosInstance.post("/auth/logoutDevice", { sessionId: id });
     }
-  };
+
+    localStorage.clear();
+    toast.success("Logged out");
+    router.push("/login");
+  } catch (err) {
+    toast.error("Logout failed");
+  }
+};
+
 
   return (
     <div className="min-h-screen p-6 flex justify-center dotted-bg">
@@ -258,6 +269,7 @@ export default function ProfilePage() {
           <div className="space-y-4">
             {devices.map((d) => {
               const { device, browser, os } = parseUserAgent(d.userAgent);
+              const isCurrent = d._id === currentSessionId;
 
               return (
                 <div key={d._id} className="border p-4 rounded-xl">
@@ -273,12 +285,18 @@ export default function ProfilePage() {
                     Last active: {new Date(d.lastActiveAt).toLocaleString()}
                   </p>
 
-                  <button
-                    onClick={() => logoutDevice(d._id)}
-                    className="mt-3 px-3 py-1 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 transition"
-                  >
-                    Logout this device
-                  </button>
+                  {isCurrent ? (
+                    <p className="mt-2 text-xs font-medium text-green-600">
+                      ✓ Current device
+                    </p>
+                  ) : (
+                    <button
+                      onClick={() => logoutDevice(d._id)}
+                      className="mt-3 px-3 py-1 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 transition"
+                    >
+                      Logout this device
+                    </button>
+                  )}
                 </div>
               );
             })}
