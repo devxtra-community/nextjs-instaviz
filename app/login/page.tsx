@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  
   async function handleLogin() {
     try {
       const loginData = {
@@ -24,6 +25,8 @@ export default function LoginPage() {
       };
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
+      localStorage.setItem("sessionId", LoginResponse.data.sessionId);
+      
 
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
@@ -88,6 +91,11 @@ export default function LoginPage() {
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
+            <p className="text-right text-sm mt-1">
+              <Link href="/forgot-password" className="primary hover:underline">
+                Forgot Password?
+              </Link>
+            </p>
 
             <button
               onClick={handleLogin}
