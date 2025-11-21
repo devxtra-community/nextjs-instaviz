@@ -21,6 +21,8 @@ export default function LoginPage() {
         password,
       };
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
+      console.log(LoginResponse.data);
+      
 
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
