@@ -194,3 +194,9 @@ h2 {
 html {
   scroll-behavior: smooth;
 }
+
+
+:root {
+  --dotted-bg: 
+    radial-gradient(#d3d3d3 1px, transparent 1px) 0 0 / 18px 18px #ffffff;
+}

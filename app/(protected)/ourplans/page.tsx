@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/Navbar";
-import CheckoutButton from "../../components/CheckoutButton"; 
+import CheckoutButton from "../../../components/CheckoutButton"; 
 
 const plans = [
   {

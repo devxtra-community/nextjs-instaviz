@@ -1,52 +1,38 @@
 "use client";
 
 import { useEffect } from "react";
-import axiosAdmin from "@/lib/axiosAdmin";
 import axiosInstance from "@/lib/axiosInstance";
 
 export default function Heartbeat() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    const startSession = async () => {
+    const init = async () => {
+      // const token = localStorage.getItem("token");
+      // console.log(token)
+      // if (!token) {
+      //   console.log("No access token found → skipping session tracking.");
+      //   return;
+      // }
+
       try {
-        await axiosInstance.post("/session/start");
+        const response = await axiosInstance.post("/session/start");
+
+        console.log("Session start response:", response?.data);
       } catch (err) {
-        console.error("startSession failed:", err);
+        console.error("Session start failed:", err);
       }
+
+      // heartbeat every 15 seconds
+      // interval = setInterval(() => {
+      //   axiosInstance
+      //     .post("/session/heartbeat")
+      //     .catch((err) => console.error("Heartbeat error:", err));
+      // }, 15000);
     };
 
-    const sendHeartbeat = async () => {
-      try {
-        await axiosInstance.post("/session/heartbeat");
-      } catch (err) {
-        console.error("Heartbeat failed:", err);
-      }
-    };
-
-    const passSession = async () => {
-      await startSession();
-      await sendHeartbeat();
-      interval = setInterval(sendHeartbeat, 15000);
-    };
-
-    passSession()
-
-    const handleBeforeUnload = () => {
-
-      navigator.sendBeacon(
-        `${process.env.NEXT_PUBLIC_API ?? "http://localhost:5000"}/session/heartbeat`,
-        new Blob([], { type: "application/json" })
-      );
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      if (interval) clearInterval(interval);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    init();
   }, []);
 
-  return null;
+  return <></>;
 }
