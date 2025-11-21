@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import axiosAdmin from "@/lib/axiosAdmin";   // ✅ FIXED
+import axiosAdmin from "@/lib/axiosAdmin";   
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -24,7 +23,7 @@ export default function AdminLoginPage() {
       if (res.data.success) {
         
         localStorage.setItem("adminAccessToken", res.data.accessToken);
-
+        document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=900`;
         router.push("/admin/dashboard");
       }
     } catch (err: any) {
