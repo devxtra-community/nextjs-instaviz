@@ -72,7 +72,7 @@ export default function ProfilePage() {
   const logoutAllDevices = () => {
     console.log("clicked logout all devices");
   };
-
+//df
   useEffect(() => {
     const googleToken = localStorage.getItem("token");
     const normalToken = localStorage.getItem("accessToken");
