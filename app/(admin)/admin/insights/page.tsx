@@ -1,10 +1,9 @@
 "use client";
 import { useEffect } from "react";
-
 import UserGrowthCard from "@/components/insights/UserGrowthCard";
 import ActiveIdleCard from "@/components/insights/ActiveIdleCard";
-import MostUsedFeaturesCard from "@/components/insights/MostUsedFeaturesCard";
 import DeviceUsageCard from "@/components/insights/DeviceUsageCard";
+import UserWeeklyGrowthCard from "@/components/insights/UserWeeklyCard";
 
 
 export default function InsightsPage() {
@@ -22,7 +21,7 @@ export default function InsightsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <MostUsedFeaturesCard />
+     <UserWeeklyGrowthCard/>
         <DeviceUsageCard />
       </div>
 

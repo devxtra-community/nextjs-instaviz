@@ -33,7 +33,8 @@ axiosAdmin.interceptors.response.use(
 
         localStorage.setItem("adminAccessToken", newToken);
 
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+       originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+
 
         console.log("Retrying original request…");
         return axiosAdmin(originalRequest);
