@@ -8,31 +8,46 @@ export default function Heartbeat() {
     let interval: NodeJS.Timeout;
 
     const init = async () => {
-      // const token = localStorage.getItem("token");
-      // console.log(token)
-      // if (!token) {
-      //   console.log("No access token found → skipping session tracking.");
-      //   return;
-      // }
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.log("No access token found → skipping session tracking.");
+        return;
+      }
 
       try {
-        const response = await axiosInstance.post("/session/start");
+        const response = await axiosInstance.post("/session/start", {
+          screenWidth: window.innerWidth,
+          screenHeight: window.innerHeight,
+        });
 
         console.log("Session start response:", response?.data);
       } catch (err) {
         console.error("Session start failed:", err);
       }
 
-      // heartbeat every 15 seconds
-      // interval = setInterval(() => {
-      //   axiosInstance
-      //     .post("/session/heartbeat")
-      //     .catch((err) => console.error("Heartbeat error:", err));
-      // }, 15000);
+     
+      interval = setInterval(() => {
+        axiosInstance
+          .post("/session/heartbeat")
+          .catch((err) => console.error("Heartbeat error:", err));
+      }, 15000);
     };
 
     init();
+
+    
+    const endSession = () => {
+      axiosInstance.post("/session/end").catch(() => {});
+    };
+
+    window.addEventListener("beforeunload", endSession);
+
+    return () => {
+      clearInterval(interval);
+      endSession();
+      window.removeEventListener("beforeunload", endSession);
+    };
   }, []);
 
-  return <></>;
+  
 }
