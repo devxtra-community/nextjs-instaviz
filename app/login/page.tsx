@@ -7,8 +7,10 @@ import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/GoogleButton";
 import { Eye, EyeOff } from "lucide-react";
+import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 export default function LoginPage() {
+  useRedirectIfLoggedIn();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -22,7 +24,6 @@ export default function LoginPage() {
       };
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
-      
 
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
