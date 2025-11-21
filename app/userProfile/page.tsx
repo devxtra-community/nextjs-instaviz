@@ -7,6 +7,39 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function ProfilePage() {
+  console.log("inside useEffect");
+  async function getsession() {
+    const logged = await axiosInstance.get("/auth/getAllSessions");
+    console.log(logged.data);
+    setDevices(logged.data.sessions);
+  }
+  useEffect(() => {
+    getsession();
+  }, []);
+
+  function parseUserAgent(ua: string) {
+    let os = "Unknown OS";
+    let device = "Unknown Device";
+    let browser = "Unknown Browser";
+
+    if (ua.includes("Windows NT")) os = "Windows";
+    else if (ua.includes("Macintosh")) os = "macOS";
+    else if (ua.includes("Android") && ua.includes("Mobile")) os = "Android";
+    else if (ua.includes("iPhone")) os = "iPhone";
+
+    if (ua.includes("Chrome")) browser = "Chrome";
+    else if (ua.includes("Firefox")) browser = "Firefox";
+    else if (ua.includes("Safari") && !ua.includes("Chrome"))
+      browser = "Safari";
+
+    if (os === "Windows") device = "Windows PC";
+    else if (os === "macOS") device = "MacBook / iMac";
+    else if (os === "Android") device = "Android Phone";
+    else if (os === "iPhone") device = "iPhone";
+
+    return { device, browser, os };
+  }
+
   const router = useRouter();
 
   const [userId, setUserId] = useState<string>("");
@@ -18,46 +51,28 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const [devices, setDevices] = useState([
-    {
-      id: "1",
-      device: "MacBook Pro",
-      browser: "Chrome",
-      os: "macOS",
-      ip: "192.168.0.45",
-      lastActive: "10 mins ago",
-      current: true,
-    },
-    {
-      id: "2",
-      device: "Samsung S23",
-      browser: "Chrome Mobile",
-      os: "Android",
-      ip: "192.168.0.91",
-      lastActive: "2 hours ago",
-      current: false,
-    },
-    {
-      id: "3",
-      device: "Office Desktop",
-      browser: "Edge",
-      os: "Windows 11",
-      ip: "103.91.44.12",
-      lastActive: "Yesterday",
-      current: false,
-    },
-  ]);
-  const logoutDevice = (id: string) => {
-    setDevices((prev) => prev.filter((d) => d.id !== id));
-    toast.success("Logged out from device");
+  const [devices, setDevices] = useState<any[]>([]);
+
+  const logoutDevice = async (id: string) => {
+    console.log("clicked logoutdevice", id);
+
+    try {
+      const resp = await axiosInstance.post("/auth/logoutDevice", {
+        sessionId: id,
+      });
+      console.log(resp.data);
+
+      getsession();
+      toast.success("Logged out from this device");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to logout device");
+    }
   };
 
   const logoutAllDevices = () => {
-    setDevices((prev) => prev.filter((d) => d.current));
-    toast.success("Logged out from all other devices");
+    console.log("clicked logout all devices");
   };
-
-
+//df
   useEffect(() => {
     const googleToken = localStorage.getItem("token");
     const normalToken = localStorage.getItem("accessToken");
@@ -121,7 +136,8 @@ export default function ProfilePage() {
   };
 
   const updatePassword = async () => {
-    if (!oldPassword || !newPassword) return toast.error("Both fields required");
+    if (!oldPassword || !newPassword)
+      return toast.error("Both fields required");
 
     try {
       const res = await axiosInstance.post("/user/newpassword", {
@@ -153,7 +169,6 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen p-6 flex justify-center dotted-bg">
       <div className="w-full max-w-6xl flex gap-8 flex-col md:flex-row">
-        
         <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
           <h2 className="text-xl font-bold mb-6 text-gray-900">
             Profile & Account Settings
@@ -241,31 +256,32 @@ export default function ProfilePage() {
           </button>
 
           <div className="space-y-4">
-            {devices.map((d) => (
-              <div key={d.id} className="border p-4 rounded-xl">
-                <p className="font-semibold">{d.device}</p>
-                <p className="text-sm text-gray-600">
-                  {d.browser} • {d.os}
-                </p>
-                <p className="text-xs text-gray-500">IP: {d.ip}</p>
-                <p className="text-xs text-gray-400">Last active: {d.lastActive}</p>
+            {devices.map((d) => {
+              const { device, browser, os } = parseUserAgent(d.userAgent);
 
-                {!d.current && (
+              return (
+                <div key={d._id} className="border p-4 rounded-xl">
+                  <p className="font-semibold">{device}</p>
+
+                  <p className="text-sm text-gray-600">
+                    {browser} • {os}
+                  </p>
+
+                  <p className="text-xs text-gray-500">IP: {d.ip}</p>
+
+                  <p className="text-xs text-gray-400">
+                    Last active: {new Date(d.lastActiveAt).toLocaleString()}
+                  </p>
+
                   <button
-                    onClick={() => logoutDevice(d.id)}
+                    onClick={() => logoutDevice(d._id)}
                     className="mt-3 px-3 py-1 rounded-full bg-red-500 text-white text-xs hover:bg-red-600 transition"
                   >
                     Logout this device
                   </button>
-                )}
-
-                {d.current && (
-                  <p className="mt-2 text-xs font-medium text-green-600">
-                    ✓ Current device
-                  </p>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
