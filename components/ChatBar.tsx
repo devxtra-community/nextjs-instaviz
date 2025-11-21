@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
-import { motion } from "framer-motion";
 import VioletAIAvatar from "./VioletAIAvatar";
 import { useAnalysis } from "@/context/AnalysisContext";
 import axiosInstance from "@/lib/axiosInstance";
@@ -9,104 +8,137 @@ import axiosInstance from "@/lib/axiosInstance";
 type ChatBarProps = {
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
+  messages: { role: "user" | "ai"; text: string }[];
+  setMessages: React.Dispatch<
+    React.SetStateAction<{ role: "user" | "ai"; text: string }[]>
+  >;
+  mobile?: boolean; // NEW → detect mobile version
+  onClose?: () => void; // NEW → close button for mobile
 };
 
 export const ChatBar: React.FC<ChatBarProps> = ({
   dataUploaded,
-  setDataUploaded,
+  messages,
+  setMessages,
+  mobile = false,
+  onClose,
 }) => {
-  const [messages, setMessages] = useState<
-    { role: "user" | "ai"; text: string }[]
-  >([]);
   const [input, setInput] = useState("");
-
   const { addNewChart, setLoading } = useAnalysis();
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userText = input;
+    const text = input;
     setInput("");
 
-    // Add user bubble
-    setMessages((prev) => [...prev, { role: "user", text: userText }]);
+    setMessages((prev) => [...prev, { role: "user", text }]);
 
     try {
       setLoading(true);
 
-      const res = await axiosInstance.post("/chat", { message: userText });
-
+      const res = await axiosInstance.post("/chat", { message: text });
       const data = res.data;
 
-      // Add AI reply
       setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
 
-      // Add chart (if available)
-      if (data.chart) {
-        addNewChart(data.chart);
-      }
-    } catch (err) {
-      console.error("Chat error:", err);
-
+      if (data.chart) addNewChart(data.chart);
+    } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "ai", text: "❌ Error communicating with server." },
+        { role: "ai", text: "Error communicating with server." },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
+ // BEFORE UPLOAD
+if (!dataUploaded) {
+  return (
+    <aside
+      className={`
+        ${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"}
+        w-full fixed
+        ${mobile ? "bottom-0" : "top-12 right-0"}
+        bg-white p-4 flex flex-col
+        border-t md:border-l border-gray-200
+      `}
+    >
+      {/* Header Row */}
+      <div className="flex justify-between items-center mb-3">
+        <h1 className="text-lg font-semibold primary mt-2">
+          InstaviZ AI Chat
+        </h1>
 
-  if (!dataUploaded) {
-    return (
-      <aside className="w-full md:w-96 h-[93vh] fixed right-0 top-12 flex flex-col bg-white p-4 border-t md:border-l border-gray-200">
+        {mobile && (
+          <button
+            onClick={onClose}
+            className="primary hover:text-gray-700 text-xl font-bold mr-2"
+          >
+            ×
+          </button>
+        )}
+      </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-60 text-center px-2"
-        >
-          <h2 className="text-lg font-semibold primary mb-2">
+      {/* Message */}
+      <div className="text-center mt-40 ">
+        <h2 className="text-lg font-semibold primary mb-2">
             Upload a file to chat with InstaviZ AI
           </h2>
           <p className="text-sm text-gray-500">
             InstaviZ AI is ready to answer — upload your CSV to begin.
           </p>
-        </motion.div>
-      </aside>
-    );
-  }
+      </div>
+    </aside>
+  );
+}
+
 
   return (
-    <aside className="w-full md:w-96 h-[93vh] fixed right-0 top-12 flex flex-col bg-white p-4 border-t md:border-l border-gray-200">
+    <aside
+      className={`
+        flex flex-col bg-white
+        ${mobile ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl" : "h-[93vh] fixed right-0 top-12 md:w-96"}
+        p-4 border-t md:border-l border-gray-200
+      `}
+    >
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-lg font-semibold primary">
+          Ask InstaviZ AI
+        </h1>
 
-      {/* Messages */}
+        {mobile && (
+          <button onClick={onClose} className="primary text-xl">
+            ×
+          </button>
+        )}
+      </div>
+
+      {/* CHAT MESSAGES */}
       <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-hide">
-        <h1 className="text-lg font-semibold primary mb-2">Ask InstaviZ AI</h1>
-
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
-              } gap-2`}
+            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} gap-2`}
           >
             {m.role === "ai" && <VioletAIAvatar />}
             <div
-              className={`px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] ${m.role === "user"
+              className={`px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] ${
+                m.role === "user"
                   ? "bg-[#f7edff] primary"
                   : "bg-gray-50 text-gray-800"
-                }`}
+              }`}
             >
               {m.text}
             </div>
-            {m.role === "user" && <VioletAIAvatar />}
           </div>
         ))}
       </div>
 
-      {/* Input */}
-      <div className="relative flex items-center">
+      {/* INPUT */}
+      <div className="relative flex items-center mt-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
