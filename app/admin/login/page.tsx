@@ -25,6 +25,7 @@ export default function AdminLoginPage() {
       if (res.data.success) {
         localStorage.setItem("adminAccessToken", res.data.accessToken);
         document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=900`;
+        
         router.push("/admin/dashboard");
       }
     } catch (err: any) {
