@@ -82,6 +82,7 @@ axiosInstance.interceptors.response.use(
         if (status == 401) {
           localStorage.clear();
           window.location.href = "/login";
+          window.location.reload()
         } else {
           alert("Something went wrong. Please try again.");
         }
