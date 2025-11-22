@@ -45,8 +45,7 @@ axiosInstance.interceptors.response.use(
     }
 
     const accessToken = localStorage.getItem("accessToken");
-
-    
+ 
     if (error.response?.status === 401 && !ogRequest.retry) {
       console.log("detected 401, attempting refresh");
 
