@@ -79,7 +79,11 @@ h2 {
   background-color: #ad49e1;
 }
 .hoverColor:hover {
-  color: #ad49e1;
+  background-color: #a444d7;
+}
+
+.hoverText:hover{
+  color:#a444d7;
 }
 
 @keyframes fadeIn {

@@ -2,15 +2,17 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import axiosAdmin from "@/lib/axiosAdmin";   
+import axiosAdmin from "@/lib/axiosAdmin";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin() {
     try {
@@ -21,7 +23,6 @@ export default function AdminLoginPage() {
       });
 
       if (res.data.success) {
-        
         localStorage.setItem("adminAccessToken", res.data.accessToken);
         document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=900`;
         router.push("/admin/dashboard");
@@ -34,7 +35,7 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
-{/*         
+        {/*         
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Admin Panel</h1>
         </div> */}
@@ -49,7 +50,6 @@ export default function AdminLoginPage() {
           </p>
 
           <div className="mt-8 space-y-5">
-
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Admin Email
@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
                 type="email"
                 placeholder="admin@example.com"
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm
-                           outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
+                           outline-none focus:border-[#cb80f4] focus:ring-1 focus:ring-[#cb80f4]"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
               />
@@ -68,19 +68,27 @@ export default function AdminLoginPage() {
               <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm
-                           outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-[#AD49E1]"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm
+                           outline-none focus:border-[#cb80f4] focus:ring-1 focus:ring-[#cb80f4]"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                />
+                <button
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="primary absolute top-3 right-2 cursor-pointer hoverText"
+                >
+                  {showPassword ? <Eye size={22} /> : <EyeOff size={22} />}
+                </button>
+              </div>
             </div>
 
             <button
               onClick={handleLogin}
-              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 transition"
+              className="w-full rounded-md primarybg py-2.5 text-white font-medium hover:bg-purple-200 transition hoverColor cursor-pointer"
             >
               Sign in as Admin
             </button>
@@ -88,17 +96,19 @@ export default function AdminLoginPage() {
             <p className="text-center text-sm text-gray-600">
               Access restricted to authorized administrators only.
             </p>
-
           </div>
         </div>
       </div>
 
-      <div className="hidden md:flex flex-1 items-center justify-center relative 
-        bg-gradient-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden">
-
-        <div className="absolute inset-0 opacity-20 
+      <div
+        className="hidden md:flex flex-1 items-center justify-center relative 
+        bg-gradient-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden"
+      >
+        <div
+          className="absolute inset-0 opacity-20 
           bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] 
-          bg-[size:20px_20px]" />
+          bg-[size:20px_20px]"
+        />
 
         <motion.img
           src="/giphy.gif"
@@ -118,7 +128,6 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-0" />
-
       </div>
     </div>
   );
