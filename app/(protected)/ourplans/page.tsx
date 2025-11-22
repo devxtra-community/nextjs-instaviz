@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
+
 import CheckoutButton from "@/components/CheckoutButton";
 import axiosInstance from "@/lib/axiosInstance";
+
+
 
 export default function PlansPage() {
   const [plans, setPlans] = useState([]);

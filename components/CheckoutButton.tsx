@@ -16,7 +16,7 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
   const router = useRouter();
 
   const handleCheckout = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     const token2 = localStorage.getItem("accessToken");
     console.log(token,token2);
     if (!token && !token2) {
