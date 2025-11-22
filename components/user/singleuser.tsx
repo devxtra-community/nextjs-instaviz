@@ -19,6 +19,7 @@ import {
   BarChart,
   Bar,
   XAxis,
+  YAxis,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -33,12 +34,21 @@ interface UserType {
   status?: "active" | "disabled";
 }
 
+interface DailyActiveTime {
+  date: string;
+  dayName: string;
+  totalSeconds: number;
+  formatted: string;
+}
+
 export default function UserProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<"active" | "disabled">("active");
   const [singleToken, setSingleToken] = useState<number | null>(null);
+  const [activityData, setActivityData] = useState<DailyActiveTime[]>([]);
+  const [loadingActivity, setLoadingActivity] = useState(true);
 
   const fetchUserSinglePage = async () => {
     try {
@@ -75,9 +85,28 @@ export default function UserProfilePage() {
     }
   };
 
+  const fetchUserActivity = async () => {
+    try {
+      setLoadingActivity(true);
+      const res = await axiosAdmin.get(`/admin/user-daily-active/${id}`);
+      
+      if (res.data.success && res.data.dailyActiveTime) {
+        // Get last 7 days only for the chart
+        const last7Days = res.data.dailyActiveTime.slice(-7);
+        setActivityData(last7Days);
+      }
+    } catch (err) {
+      console.error("Error fetching user activity:", err);
+      setActivityData([]);
+    } finally {
+      setLoadingActivity(false);
+    }
+  };
+
   useEffect(() => {
     fetchSingleUserToken();
-  }, []);
+    fetchUserActivity();
+  }, [id]);
 
   useEffect(() => {
     if (id) fetchUserSinglePage();
@@ -91,15 +120,29 @@ export default function UserProfilePage() {
     { name: "May", value: 27 },
   ];
 
-  const activityData = [
-    { name: "Mon", value: 65 },
-    { name: "Tue", value: 75 },
-    { name: "Wed", value: 68 },
-    { name: "Thu", value: 80 },
-    { name: "Fri", value: 72 },
-    { name: "Sat", value: 78 },
-    { name: "Sun", value: 70 },
-  ];
+  // Convert seconds to hours for chart display
+  const chartData = activityData.map((item) => ({
+    name: item.dayName.substring(0, 3), // Mon, Tue, etc.
+    active: item.totalSeconds / 3600, // Convert to hours
+    formatted: item.formatted, // Keep formatted string for tooltip
+  }));
+
+  // Custom tooltip for activity chart
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
+          <p className="text-sm font-medium text-gray-900">
+            {payload[0].payload.name}
+          </p>
+          <p className="text-sm text-[#AD49E1]">
+            {payload[0].payload.formatted}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   if (loading)
     return (
@@ -220,30 +263,34 @@ export default function UserProfilePage() {
         {/* ACTIVITY CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
-            Avg. Active Time
+            Weekly Activity (Last 7 Days)
           </h3>
-          <div className="w-full h-16">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={activityData}>
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#AD49E1"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #E5E7EB",
-                    borderRadius: "6px",
-                    fontSize: "12px",
-                  }}
-                />
-                <XAxis dataKey="name" hide />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          
+          {loadingActivity ? (
+            <div className="flex items-center justify-center h-16">
+              <p className="text-xs text-gray-500">Loading...</p>
+            </div>
+          ) : chartData.length > 0 ? (
+            <div className="w-full h-16">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <Line
+                    type="monotone"
+                    dataKey="active"
+                    stroke="#AD49E1"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <XAxis dataKey="name" hide />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-16">
+              <p className="text-xs text-gray-500">No activity data</p>
+            </div>
+          )}
         </div>
       </div>
 
