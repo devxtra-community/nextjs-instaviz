@@ -79,12 +79,9 @@ h2 {
   background-color: #ad49e1;
 }
 .hoverColor:hover {
-  background-color: #a444d7;
+  color: #b958ed;
 }
 
-.hoverText:hover{
-  color:#a444d7;
-}
 
 @keyframes fadeIn {
   from {
@@ -196,4 +193,10 @@ h2 {
 
 html {
   scroll-behavior: smooth;
+}
+
+
+:root {
+  --dotted-bg: 
+    radial-gradient(#d3d3d3 1px, transparent 1px) 0 0 / 18px 18px #ffffff;
 }

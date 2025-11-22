@@ -30,24 +30,23 @@ interface UserType {
   picture?: string;
   phone?: string;
   location?: string;
-  status?: string;
+  status?: "active" | "disabled";
 }
 
 export default function UserProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState("Active");
-  const [singletoken, setSingletoken] = useState<any>(null);
-
-
+  const [status, setStatus] = useState<"active" | "disabled">("active");
+  const [singleToken, setSingleToken] = useState<number | null>(null);
 
   const fetchUserSinglePage = async () => {
     try {
       const res = await axiosAdmin.get(`/admin/singleuser/${id}`);
-      console.log("Single user fetched:", res.data.singleuser);
-      setUser(res.data.singleuser);
-      setStatus(res.data.singleuser?.status || "Active");
+      const userData = res.data.singleuser;
+
+      setUser(userData);
+      setStatus(userData?.status || "active");
     } catch (err) {
       console.error("Error fetching single user:", err);
     } finally {
@@ -57,32 +56,28 @@ export default function UserProfilePage() {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      await axiosAdmin.put(`/admin/update-status/${id}`, {
+      await axiosAdmin.put(`/admin/status/${id}`, {
         status: newStatus,
       });
-      setStatus(newStatus);
+      setStatus(newStatus as "active" | "disabled");
       console.log("Status updated successfully:", newStatus);
     } catch (err) {
       console.error("Error updating status:", err);
     }
   };
 
-const singleusertoken = async () => { 
-  try {
-    const res = await axiosAdmin.get(`/admin/singltoken/${id}`);
-    console.log("single user token fetched");
-    console.log(res);
-    setSingletoken(res.data.singletoken);
-  } catch (err) {
-    console.log(err);
-  }
-};
+  const fetchSingleUserToken = async () => {
+    try {
+      const res = await axiosAdmin.get(`/admin/singltoken/${id}`);
+      setSingleToken(res.data.singletoken);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-
-  useEffect(()=>{
-    singleusertoken()
-  },[])
-
+  useEffect(() => {
+    fetchSingleUserToken();
+  }, []);
 
   useEffect(() => {
     if (id) fetchUserSinglePage();
@@ -122,12 +117,11 @@ const singleusertoken = async () => {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] p-4 md:p-5">
-    
       <h1 className="text-2xl font-semibold text-gray-800 mb-5 tracking-tight">
         User Profile
       </h1>
 
-
+      {/* HEADER CARD */}
       <div className="rounded-2xl shadow-sm overflow-hidden mb-6 bg-gradient-to-r from-[#AD49E1] via-[#C56BE8] to-[#E19BFF] text-white">
         <div className="flex flex-col md:flex-row items-center gap-6 p-6">
           <div className="relative w-28 h-28">
@@ -141,7 +135,7 @@ const singleusertoken = async () => {
               />
             ) : (
               <div className="w-28 h-28 flex items-center justify-center rounded-full bg-[#E8C7F7] text-[#AD49E1] text-3xl font-semibold border-4 border-white shadow-lg">
-                {user.name?.charAt(0).toUpperCase() || "U"}
+                {user.name?.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
@@ -149,9 +143,10 @@ const singleusertoken = async () => {
           <div className="flex-1 text-center md:text-left">
             <h2 className="text-2xl font-semibold mb-1">{user.name}</h2>
             <p className="text-sm opacity-90">Premium User</p>
+
             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-3 text-sm opacity-90">
               <div className="flex items-center gap-1.5">
-                <Mail size={15} /> {user.email || "No email"}
+                <Mail size={15} /> {user.email}
               </div>
               <div className="flex items-center gap-1.5">
                 <Phone size={15} /> {user.phone || "+91 00000 00000"}
@@ -164,15 +159,18 @@ const singleusertoken = async () => {
         </div>
       </div>
 
-    
+      {/* MAIN GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
         
+        {/* TOKEN CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Available Tokens
           </h3>
           <div className="flex justify-between items-center">
-            <p className="text-3xl font-bold text-gray-900">{singletoken ?? 0}</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {singleToken ?? 0}
+            </p>
             <div className="w-28 h-12">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={tokenData}>
@@ -181,49 +179,45 @@ const singleusertoken = async () => {
               </ResponsiveContainer>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Token usage for the last 5 months
-          </p>
         </div>
 
-      
+        {/* STATUS CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Account Status
           </h3>
+
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-gray-700 text-sm focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none bg-gray-50 hover:bg-white transition"
+              onChange={(e) => setStatus(e.target.value as "active" | "disabled")}
+              className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-gray-700 text-sm bg-gray-50 hover:bg-white focus:ring-2 focus:ring-[#E5B4F6] transition"
             >
-              <option value="Active">🟢 Active</option>
-              <option value="Deactivated">🔴 Deactivated</option>
+              <option value="active">🟢 Active</option>
+              <option value="disabled">🔴 Disabled</option>
             </select>
 
             <button
               onClick={() => handleStatusChange(status)}
-              className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] active:scale-95 transition text-sm shadow-sm"
+              className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm shadow-sm"
             >
               Done
             </button>
           </div>
+
           <p className="text-xs text-gray-500 mt-2">
             Current status:{" "}
             <span
               className={`font-semibold ${
-                status === "Active"
-                  ? "text-green-600"
-                  : status === "Deactivated"
-                  ? "text-red-600"
-                  : "text-yellow-600"
+                status === "active" ? "text-green-600" : "text-red-600"
               }`}
             >
-              {status}
+              {status === "active" ? "Active" : "Disabled"}
             </span>
           </p>
         </div>
 
+        {/* ACTIVITY CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Avg. Active Time
@@ -250,14 +244,12 @@ const singleusertoken = async () => {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Weekly average activity percentage
-          </p>
         </div>
       </div>
 
-      {/* Token Controls */}
+      {/* TOKEN CONTROLS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+        {/* ADD TOKENS */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
             Add Tokens
@@ -274,6 +266,7 @@ const singleusertoken = async () => {
           </div>
         </div>
 
+        {/* UPDATE TOKENS */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
             Update Tokens
@@ -291,8 +284,10 @@ const singleusertoken = async () => {
         </div>
       </div>
 
-      {/* Suspend & Alert Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* ACTION CONTROLS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+        
+        {/* SUSPEND CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
             Suspend User
@@ -309,10 +304,12 @@ const singleusertoken = async () => {
           </div>
         </div>
 
+        {/* EMAIL & ALERT CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center gap-3">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Actions
           </h3>
+
           <div className="flex flex-col sm:flex-row gap-2">
             <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
               <Bell size={16} /> Token Alert
@@ -326,4 +323,3 @@ const singleusertoken = async () => {
     </div>
   );
 }
-

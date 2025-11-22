@@ -11,7 +11,7 @@ export default function GoogleCallbackPage() {
     const token = searchParams.get("token");
 
     if (token) {
-      localStorage.setItem("token", token);
+      localStorage.setItem("accessToken", token);
       router.push("/home");
     } else {
       router.push("/signup");
