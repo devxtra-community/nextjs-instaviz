@@ -25,6 +25,10 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 }) => {
   const [input, setInput] = useState("");
   const { addNewChart, setLoading } = useAnalysis();
+  const [userImage, setUserImage] = useState("/user.jpg");
+  const [aiTyping, setAiTyping] = useState(false);
+
+
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -35,6 +39,34 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const googleToken = localStorage.getItem("token");
+    const normalToken = localStorage.getItem("accessToken");
+    const finalToken = googleToken || normalToken;
+
+    if (!finalToken) return;
+
+    let decoded: any;
+    try {
+      decoded = JSON.parse(atob(finalToken.split(".")[1])); // lightweight decode
+    } catch {
+      return;
+    }
+
+    const id = decoded.id || decoded.googleId || decoded.userId;
+    if (!id) return;
+
+    (async () => {
+      try {
+        const res = await axiosInstance.get(`/user/${id}`);
+        if (res.data.user?.picture) setUserImage(res.data.user.picture);
+      } catch {
+        console.log("Failed to load user picture");
+      }
+    })();
+  }, []);
+
 
   // Detect if user has scrolled up
   const handleScroll = () => {
@@ -55,6 +87,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     setInput("");
 
     setMessages((prev) => [...prev, { role: "user", text }]);
+    setAiTyping(true);
 
     try {
       setLoading(true);
@@ -62,17 +95,19 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       const data = res.data;
 
       setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
-
       if (data.chart) addNewChart(data.chart);
+
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "ai", text: "Error communicating with server." },
+        { role: "ai", text: "Error communicating with server." }
       ]);
     } finally {
+      setAiTyping(false);
       setLoading(false);
     }
   };
+
 
   // BEFORE UPLOAD
   if (!dataUploaded) {
@@ -137,22 +172,56 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`flex ${
-              m.role === "user" ? "justify-end" : "justify-start"
-            } gap-2`}
+            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
+              } items-end gap-2`}
           >
-            {m.role === "ai" && <VioletAIAvatar />}
-            <div
-              className={`px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] ${
-                m.role === "user"
-                  ? "bg-[#f7edff] primary"
-                  : "bg-gray-50 text-gray-800"
-              }`}
-            >
-              {m.text}
-            </div>
+
+            {/* AI SIDE (avatar left, bubble right) */}
+            {m.role === "ai" && (
+              <>
+                <VioletAIAvatar />
+
+                <div
+                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-gray-50 text-gray-800"
+                >
+                  {m.text}
+                </div>
+              </>
+            )}
+
+            {/* USER SIDE (bubble left, avatar right) */}
+            {m.role === "user" && (
+              <>
+                <div
+                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-[#f7edff] primary"
+                >
+                  {m.text}
+                </div>
+
+                <img
+                  src={userImage}
+                  className="w-6 h-6 rounded-full border object-cover"
+                  alt="User"
+                />
+              </>
+            )}
+
           </div>
         ))}
+
+        {aiTyping && (
+          <div className="flex justify-start items-center gap-2 pl-1">
+            <VioletAIAvatar />
+
+            <div className="flex gap-1">
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]"></span>
+            </div>
+          </div>
+        )}
+
+
 
         {/* Scroll Anchor */}
         <div ref={bottomRef} />
