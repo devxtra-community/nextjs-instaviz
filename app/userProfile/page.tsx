@@ -74,8 +74,26 @@ export default function ProfilePage() {
     }
   };
 
-  const logoutAllDevices = () => {
-    console.log("clicked logout all devices");
+  const logoutAllDevices = async() => {
+    console.log("in logoutAll Devices");
+   try {
+    const currentSessionId = localStorage.getItem("sessionId");
+
+    if (!currentSessionId) {
+      toast.error("No session found");
+      return;
+    }
+
+    const resp = await axiosInstance.post("/auth/logoutAllDevices", {
+      currentSessionId,
+    });
+
+    toast.success(resp.data.message);
+    getsession();
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Failed to logout devices");
+  }
+   
   };
 
   useEffect(() => {
