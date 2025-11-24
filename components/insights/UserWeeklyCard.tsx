@@ -17,6 +17,28 @@ import { motion } from "framer-motion";
 
 type DayPoint = { day: string; users: number };
 
+const InsideLabel = (props: any) => {
+  const { x, y, width, height, value } = props;
+
+  if (height < 20) {
+    return null; // too small to show text
+  }
+
+  return (
+    <text
+      x={x + width / 2}
+      y={y + height / 2}
+      fill="#ffffff"
+      fontSize={12}
+      fontWeight={600}
+      textAnchor="middle"
+      dominantBaseline="middle"
+    >
+      {value}
+    </text>
+  );
+};
+
 export default function UserWeeklyGrowthCard() {
   const [data, setData] = useState<DayPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,11 +64,11 @@ export default function UserWeeklyGrowthCard() {
     <Card className="p-4">
       <CardHeader>
         <CardTitle className="text-sm font-medium">
-          Weekly User Growth
+          Weekly User Growth(Current Week)
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="h-56">
+      <CardContent className="h-64">
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,34 +76,22 @@ export default function UserWeeklyGrowthCard() {
           className="w-full h-full"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data}>
+            <BarChart data={data} margin={{ top: 20 }}>
               <XAxis
                 dataKey="day"
                 tick={{ fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
+                interval={0} // always show 7 days on mobile
               />
 
               <YAxis hide />
 
               <Tooltip cursor={{ fill: "transparent" }} />
 
-              <Bar
-                dataKey="users"
-                fill="#7c3aed"
-                radius={[6, 6, 0, 0]}
-                barSize={30} // responsive bar width
-              >
-                {/* ALWAYS visible numbers above each bar */}
-                <LabelList
-                  dataKey="users"
-                  position="top"
-                  style={{
-                    fill: "#7c3aed",
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
-                />
+              <Bar dataKey="users" fill="#7c3aed" radius={[6, 6, 0, 0]}>
+                {/* CUSTOM LABEL = TEXT INSIDE BAR */}
+                <LabelList content={<InsideLabel />} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

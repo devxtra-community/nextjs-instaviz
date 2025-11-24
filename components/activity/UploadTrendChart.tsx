@@ -3,18 +3,38 @@
 import { useEffect, useState } from "react"
 import axiosAdmin from "@/lib/axiosAdmin"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip
+} from "recharts"
 import { motion } from "framer-motion"
 
+type UploadPoint = {
+  day: string
+  uploads: number
+}
+
 export default function UploadTrendChart() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<UploadPoint[]>([])
 
   useEffect(() => {
     const fetchTrend = async () => {
       try {
         const res = await axiosAdmin.get("/admin/weeklyuploads")
         console.log("Fetched Trend:", res.data)
-        setData(res.data)
+
+        const order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+        const sorted = [...res.data].sort(
+          (a, b) => order.indexOf(a.day) - order.indexOf(b.day)
+        )
+
+        setData(sorted)
       } catch (err) {
         console.log("Weekly trend error:", err)
       }
@@ -27,7 +47,7 @@ export default function UploadTrendChart() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="rounded-2xl shadow-md border border-gray-100">
         <CardHeader>
-          <CardTitle>Weekly Upload Trend</CardTitle>
+          <CardTitle>Weekly Upload Trend(Current Week)</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={260}>
