@@ -80,6 +80,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   };
 
   const sendMessage = async () => {
+    if (aiTyping) return;
     if (!input.trim()) return;
 
     const text = input;
@@ -239,6 +240,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       {/* INPUT SECTION */}
       <div className="relative mt-2 flex">
         <textarea
+          disabled={aiTyping}
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
@@ -246,25 +248,40 @@ export const ChatBar: React.FC<ChatBarProps> = ({
             e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
           }}
           onKeyDown={(e) => {
+            if (aiTyping) return;
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               sendMessage();
             }
           }}
-          placeholder="Ask questions about your data..."
+          placeholder={aiTyping ? "AI is thinking..." : "Ask questions about your data..."}
           className="w-full px-3 py-2 rounded-lg border border-[#e9e0f8]
           text-gray-700 shadow text-xs resize-none leading-snug
-          max-h-[120px] overflow-hidden focus:border-[#ad49e1] focus:outline-none"
+          max-h-[120px] overflow-hidden focus:border-[#ad49e1] 
+          focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           rows={1}
         />
 
+
         <button
+          disabled={aiTyping}
           onClick={sendMessage}
-          className=" right-2 top-3 primary hover:bg-[#f4e9ff]
-            rounded-full p-2 transition"
+          className={`
+    right-2 top-3 rounded-full p-2 transition
+    ${aiTyping ? "bg-gray-200 cursor-not-allowed" : "primary hover:bg-[#f4e9ff]"}
+  `}
         >
-          <FiSend size={15} />
+          {aiTyping ? (
+            <div className="flex gap-1 px-1">
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:0ms]"></span>
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:150ms]"></span>
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:300ms]"></span>
+            </div>
+          ) : (
+            <FiSend size={15} />
+          )}
         </button>
+
       </div>
     </aside>
   );
