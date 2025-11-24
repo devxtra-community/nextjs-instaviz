@@ -28,7 +28,6 @@ axiosAdmin.interceptors.response.use(
     ) {
       return Promise.reject(error);
     }
-
     if (
       endpoint.includes("/admin/refresh") ||
       endpoint.endsWith("admin/refresh") ||
