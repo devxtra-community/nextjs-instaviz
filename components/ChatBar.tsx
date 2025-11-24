@@ -41,9 +41,8 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   }, [messages]);
 
   useEffect(() => {
-    const googleToken = localStorage.getItem("token");
-    const normalToken = localStorage.getItem("accessToken");
-    const finalToken = googleToken || normalToken;
+    const finalToken = localStorage.getItem("accessToken");
+
 
     if (!finalToken) return;
 
