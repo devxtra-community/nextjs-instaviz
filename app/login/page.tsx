@@ -7,8 +7,10 @@ import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/GoogleButton";
 import { Eye, EyeOff } from "lucide-react";
+import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 export default function LoginPage() {
+  useRedirectIfLoggedIn();
   const router = useRouter();
 
   const [email, setEmail] = useState("");

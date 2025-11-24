@@ -4,11 +4,10 @@ import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
 export default function ProfilePage() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-  console.log("inside useEffect");
   async function getsession() {
     const logged = await axiosInstance.get("/auth/getAllSessions");
     console.log(logged.data);
@@ -174,29 +173,29 @@ export default function ProfilePage() {
       setOldPassword("");
       setNewPassword("");
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update");
+      toast.warning(err?.response?.data?.message || "Failed to update");
     }
   };
-//comment
- const handleLogout = async () => {
-  try {
-    const id = localStorage.getItem("sessionId"); 
+  //comment
+  const handleLogout = async () => {
+    try {
+      const id = localStorage.getItem("sessionId");
 
-    if (id) {
-      await axiosInstance.post("/auth/logoutDevice", { sessionId: id });
+      if (id) {
+        await axiosInstance.post("/auth/logoutDevice", { sessionId: id });
+      }
+
+      localStorage.clear();
+      toast.success("Logged out");
+      router.push("/home");
+    } catch (err) {
+      toast.error("Logout failed");
     }
-
-    localStorage.clear();
-    toast.success("Logged out");
-    router.push("/home");
-  } catch (err) {
-    toast.error("Logout failed");
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen p-6 flex justify-center dotted-bg">
+      <Toaster richColors position="top-center" />
       <div className="w-full max-w-6xl flex gap-8 flex-col md:flex-row">
         <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
           <h2 className="text-xl font-bold mb-6 text-gray-900">
@@ -264,7 +263,6 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Logout */}
           <button
             onClick={handleLogout}
             className="mt-10 w-full py-2 rounded-lg bg-red-100 text-red-600 font-semibold hover:bg-red-200 transition"
@@ -273,7 +271,6 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        {/* LOGGED-IN DEVICES */}
         <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
           <h3 className="text-lg font-semibold mb-4">Logged in devices</h3>
 
