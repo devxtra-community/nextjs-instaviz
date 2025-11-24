@@ -26,9 +26,9 @@ axiosInstance.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   if (sessionId) {
-    config.headers["x-session-id"] = sessionId;   
+    config.headers["x-session-id"] = sessionId;
   }
-
+  
   return config;
 });
 
