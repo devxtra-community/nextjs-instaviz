@@ -1,125 +1,93 @@
 "use client"
 
-import * as React from "react"
-import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import { useEffect, useState } from "react"
+import { Pie, PieChart, Cell } from "recharts"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import axiosAdmin from "@/lib/axiosAdmin"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
+const COLORS = ["#AD49E1", "#4B2E83"]
 
-export const description = "A pie chart with stacked sections"
+const renderLabel = (props: any) => {
+  const { cx, cy, midAngle, innerRadius, outerRadius, value } = props
+  const RADIAN = Math.PI / 180
+  const radius = innerRadius + (outerRadius - innerRadius) / 2
+  const x = cx + radius * Math.cos(-midAngle * RADIAN)
+  const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
-const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
-  { month: "june", desktop: 193, fill: "var(--color-june)" },
-]
-
-const mobileData = [
-  { month: "january", mobile: 80, fill: "var(--color-january)" },
-  { month: "february", mobile: 200, fill: "var(--color-february)" },
-  { month: "march", mobile: 120, fill: "var(--color-march)" },
-  { month: "april", mobile: 190, fill: "var(--color-april)" },
-  { month: "may", mobile: 130, fill: "var(--color-may)" },
-  { month: "june", mobile: 193, fill: "var(--color-june)" },
-]
-
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  desktop: {
-    label: "Desktop",
-  },
-  mobile: {
-    label: "Mobile",
-  },
-  january: {
-    label: "January",
-    color: "#AD49E1",
-  },
-  february: {
-    label: "February",
-    color: "#4B2E83",
-  },
-  march: {
-    label: "March",
-    color: "#D891F6",
-  },
-  april: {
-    label: "April",
-    color: "#6A1F92",
-  },
-  may: {
-    label: "May",
-    color: "#E7B7FA",
-  },
-   june: {
-    label: "June",
-    color: "#4A1566",
-  },
-} satisfies ChartConfig
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="#fff"
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize={14}
+      fontWeight={600}
+    >
+      {value}
+    </text>
+  )
+}
 
 export function ChartPieStacked() {
+  const [chartData, setChartData] = useState([
+    { device: "Desktop", value: 0, color: COLORS[0] },
+    { device: "Mobile", value: 0, color: COLORS[1] },
+  ])
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axiosAdmin.get("/admin/dashboard/useruploads")
+        setChartData([
+          { device: "Desktop", value: res.data.desktop, color: COLORS[0] },
+          { device: "Mobile", value: res.data.mobile, color: COLORS[1] },
+        ])
+      } catch (err) {
+        console.log("Pie chart stats error:", err)
+      }
+    }
+
+    fetchStats()
+  }, [])
+
   return (
     <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Recent Upload Activity</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+      <CardHeader className="pb-0 text-center">
+        <CardTitle>Upload Device Split</CardTitle>
+        <CardDescription>Uploads this month — Desktop vs Mobile</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  labelKey="visitors"
-                  nameKey="month"
-                  indicator="line"
-                  labelFormatter={(_, payload) => {
-                    return chartConfig[
-                      payload?.[0].dataKey as keyof typeof chartConfig
-                    ].label
-                  }}
-                />
-              }
-            />
-            <Pie data={desktopData} dataKey="desktop" outerRadius={60} />
-            <Pie
-              data={mobileData}
-              dataKey="mobile"
-              innerRadius={70}
-              outerRadius={90}
-            />
-          </PieChart>
-        </ChartContainer>
+
+      <CardContent className="flex flex-col items-center gap-4 pt-4">
+        <PieChart width={250} height={250}>
+          <Pie
+            data={chartData}
+            dataKey="value"
+            nameKey="device"
+            outerRadius={95}
+            innerRadius={60}
+            label={renderLabel}
+            labelLine={false}
+          >
+            {chartData.map((entry, i) => (
+              <Cell key={i} fill={entry.color} />
+            ))}
+          </Pie>
+        </PieChart>
+
+        {/* LEGEND */}
+        <div className="flex gap-6 mt-2">
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-full" style={{ background: COLORS[0] }}></div>
+            <span className="text-sm font-medium">Desktop</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="h-3 w-3 rounded-full" style={{ background: COLORS[1] }}></div>
+            <span className="text-sm font-medium">Mobile</span>
+          </div>
+        </div>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   )
 }

@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  
   async function handleLogin() {
     try {
 
@@ -26,25 +26,13 @@ export default function LoginPage() {
       };
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
+      localStorage.setItem("sessionId", LoginResponse.data.sessionId);
       
 
-
-      if (!res.data?.success) return;
-
-      localStorage.removeItem("sessionId");
-
-      localStorage.setItem("accessToken", res.data.accessToken);
-      if (res.data.user) {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (LoginResponse.data.success) {
+        localStorage.setItem("accessToken", LoginResponse.data.accessToken);
+        router.push("/home");
       }
-
-      if (res.data.sessionId) {
-        localStorage.setItem("sessionId", res.data.sessionId);
-      } else {
-        console.warn("login response missing sessionId");
-      }
-
-      router.push("/home");
     } catch (err: any) {
       console.error("login failed:", err);
       toast.error(err?.response?.data?.message || "Login failed");
@@ -95,6 +83,11 @@ export default function LoginPage() {
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
+            <p className="text-right text-sm mt-1">
+              <Link href="/forgot-password" className="primary hover:underline">
+                Forgot Password?
+              </Link>
+            </p>
 
             <button
               onClick={handleLogin}

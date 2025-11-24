@@ -15,8 +15,8 @@ export default function DeviceUsageCard() {
       try {
         const res = await axiosAdmin.get("/admin/device");
 
-        setMobilePercent(res.data.mobile);
-        setDesktopPercent(res.data.desktop);
+        setMobilePercent(res.data.mobilePercentage);
+        setDesktopPercent(res.data.desktopPercentage);
       } catch (err) {
         console.log("Error fetching device stats:", err);
       }
@@ -28,7 +28,7 @@ export default function DeviceUsageCard() {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardHeader>
-        <CardTitle>Device Split</CardTitle>
+        <CardTitle>Users Device Split</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">

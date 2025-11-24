@@ -1,37 +1,60 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import axiosAdmin from "@/lib/axiosAdmin"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip
+} from "recharts"
 import { motion } from "framer-motion"
 
-const data = [
-  { month: "Jan", uploads: 2100 },
-  { month: "Feb", uploads: 3300 },
-  { month: "Mar", uploads: 2900 },
-  { month: "Apr", uploads: 3600 },
-  { month: "May", uploads: 4200 },
-  { month: "Jun", uploads: 5100 },
-  { month: "Jul", uploads: 4800 },
-  { month: "Aug", uploads: 5600 },
-  { month: "Sep", uploads: 5900 },
-  { month: "Oct", uploads: 6200 },
-  { month: "Nov", uploads: 6700 },
-  { month: "Dec", uploads: 7400 },
-]
+type UploadPoint = {
+  day: string
+  uploads: number
+}
 
 export default function UploadTrendChart() {
+  const [data, setData] = useState<UploadPoint[]>([])
+
+  useEffect(() => {
+    const fetchTrend = async () => {
+      try {
+        const res = await axiosAdmin.get("/admin/weeklyuploads")
+        console.log("Fetched Trend:", res.data)
+
+        const order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+        const sorted = [...res.data].sort(
+          (a, b) => order.indexOf(a.day) - order.indexOf(b.day)
+        )
+
+        setData(sorted)
+      } catch (err) {
+        console.log("Weekly trend error:", err)
+      }
+    }
+
+    fetchTrend()
+  }, [])
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="rounded-2xl shadow-md border border-gray-100">
         <CardHeader>
-          <CardTitle>Uploads Trend</CardTitle>
+          <CardTitle>Weekly Upload Trend(Current Week)</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EAEAEA" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
+              <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
               <Tooltip />
               <Line
                 type="monotone"

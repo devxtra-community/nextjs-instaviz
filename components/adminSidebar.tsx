@@ -28,7 +28,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     { icon: Coins, label: "Tokens", href: "/admin/token" },
     { icon: TrendingUp, label: "Insights", href: "/admin/insights" },
     { icon: Calendar, label: "Plans", href: "/admin/plans" },
-    { icon: CreditCard, label: "Payments", href: "/admin/payments" },
+    // { icon: CreditCard, label: "Payments", href: "/admin/payments" },
   ];
 
   return (
