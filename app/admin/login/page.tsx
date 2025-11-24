@@ -6,8 +6,10 @@ import axiosAdmin from "@/lib/axiosAdmin";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import useRedirectAdmin from "@/components/hooks/useRedirectAdmin";
 
 export default function AdminLoginPage() {
+  useRedirectAdmin();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -25,7 +27,7 @@ export default function AdminLoginPage() {
       if (res.data.success) {
         localStorage.setItem("adminAccessToken", res.data.accessToken);
         document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=900`;
-        
+
         router.push("/admin/dashboard");
       }
     } catch (err: any) {

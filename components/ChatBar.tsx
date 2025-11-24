@@ -25,6 +25,10 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 }) => {
   const [input, setInput] = useState("");
   const { addNewChart, setLoading } = useAnalysis();
+  const [userImage, setUserImage] = useState("/user.jpg");
+  const [aiTyping, setAiTyping] = useState(false);
+
+
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -35,6 +39,33 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const finalToken = localStorage.getItem("accessToken");
+
+
+    if (!finalToken) return;
+
+    let decoded: any;
+    try {
+      decoded = JSON.parse(atob(finalToken.split(".")[1])); // lightweight decode
+    } catch {
+      return;
+    }
+
+    const id = decoded.id || decoded.googleId || decoded.userId;
+    if (!id) return;
+
+    (async () => {
+      try {
+        const res = await axiosInstance.get(`/user/${id}`);
+        if (res.data.user?.picture) setUserImage(res.data.user.picture);
+      } catch {
+        console.log("Failed to load user picture");
+      }
+    })();
+  }, []);
+
 
   // Detect if user has scrolled up
   const handleScroll = () => {
@@ -49,12 +80,14 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   };
 
   const sendMessage = async () => {
+    if (aiTyping) return;
     if (!input.trim()) return;
 
     const text = input;
     setInput("");
 
     setMessages((prev) => [...prev, { role: "user", text }]);
+    setAiTyping(true);
 
     try {
       setLoading(true);
@@ -62,17 +95,19 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       const data = res.data;
 
       setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
-
       if (data.chart) addNewChart(data.chart);
+
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "ai", text: "Error communicating with server." },
+        { role: "ai", text: "Error communicating with server." }
       ]);
     } finally {
+      setAiTyping(false);
       setLoading(false);
     }
   };
+
 
   // BEFORE UPLOAD
   if (!dataUploaded) {
@@ -137,22 +172,56 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`flex ${
-              m.role === "user" ? "justify-end" : "justify-start"
-            } gap-2`}
+            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
+              } items-end gap-2`}
           >
-            {m.role === "ai" && <VioletAIAvatar />}
-            <div
-              className={`px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] ${
-                m.role === "user"
-                  ? "bg-[#f7edff] primary"
-                  : "bg-gray-50 text-gray-800"
-              }`}
-            >
-              {m.text}
-            </div>
+
+            {/* AI SIDE (avatar left, bubble right) */}
+            {m.role === "ai" && (
+              <>
+                <VioletAIAvatar />
+
+                <div
+                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-gray-50 text-gray-800"
+                >
+                  {m.text}
+                </div>
+              </>
+            )}
+
+            {/* USER SIDE (bubble left, avatar right) */}
+            {m.role === "user" && (
+              <>
+                <div
+                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-[#f7edff] primary"
+                >
+                  {m.text}
+                </div>
+
+                <img
+                  src={userImage}
+                  className="w-6 h-6 rounded-full border object-cover"
+                  alt="User"
+                />
+              </>
+            )}
+
           </div>
         ))}
+
+        {aiTyping && (
+          <div className="flex justify-start items-center gap-2 pl-1">
+            <VioletAIAvatar />
+
+            <div className="flex gap-1">
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]"></span>
+            </div>
+          </div>
+        )}
+
+
 
         {/* Scroll Anchor */}
         <div ref={bottomRef} />
@@ -171,6 +240,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       {/* INPUT SECTION */}
       <div className="relative mt-2 flex">
         <textarea
+          disabled={aiTyping}
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
@@ -178,25 +248,40 @@ export const ChatBar: React.FC<ChatBarProps> = ({
             e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
           }}
           onKeyDown={(e) => {
+            if (aiTyping) return;
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               sendMessage();
             }
           }}
-          placeholder="Ask questions about your data..."
+          placeholder={aiTyping ? "AI is thinking..." : "Ask questions about your data..."}
           className="w-full px-3 py-2 rounded-lg border border-[#e9e0f8]
           text-gray-700 shadow text-xs resize-none leading-snug
-          max-h-[120px] overflow-hidden focus:border-[#ad49e1] focus:outline-none"
+          max-h-[120px] overflow-hidden focus:border-[#ad49e1] 
+          focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           rows={1}
         />
 
+
         <button
+          disabled={aiTyping}
           onClick={sendMessage}
-          className=" right-2 top-3 primary hover:bg-[#f4e9ff]
-            rounded-full p-2 transition"
+          className={`
+    right-2 top-3 rounded-full p-2 transition
+    ${aiTyping ? "bg-gray-200 cursor-not-allowed" : "primary hover:bg-[#f4e9ff]"}
+  `}
         >
-          <FiSend size={15} />
+          {aiTyping ? (
+            <div className="flex gap-1 px-1">
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:0ms]"></span>
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:150ms]"></span>
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:300ms]"></span>
+            </div>
+          ) : (
+            <FiSend size={15} />
+          )}
         </button>
+
       </div>
     </aside>
   );

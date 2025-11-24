@@ -21,12 +21,16 @@ axiosInstance.interceptors.request.use((config) => {
   console.log("insise axios req interceptor");
 
   const accessToken = localStorage.getItem("accessToken");
+  const sessionId = localStorage.getItem("sessionId")
 
   if (accessToken) {
     console.log("user has token");
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
-
+  if (sessionId) {
+    config.headers["x-session-id"] = sessionId;
+  }
+  
   return config;
 });
 
@@ -80,9 +84,7 @@ axiosInstance.interceptors.response.use(
 
         localStorage.setItem("accessToken", newAccessToken);
         runQueue(newAccessToken);
-
         isRefreshing = false;
-
         ogRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return axiosInstance(ogRequest);
@@ -90,10 +92,9 @@ axiosInstance.interceptors.response.use(
         console.log("refresh token failed, logging out...");
         runQueue(null);
         isRefreshing = false;
-
-        const error2 = err as AxiosError;
-
-        if (error2?.response?.status === 401) {
+        const error = err as AxiosError;
+        const status = error?.response?.status;
+        if (status == 401) {
           localStorage.clear();
           window.location.href = "/login";
         } else {
