@@ -69,14 +69,14 @@ axiosInstance.interceptors.response.use(
 
         localStorage.setItem("accessToken", newAccessToken);
         runQueue(newAccessToken);
-        isRefreshing= false;
+        isRefreshing = false;
         ogRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return axiosInstance(ogRequest);
       } catch (err) {
         console.log("inside axios error");
         runQueue(null);
-        isRefreshing=false
+        isRefreshing = false;
         const error = err as AxiosError;
         const status = error?.response?.status;
         if (status == 401) {
