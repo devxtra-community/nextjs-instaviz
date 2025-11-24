@@ -6,11 +6,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 import axiosInstance from "@/lib/axiosInstance";
 import GoogleButton from "@/components/GoogleButton";
 
 export default function LoginPage() {
+  useRedirectIfLoggedIn();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

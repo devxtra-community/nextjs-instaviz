@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import GoogleButton from "@/components/GoogleButton";
 import { Eye, EyeOff } from "lucide-react";
+import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 export default function SignUpPage() {
+  useRedirectIfLoggedIn();
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -205,11 +207,7 @@ export default function SignUpPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 primary cursor-pointer"
                 >
-                  {showPassword ? (
-                    <Eye size={18} />
-                  ) : (
-                    <EyeOff size={18} />
-                  )}
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                 </button>
               </div>
             </div>
