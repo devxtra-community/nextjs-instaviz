@@ -23,6 +23,7 @@ axiosInstance.interceptors.request.use((config) => {
 
   if (accessToken) {
     console.log("user has token");
+
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   if (sessionId) {
