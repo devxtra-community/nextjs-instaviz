@@ -81,6 +81,10 @@ axiosInstance.interceptors.response.use(
         localStorage.setItem("accessToken", newAccessToken);
         runQueue(newAccessToken);
 
+
+        isRefreshing = false;
+
+
         isRefreshing = false;
 
         ogRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -91,9 +95,15 @@ axiosInstance.interceptors.response.use(
         runQueue(null);
         isRefreshing = false;
 
+
         const error2 = err as AxiosError;
 
         if (error2?.response?.status === 401) {
+
+        const error = err as AxiosError;
+        const status = error?.response?.status;
+        if (status == 401) {
+
           localStorage.clear();
           window.location.href = "/login";
         } else {
@@ -104,6 +114,6 @@ axiosInstance.interceptors.response.use(
 
     return Promise.reject(error);
   }
-);
+  })
 
 export default axiosInstance;
