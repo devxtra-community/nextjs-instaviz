@@ -1,8 +1,11 @@
 "use client";
+
 import {
+  BarChart,
+  Bar,
+  PieChart,
   LineChart,
   Line,
-  PieChart,
   Pie,
   Cell,
   Tooltip,
@@ -11,98 +14,103 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { FiTrendingUp, FiPieChart } from "react-icons/fi";
 import { motion } from "framer-motion";
-import React from "react";
 
-const COLORS = ["#AD49E1", "#B46FE9", "#CDA5F2", "#E5D6FA"];
+const COLORS = ["#AD49E1", "#B46FE9", "#CDA5F2", "#E5D6FA", "#D7B6FA"];
 
-export default function Charts() {
-  const chartData = [
-    { month: "Jan", growth: 12, users: 240 },
-    { month: "Feb", growth: 18, users: 320 },
-    { month: "Mar", growth: 25, users: 380 },
-    { month: "Apr", growth: 21, users: 350 },
-    { month: "May", growth: 28, users: 420 },
-    { month: "Jun", growth: 33, users: 470 },
-  ];
+interface ChartConfig {
+  type: "bar" | "pie" | "line";
+  x: string;
+  y: string;
+  title: string;
+  data: any[];
+}
 
-  const pieData = [
-    { name: "AI Charts", value: 48 },
-    { name: "Insights", value: 27 },
-    { name: "Exports", value: 15 },
-    { name: "Collaboration", value: 10 },
-  ];
+export default function Charts({ charts }: { charts: ChartConfig[] }) {
+  if (!charts || charts.length === 0) {
+    return (
+      <p className="text-gray-400 text-sm mt-4">
+        There is no charts available for your current file upload.
+      </p>
+    );
+  }
+
+  // Normalizers
+  const normalize = (chart: ChartConfig) =>
+    chart.data.map((r) => ({
+      [chart.x]: r.xValue,
+      [chart.y]: r.yValue ?? r.value,
+      value: r.value,
+    }));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      {/* Line Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[15px] font-semibold text-gray-800">
-            Growth & Engagement Trends
-          </h3>
-          <FiTrendingUp className="primary" size={18} />
-        </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3e8ff" />
-            <XAxis dataKey="month" stroke="#bbb" fontSize={11} />
-            <YAxis stroke="#bbb" fontSize={11} />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="growth"
-              stroke="#AD49E1"
-              strokeWidth={2.5}
-              dot={{ r: 3 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="users"
-              stroke="#9929D5"
-              strokeWidth={2.5}
-              dot={{ r: 3 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </motion.div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
+      {charts.map((chart, i) => {
+        const data = normalize(chart);
 
-      {/* Pie Chart */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[15px] font-semibold text-gray-800">
-            Usage Distribution
-          </h3>
-          <FiPieChart className="primary" size={18} />
-        </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              outerRadius={75}
-              labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-            >
-              {pieData.map((_, i) => (
-                <Cell key={i} fill={COLORS[i % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
-      </motion.div>
+        return (
+          <motion.div
+            key={`chart-${i}`}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-xl border border-[#ede4fa] p-4 md:p-5"
+          >
+            <h3 className="text-[15px] font-semibold text-gray-800 mb-2">
+              {chart.title}
+            </h3>
+
+            <ResponsiveContainer width="100%" height={260}>
+              {{
+                bar: (
+                  <BarChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f3e8ff" />
+                    <XAxis dataKey={chart.x} stroke="#bbb" fontSize={11} />
+                    <YAxis stroke="#bbb" fontSize={11} />
+                    <Tooltip />
+                    <Bar dataKey={chart.y} fill="#AD49E1" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                ),
+                pie: (
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      dataKey="value"
+                      nameKey={chart.x}
+                      outerRadius={90}
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name.substring(0, 18)}… ${(percent * 100).toFixed(0)}%`
+                      }
+                    >
+                      {data.map((_, index) => (
+                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                ),
+                line: (
+                  <LineChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f3e8ff" />
+                    <XAxis dataKey={chart.x} stroke="#bbb" fontSize={11} />
+                    <YAxis stroke="#bbb" fontSize={11} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey={chart.y}
+                      stroke="#B46FE9"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                ),
+              }[chart.type]}
+            </ResponsiveContainer>
+
+          </motion.div>
+        );
+      })}
     </div>
   );
 }

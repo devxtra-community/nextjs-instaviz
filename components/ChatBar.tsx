@@ -1,117 +1,287 @@
-import { FiSend } from "react-icons/fi";
-import { motion } from "framer-motion";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { FiSend, FiArrowDownCircle } from "react-icons/fi";
 import VioletAIAvatar from "./VioletAIAvatar";
-
-const Sparkle = () => (
-  <motion.svg
-    width="54"
-    height="54"
-    viewBox="0 0 54 54"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    initial={{ scale: 0.84, opacity: 0.7 }}
-    animate={{ scale: [0.84, 1.09, 0.9, 0.84], opacity: [0.7, 1, 0.8, 0.7] }}
-    transition={{
-      duration: 2.5,
-      repeat: Infinity,
-      ease: "easeInOut",
-      repeatType: "loop"
-    }}
-    // className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
-    // className="mx-auto w-14 h-14 sm:w-16 sm:h-16"
-  >
-    <path
-      d="M27 7L30.2877 21.7123L45 25L30.2877 28.2877L27 43L23.7123 28.2877L9 25L23.7123 21.7123L27 7Z"
-      fill="#d8b4fe"
-      stroke="#AD49E1"
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M42 16L43.2462 19.7538L47 21L43.2462 22.2462L42 26L40.7538 22.2462L37 21L40.7538 19.7538L42 16Z"
-      fill="#e9d5ff"
-      stroke="#AD49E1"
-      strokeWidth="1"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M16 36L17.1231 39.1231L20.2462 40.2462L17.1231 41.3692L16 44.4923L14.8769 41.3692L11.7538 40.2462L14.8769 39.1231L16 36Z"
-      fill="#f3e8ff"
-      stroke="#c4b5fd"
-      strokeWidth="1"
-      strokeLinejoin="round"
-    />
-  </motion.svg>
-);
+import { useAnalysis } from "@/context/AnalysisContext";
+import axiosInstance from "@/lib/axiosInstance";
 
 type ChatBarProps = {
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
+  messages: { role: "user" | "ai"; text: string }[];
+  setMessages: React.Dispatch<
+    React.SetStateAction<{ role: "user" | "ai"; text: string }[]>
+  >;
+  mobile?: boolean;
+  onClose?: () => void;
 };
 
 export const ChatBar: React.FC<ChatBarProps> = ({
   dataUploaded,
-  setDataUploaded,
+  messages,
+  setMessages,
+  mobile = false,
+  onClose,
 }) => {
+  const [input, setInput] = useState("");
+  const { addNewChart, setLoading } = useAnalysis();
+  const [userImage, setUserImage] = useState("/user.jpg");
+  const [aiTyping, setAiTyping] = useState(false);
+
+
+
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  // Auto-scroll when new messages arrive
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    const finalToken = localStorage.getItem("accessToken");
+
+
+    if (!finalToken) return;
+
+    let decoded: any;
+    try {
+      decoded = JSON.parse(atob(finalToken.split(".")[1])); // lightweight decode
+    } catch {
+      return;
+    }
+
+    const id = decoded.id || decoded.googleId || decoded.userId;
+    if (!id) return;
+
+    (async () => {
+      try {
+        const res = await axiosInstance.get(`/user/${id}`);
+        if (res.data.user?.picture) setUserImage(res.data.user.picture);
+      } catch {
+        console.log("Failed to load user picture");
+      }
+    })();
+  }, []);
+
+
+  // Detect if user has scrolled up
+  const handleScroll = () => {
+    if (!messagesRef.current) return;
+    const el = messagesRef.current;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+    setShowScrollButton(!atBottom);
+  };
+
+  const scrollToBottom = () => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const sendMessage = async () => {
+    if (aiTyping) return;
+    if (!input.trim()) return;
+
+    const text = input;
+    setInput("");
+
+    setMessages((prev) => [...prev, { role: "user", text }]);
+    setAiTyping(true);
+
+    try {
+      setLoading(true);
+      const res = await axiosInstance.post("/chat", { message: text });
+      const data = res.data;
+
+      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+      if (data.chart) addNewChart(data.chart);
+
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: "Error communicating with server." }
+      ]);
+    } finally {
+      setAiTyping(false);
+      setLoading(false);
+    }
+  };
+
+
+  // BEFORE UPLOAD
   if (!dataUploaded) {
     return (
-      <aside className="w-full md:w-96 bg-white p-4 flex flex-col items-center justify-center mt-4 md:mt-0 border-t md:border-l border-black/10 md:ml-1 min-h-[220px] sm:min-h-[260px]">
-        <Sparkle />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8, ease: 'easeOut' }}
-          className="mt-4 text-center px-2"
-        >
-          <h2 className="text-base sm:text-lg font-semibold primary mb-2">
+      <aside
+        className={`
+        ${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"}
+        w-full fixed
+        ${mobile ? "bottom-0" : "top-12 right-0"}
+        bg-white p-4 flex flex-col
+        border-t md:border-l border-gray-200
+      `}
+      >
+        <div className="flex justify-between items-center mb-3">
+          <h1 className="text-lg font-semibold primary mt-2">
+            InstaviZ AI Chat
+          </h1>
+          {mobile && (
+            <button onClick={onClose} className="primary text-xl font-bold">
+              ×
+            </button>
+          )}
+        </div>
+
+        <div className="text-center mt-40">
+          <h2 className="text-lg font-semibold primary mb-2">
             Upload a file to chat with InstaviZ AI
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500">
-            InstaviZ AI is ready to answer your questions — upload your CSV to begin.
+          <p className="text-sm text-gray-500">
+            InstaviZ AI is ready to answer — upload your CSV to begin.
           </p>
-        </motion.div>
+        </div>
       </aside>
     );
   }
 
   return (
-    <aside className="w-full md:w-96 h-[60vh] md:h-full bg-white p-3 md:p-4 flex flex-col justify-between mt-4 md:mt-0 border-t md:border-l border-gray-200 md:ml-1 rounded-t-2xl md:rounded-none">
-      {/* Chat messages area */}
-      <div className="flex-1 overflow-y-auto mb-3 space-y-3 pr-1 scrollbar-thin scrollbar-thumb-[#EBDCFB]">
-        <div className="text-base md:text-lg font-semibold primary mb-3">
-          <h1>Ask InstaviZ AI</h1>
-        </div>
-
-        {/* Example user message */}
-        <div className="flex items-end justify-end self-end gap-2">
-          <div className="bg-[#f7edff] primary px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium max-w-[80%] shadow-sm">
-            Can you summarize my data?
-          </div>
-          <VioletAIAvatar />
-        </div>
-
-        {/* Example AI response */}
-        <div className="flex items-start gap-2 mt-1">
-          <VioletAIAvatar />
-          <div className="bg-gray-50 text-gray-800 px-3 py-1.5 rounded-xl shadow-sm text-xs sm:text-sm max-w-[80%] leading-snug">
-            Sure! Your uploaded CSV mostly contains sales and engagement metrics. The majority of activity comes from social media and organic search, and your overall conversion improved by 10% this week.
-          </div>
-        </div>
+    <aside
+      className={`
+      flex flex-col bg-white
+      ${mobile ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl" : "h-[93vh] fixed right-0 top-12 md:w-96"}
+      p-4 border-t md:border-l border-gray-200
+    `}
+    >
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-lg font-semibold primary">Ask InstaviZ AI</h1>
+        {mobile && (
+          <button onClick={onClose} className="primary text-xl">
+            ×
+          </button>
+        )}
       </div>
 
-      {/* Input bar */}
-      <div className="relative flex items-center">
-        <input
-          type="text"
-          placeholder="Ask questions about your data..."
-          className="w-full px-3 py-2 rounded-lg border border-[#e9e0f8] text-gray-700 shadow focus:ring-2 focus:ring-[#AD49E1]/40 outline-none text-sm sm:text-base pr-10"
-        />
+      {/* CHAT MESSAGES */}
+      <div
+        ref={messagesRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto space-y-3 pr-1 "
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
+              } items-end gap-2`}
+          >
+
+            {/* AI SIDE (avatar left, bubble right) */}
+            {m.role === "ai" && (
+              <>
+                <VioletAIAvatar />
+
+                <div
+                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-gray-50 text-gray-800"
+                >
+                  {m.text}
+                </div>
+              </>
+            )}
+
+            {/* USER SIDE (bubble left, avatar right) */}
+            {m.role === "user" && (
+              <>
+                <div
+                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-[#f7edff] primary"
+                >
+                  {m.text}
+                </div>
+
+                <img
+                  src={userImage}
+                  className="w-6 h-6 rounded-full border object-cover"
+                  alt="User"
+                />
+              </>
+            )}
+
+          </div>
+        ))}
+
+        {aiTyping && (
+          <div className="flex justify-start items-center gap-2 pl-1">
+            <VioletAIAvatar />
+
+            <div className="flex gap-1">
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]"></span>
+            </div>
+          </div>
+        )}
+
+
+
+        {/* Scroll Anchor */}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* SCROLL TO BOTTOM BUTTON */}
+      {showScrollButton && (
         <button
-          type="button"
-          className="absolute right-2 top-1/2 -translate-y-1/2 hover:cursor-pointer primary hover:bg-[#f4e9ff] rounded-full p-2 transition"
+          onClick={scrollToBottom}
+          className="absolute right-4 bottom-20 bg-white shadow-md p-2 rounded-full border hover:cursor-pointer"
         >
-          <FiSend size={15} />
+          <FiArrowDownCircle size={20} className="primary" />
         </button>
+      )}
+
+      {/* INPUT SECTION */}
+      <div className="relative mt-2 flex">
+        <textarea
+          disabled={aiTyping}
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+            e.target.style.height = "auto";
+            e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+          }}
+          onKeyDown={(e) => {
+            if (aiTyping) return;
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
+          placeholder={aiTyping ? "AI is thinking..." : "Ask questions about your data..."}
+          className="w-full px-3 py-2 rounded-lg border border-[#e9e0f8]
+          text-gray-700 shadow text-xs resize-none leading-snug
+          max-h-[120px] overflow-hidden focus:border-[#ad49e1] 
+          focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          rows={1}
+        />
+
+
+        <button
+          disabled={aiTyping}
+          onClick={sendMessage}
+          className={`
+    right-2 top-3 rounded-full p-2 transition
+    ${aiTyping ? "bg-gray-200 cursor-not-allowed" : "primary hover:bg-[#f4e9ff]"}
+  `}
+        >
+          {aiTyping ? (
+            <div className="flex gap-1 px-1">
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:0ms]"></span>
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:150ms]"></span>
+              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:300ms]"></span>
+            </div>
+          ) : (
+            <FiSend size={15} />
+          )}
+        </button>
+
       </div>
     </aside>
   );

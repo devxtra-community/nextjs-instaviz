@@ -1,7 +1,6 @@
-"use client"
-
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+"use client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function GoogleCallbackPage() {
   const router = useRouter();
@@ -9,12 +8,21 @@ export default function GoogleCallbackPage() {
 
   useEffect(() => {
     const token = searchParams.get("token");
+    const sessionId = searchParams.get("sessionId");
+    if (sessionId) {
+      localStorage.setItem("sessionId", sessionId);
+    }
 
     if (token) {
-      localStorage.setItem("token", token);
-      router.push('/home');
+      localStorage.setItem("accessToken", token);
+
+      // this prevent the user from go back and login again (the main issue) 
+      const cleanUrl = window.location.origin + "/auth/callback";
+      window.history.replaceState({}, "", cleanUrl)
+
+      router.push("/home");
     } else {
-      router.push('/signup');
+      router.push("/signup");
     }
   }, [router, searchParams]);
 

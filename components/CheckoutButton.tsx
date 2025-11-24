@@ -16,10 +16,10 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
   const router = useRouter();
 
   const handleCheckout = async () => {
-    const token = localStorage.getItem("token");
-    const token2 = localStorage.getItem("accessToken");
-    console.log(token,token2);
-    if (!token && !token2) {
+    const finalToken = localStorage.getItem("accessToken");
+
+    console.log(finalToken);
+    if (!finalToken) {
       toast.error("Please login to continue")
       setTimeout(() => {
         router.push("/login");

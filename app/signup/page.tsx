@@ -7,10 +7,12 @@ import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import GoogleButton from "@/components/GoogleButton";
-
+import { Eye, EyeOff } from "lucide-react";
+import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 export default function SignUpPage() {
-  const router = useRouter()
+  useRedirectIfLoggedIn();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,10 +22,16 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | string[]>("");
   const [success, setSuccess] = useState<string | string[]>("");
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   function validateForm() {
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
       setError("All fields are required.");
       return false;
     }
@@ -48,22 +56,19 @@ export default function SignUpPage() {
     return true;
   }
 
-
   async function handleSubmit() {
-
-
     if (!validateForm()) return;
 
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post("/user/register", formData);
+      const response = await axiosInstance.post("/auth/register", formData);
       setSuccess(response.data.message);
       console.log(response.data);
       if (response.data.otp === true) {
-        toast("OTP has been sent your Email")
+        toast("OTP has been sent your Email");
         setTimeout(() => {
-          router.push(`/otp-verify?email=${formData.email}`)
-        }, 2000)
+          router.push(`/otp-verify?email=${formData.email}`);
+        }, 2000);
       }
     } catch (err: any) {
       console.error("Registration error:", err.response?.data || err.message);
@@ -79,8 +84,6 @@ export default function SignUpPage() {
       setIsLoading(false);
     }
   }
-
-
 
   return (
     <div className="h-screen w-full flex overflow-hidden bg-white text-gray-900">
@@ -148,8 +151,10 @@ export default function SignUpPage() {
                   type="text"
                   placeholder="Full name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-1 focus:ring-purple-400 outline-none"
                   required
                 />
               </div>
@@ -168,34 +173,45 @@ export default function SignUpPage() {
                   type="email"
                   placeholder="Email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-1 focus:ring-purple-400  outline-none"
                   required
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-semibold">
                 PASSWORD
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={formData.password}
-                  onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }}
-                  className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  className="w-full h-11 pl-10 pr-10 border border-purple-300 rounded-md focus:ring-1 focus:ring-purple-400 outline-none"
                   required
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 primary cursor-pointer"
+                >
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div className="space-y-2">
               <label
                 htmlFor="confirmPassword"
@@ -205,16 +221,34 @@ export default function SignUpPage() {
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={formData.confirmPassword}
-                  onChange={(e) => { setFormData({ ...formData, confirmPassword: e.target.value }) }}
-                  className="w-full h-11 pl-10 border border-purple-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                  className="w-full h-11 pl-10 pr-10 border border-purple-300 rounded-md focus:ring-1 focus:ring-purple-400 outline-none"
                   required
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 primary cursor-pointer"
+                >
+                  {showConfirmPassword ? (
+                    <Eye size={18} />
+                  ) : (
+                    <EyeOff size={18} />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -246,7 +280,7 @@ export default function SignUpPage() {
               onClick={handleSubmit}
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-[#AD49E1] text-white font-semibold rounded-md hover:bg-purple-600 cursor-pointer  transition flex items-center justify-center gap-2"
+              className="w-full h-11 bg-[#AD49E1] text-white font-semibold rounded-md hover:bg-purple-500 cursor-pointer  transition flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -261,10 +295,14 @@ export default function SignUpPage() {
               )}
             </button>
             {error && (
-              <p className="text-red-500 text-sm font-medium text-center mt-2">{error}</p>
+              <p className="text-red-500 text-sm font-medium text-center mt-2">
+                {error}
+              </p>
             )}
             {success && (
-              <p className="text-green-600 text-sm font-medium text-center mt-2">{success}</p>
+              <p className="text-green-600 text-sm font-medium text-center mt-2">
+                {success}
+              </p>
             )}
           </div>
 
@@ -274,7 +312,7 @@ export default function SignUpPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-indigo-600 hover:underline font-semibold"
+                className="primary hover:underline font-semibold"
               >
                 Sign in
               </Link>

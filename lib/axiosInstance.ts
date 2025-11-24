@@ -1,57 +1,99 @@
-import axios from "axios";
-//interceptor need to be added
+import axios, { AxiosError } from "axios";
+
 const axiosInstance = axios.create({
-    baseURL:process.env.NEXT_PUBLIC_API,
-    withCredentials:true
-})
-axiosInstance.interceptors.request.use((config)=>{
-    console.log("inside interceptor request");
+  baseURL: process.env.NEXT_PUBLIC_API,
+  withCredentials: true,
+});
 
-    const accessToken = localStorage.getItem("accessToken")
-    if(accessToken){
-        console.log("inside if accesstoen");
-        
-        config.headers.Authorization = `bearer ${accessToken}`
-    }
-    return config
-})
+let isRefreshing = false;
+let waitingQueue: Array<(token: string | null) => void> = [];
+function addToQueue(cb: (token: string | null) => void) {
+  waitingQueue.push(cb);
+}
+function runQueue(newToken: string | null) {
+  waitingQueue.forEach((ele) => ele(newToken));
+  waitingQueue = [];
+}
 
-axiosInstance.interceptors.response.use((response)=>{
+axiosInstance.interceptors.request.use((config) => {
+  console.log("insise axios req interceptor");
 
-    console.log("inside response ",response);
-    return response
-},
+  const accessToken = localStorage.getItem("accessToken");
+  const sessionId = localStorage.getItem("sessionId")
 
-    async(error)=>{
-        console.log("inside error",error);
-        const ogRequest = error.config;
+  if (accessToken) {
+    console.log("user has token");
 
-        if(error.response.status===401 && !ogRequest.retry){
-            ogRequest.retry=true
-            try{
-                console.log("inside tryt");
-                const refreshToken = await axios.post(`${process.env.NEXT_PUBLIC_API}/user/newRefreshToken`,
-                    {},
-                    {withCredentials:true}
-                );
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  if (sessionId) {
+    config.headers["x-session-id"] = sessionId;
+  }
+  
+  return config;
+});
 
-                const newAccessToken = refreshToken.data.newAccessToken;
-                localStorage.setItem("accessToken",newAccessToken)
-                ogRequest.headers.Authorization = `bearer ${newAccessToken}`
-                return axiosInstance(ogRequest)
-                
-            }catch(err){
-                console.log("catch in interceptor worked");
-                localStorage.clear();
-                window.location.href = "/login"
-                
+axiosInstance.interceptors.response.use(
+  (response) => response,
 
+  async (error) => {
+    console.log("inside axios ressponse");
+
+    const ogRequest = error.config;
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (error.response?.status === 401 && accessToken && !ogRequest.retry) {
+      console.log("inside requesting for new newaccesstoken");
+      console.log("detected 401");
+      if (isRefreshing) {
+        console.log("one req is already refreshing");
+        return new Promise((resolve, reject) => {
+          addToQueue((newToken) => {
+            if (!newToken) {
+              resolve(Promise.reject(error));
+              return;
             }
+            ogRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(axiosInstance(ogRequest));
+          });
+        });
+      }
+
+      ogRequest.retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshResp = await axios.post(
+          `${process.env.NEXT_PUBLIC_API}/auth/newRefreshToken`,
+          {},
+          { withCredentials: true }
+        );
+
+        const newAccessToken = refreshResp.data.newAccessToken;
+
+        localStorage.setItem("accessToken", newAccessToken);
+        runQueue(newAccessToken);
+        isRefreshing = false;
+        ogRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return axiosInstance(ogRequest);
+      } catch (err) {
+        console.log("inside axios error");
+        runQueue(null);
+        isRefreshing = false;
+        const error = err as AxiosError;
+        const status = error?.response?.status;
+        if (status == 401) {
+          localStorage.clear();
+          window.location.href = "/login";
+        } else {
+          alert("Something went wrong. Please try again.");
         }
-        return  Promise.reject(error)
-        
+      }
     }
-    
-)
+
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;
