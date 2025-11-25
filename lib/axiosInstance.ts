@@ -19,13 +19,17 @@ axiosInstance.interceptors.request.use((config) => {
   console.log("insise axios req interceptor");
 
   const accessToken = localStorage.getItem("accessToken");
+  const sessionId = localStorage.getItem("sessionId")
 
   if (accessToken) {
     console.log("user has token");
 
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
-
+  if (sessionId) {
+    config.headers["x-session-id"] = sessionId;
+  }
+  
   return config;
 });
 

@@ -73,8 +73,25 @@ export default function ProfilePage() {
     }
   };
 
-  const logoutAllDevices = () => {
-    console.log("clicked logout all devices");
+  const logoutAllDevices = async () => {
+    console.log("in logoutAll Devices");
+    try {
+      const currentSessionId = localStorage.getItem("sessionId");
+
+      if (!currentSessionId) {
+        toast.error("No session found");
+        return;
+      }
+
+      const resp = await axiosInstance.post("/auth/logoutAllDevices", {
+        currentSessionId,
+      });
+
+      toast.success(resp.data.message);
+      getsession();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to logout devices");
+    }
   };
 
   useEffect(() => {
@@ -185,13 +202,16 @@ export default function ProfilePage() {
           </h2>
 
           <div className="flex items-center gap-4 border p-4 rounded-xl mb-6">
+            <div className="w-[70px] h-[70px] rounded-full overflow-hidden">
+
             <Image
               src={profilePic}
               alt="Profile"
               width={70}
               height={70}
               className="rounded-full border"
-            />
+              />
+            </div>
             <div>
               <p className="text-lg font-semibold">{name}</p>
               <p className="text-gray-500 text-sm">{email}</p>
