@@ -62,6 +62,7 @@ export default function UserProfilePage() {
   const [averageTimeData, setAverageTimeData] = useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingAverage, setLoadingAverage] = useState(true);
+  const[suspend,setsuspend]  = useState("")
 
   // Helpers
   const secondsToHms = (seconds: number) => {
