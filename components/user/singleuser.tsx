@@ -32,17 +32,19 @@ interface UserType {
   phone?: string;
   location?: string;
   status?: "active" | "disabled";
+  isSuspended?: boolean;
+  suspensionEnd?: string | null;
 }
 
 interface DailyActiveTime {
   date: string;
   dayName: string;
   totalSeconds: number;
-  formatted: string; // backend may provide but we'll compute too
+  formatted: string;
 }
 
 interface AverageTimeData {
-  dailyActiveTime: DailyActiveTime[]; // Mon -> Sun (always 7 entries)
+  dailyActiveTime: DailyActiveTime[];
   totalSeconds: number;
   totalFormatted?: string;
   averagePerDay: {
@@ -62,7 +64,8 @@ export default function UserProfilePage() {
   const [averageTimeData, setAverageTimeData] = useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingAverage, setLoadingAverage] = useState(true);
-  const[suspend,setsuspend]  = useState("")
+  const [suspend, setSuspend] = useState("");
+  const [suspending, setSuspending] = useState(false);
 
   // Helpers
   const secondsToHms = (seconds: number) => {
@@ -92,9 +95,10 @@ export default function UserProfilePage() {
         status: newStatus,
       });
       setStatus(newStatus as "active" | "disabled");
-      console.log("Status updated successfully:", newStatus);
+      alert("Status updated successfully!");
     } catch (err) {
       console.error("Error updating status:", err);
+      alert("Failed to update status. Please try again.");
     }
   };
 
@@ -108,7 +112,7 @@ export default function UserProfilePage() {
     }
   };
 
-  // Fetch last 7 days activity (if you use elsewhere)
+  // Fetch last 7 days activity
   const fetchUserActivity = async () => {
     try {
       setLoadingActivity(true);
@@ -126,14 +130,13 @@ export default function UserProfilePage() {
     }
   };
 
-  // Fetch weekly average (Mon->Sun) from your API
+  // Fetch weekly average
   const fetchAverageTime = async () => {
     try {
       setLoadingAverage(true);
       const res = await axiosAdmin.get(`/admin/singleUsertime/${id}`);
 
       if (res.data.success && res.data.dailyActiveTime) {
-        // Ensure each item has formatted h:m:s (Option A)
         const daily = res.data.dailyActiveTime.map((d: any) => {
           const totalSeconds = typeof d.totalSeconds === "number" ? d.totalSeconds : Number(d.totalSeconds || 0);
           return {
@@ -144,7 +147,6 @@ export default function UserProfilePage() {
           } as DailyActiveTime;
         });
 
-        // Replace dailyActiveTime in the returned object with our normalized version
         const normalized: AverageTimeData = {
           ...res.data,
           dailyActiveTime: daily,
@@ -167,6 +169,37 @@ export default function UserProfilePage() {
     }
   };
 
+  // FIXED: Suspend user handler - only called when button is clicked
+  const handleUserSuspend = async () => {
+    // Validation
+    if (!suspend || isNaN(Number(suspend)) || Number(suspend) <= 0) {
+      alert("Please enter a valid number of days (greater than 0)");
+      return;
+    }
+
+    try {
+      setSuspending(true);
+      console.log(`Suspending user for ${suspend} days...`);
+      
+      const res = await axiosAdmin.put(`/admin/suspend/${id}?days=${suspend}`);
+      
+      console.log("Suspend response:", res.data);
+      alert(`User suspended successfully for ${suspend} days`);
+      
+      // Refresh user data to show updated suspension status
+      await fetchUserSinglePage();
+      
+      // Clear the input
+      setSuspend("");
+    } catch (err: any) {
+      console.error("Error suspending user:", err);
+      alert(err.response?.data?.message || "Failed to suspend user. Please try again.");
+    } finally {
+      setSuspending(false);
+    }
+  };
+
+  // FIXED: Remove handleUserSuspend from useEffect
   useEffect(() => {
     if (id) {
       fetchUserSinglePage();
@@ -184,15 +217,13 @@ export default function UserProfilePage() {
     { name: "May", value: 27 },
   ];
 
-  // Chart data: convert seconds -> decimal hours for plotting (hours = seconds / 3600)
   const weeklyChartData =
     averageTimeData?.dailyActiveTime.map((item) => ({
-      name: item.dayName.substring(0, 3), // Mon, Tue...
-      hours: +(item.totalSeconds / 3600).toFixed(2), // decimal hours (2dp)
-      formatted: item.formatted, // h:m:s string for tooltip
+      name: item.dayName.substring(0, 3),
+      hours: +(item.totalSeconds / 3600).toFixed(2),
+      formatted: item.formatted,
     })) || [];
 
-  // Custom tooltip shows h:m:s (always seconds)
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const p = payload[0].payload;
@@ -260,6 +291,13 @@ export default function UserProfilePage() {
                 <MapPin size={15} /> {user.location || "Unknown"}
               </div>
             </div>
+
+            {/* Show suspension status if suspended */}
+            {user.isSuspended && user.suspensionEnd && (
+              <div className="mt-3 bg-red-500 bg-opacity-20 border border-white rounded-lg px-3 py-2 text-sm">
+                ⚠️ Account Suspended until {new Date(user.suspensionEnd).toLocaleString()}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -315,7 +353,7 @@ export default function UserProfilePage() {
           </p>
         </div>
 
-        {/* WEEKLY ACTIVITY CARD (UPDATED) */}
+        {/* WEEKLY ACTIVITY CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide flex items-center gap-2">
             <Clock size={16} />
@@ -328,13 +366,11 @@ export default function UserProfilePage() {
             </div>
           ) : averageTimeData && Array.isArray(averageTimeData.dailyActiveTime) && averageTimeData.dailyActiveTime.length > 0 ? (
             <div>
-              {/* Overall Average Display - show h:m:s (Option A) */}
               <div className="mb-3">
                 <p className="text-2xl font-bold text-gray-900">{secondsToHms(averageTimeData.averagePerDay.seconds)}</p>
                 <p className="text-xs text-gray-500">Average per day (Mon – Sun)</p>
               </div>
 
-              {/* Mini line chart (hours decimal) */}
               <div className="w-full h-16">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyChartData}>
@@ -380,13 +416,31 @@ export default function UserProfilePage() {
 
       {/* ACTION CONTROLS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-        {/* SUSPEND CARD */}
+        {/* SUSPEND CARD - FIXED */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">Suspend User</h3>
           <div className="flex gap-2">
-            <button className="flex-1 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">Suspend</button>
-            <input type="text" placeholder="7 Days" className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm w-32" />
+            <input
+              type="number"
+              placeholder="Days"
+              value={suspend}
+              onChange={(e) => setSuspend(e.target.value)}
+              className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-32 text-sm"
+              min="1"
+            />
+            <button
+              className="flex-1 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+              onClick={handleUserSuspend}
+              disabled={suspending || !suspend}
+            >
+              {suspending ? "Suspending..." : "Suspend"}
+            </button>
           </div>
+          {user.isSuspended && user.suspensionEnd && (
+            <p className="text-xs text-red-600 mt-2">
+              Currently suspended until {new Date(user.suspensionEnd).toLocaleDateString()}
+            </p>
+          )}
         </div>
 
         {/* EMAIL & ALERT CARD */}
