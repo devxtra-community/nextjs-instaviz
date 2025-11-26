@@ -28,7 +28,7 @@ export default function DeviceUsageCard() {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardHeader>
-        <CardTitle>Users Device Split</CardTitle>
+        <CardTitle className="text-md font-semibold">Users Device Split</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">

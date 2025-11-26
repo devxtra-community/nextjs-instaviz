@@ -63,7 +63,7 @@ export default function UserWeeklyGrowthCard() {
   return (
     <Card className="p-4">
       <CardHeader>
-        <CardTitle className="text-sm font-medium">
+        <CardTitle className="text-md font-semibold">
           Weekly User Growth(Current Week)
         </CardTitle>
       </CardHeader>
