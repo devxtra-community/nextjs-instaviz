@@ -19,7 +19,8 @@ axiosInstance.interceptors.request.use((config) => {
   console.log("insise axios req interceptor");
 
   const accessToken = localStorage.getItem("accessToken");
-  const sessionId = localStorage.getItem("sessionId")
+  const sessionId = localStorage.getItem("sessionId");
+  const sessionToken = localStorage.getItem("session_token");
 
   if (accessToken) {
     console.log("user has token");
@@ -29,7 +30,11 @@ axiosInstance.interceptors.request.use((config) => {
   if (sessionId) {
     config.headers["x-session-id"] = sessionId;
   }
-  
+
+  if (!accessToken && sessionToken) {
+    config.headers["x-session-token"] = sessionToken;
+  }
+
   return config;
 });
 

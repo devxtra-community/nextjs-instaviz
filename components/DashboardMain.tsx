@@ -1,14 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import MetricCard from "@/components/metricCard";
 import dynamic from "next/dynamic";
 import UploadButton from "./UploadButton";
 import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
+import SessionSelector from "@/components/SessionSelector";
+import axiosInstance from "@/lib/axiosInstance";
 
-// Dynamically load Chart component
+// Lazy load Chart component
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
   loading: () => (
@@ -25,20 +27,56 @@ export default function DashboardMain({
   showData: boolean;
   setDataUploaded: (val: boolean) => void;
 }) {
-  const { analysisData, loading } = useAnalysis();
+  const {
+    analysisData,
+    setAnalysisData,
+    loading,
+    activeSessionId,
+    setActiveSessionId,
+    resetAnalysis,
+  } = useAnalysis();
 
-  // BEFORE UPLOAD
+  /** Auto-load previously open session (when user refreshes page) */
+  useEffect(() => {
+    if (!showData) return;
+    if (!analysisData) return;
+
+    const saved = localStorage.getItem("currentSessionId");
+    if (saved && saved !== activeSessionId) loadSession(saved);
+  }, []);
+
+  /** Load session and update UI */
+  const loadSession = async (sessionId: string) => {
+    try {
+      const res = await axiosInstance.get(`/session/${sessionId}`);
+      const session = res.data;
+
+      setAnalysisData({
+        data: {
+          charts: session.charts || [],
+          metrics: session.metrics || {},
+          summary: session.data_id?.summary || [],
+        },
+      });
+
+      setActiveSessionId(sessionId);
+      setDataUploaded(true);
+    } catch (err) {
+      console.error("Failed to load session:", err);
+    }
+  };
+
+  /** BEFORE UPLOAD — No session, no data */
   if (!showData || !analysisData) {
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
-
         {loading && <FullLoader />}
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-lg"  
+          className="max-w-lg"
         >
           <h1 className="text-3xl font-bold primary mb-3">
             Start Visualizing Smarter
@@ -48,32 +86,53 @@ export default function DashboardMain({
             powered by intelligent AI for instant insights.
           </p>
 
+          {/* Upload CSV */}
           <UploadButton onUploadSuccess={() => setDataUploaded(true)} />
         </motion.div>
       </main>
     );
   }
 
-  // AFTER UPLOAD
+  /** AFTER UPLOAD — Dashboard displaying session data */
   const metrics = analysisData.data.metrics;
-
   const charts = analysisData.data.charts;
-
   const summary = analysisData.data.summary;
 
   return (
-    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8 top-2">
-
+    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8 top-12">
       {loading && <FullLoader />}
 
       {/* Header */}
-      <div className="mb-4">
-        <h1 className="text-[1.6rem] md:text-[1.9rem] font-semibold text-gray-800 leading-tight">
-          Welcome back, <span className="primary">Analyst</span>
-        </h1>
-        <p className="text-gray-500 text-[13px]">
-          Live snapshot powered by InstaviZ Intelligence Engine.
-        </p>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-[1.6rem] md:text-[1.9rem] font-semibold text-gray-800 leading-tight">
+            Welcome back, <span className="primary">Analyst</span>
+          </h1>
+          <p className="text-gray-500 text-[13px]">
+            Live snapshot powered by InstaviZ Intelligence Engine.
+          </p>
+        </div>
+
+        {/* RIGHT SIDE → Session dropdown + new file */}
+        <div className="flex items-center gap-3 ">
+          <SessionSelector
+            onSessionChange={(id) => loadSession(id)}
+            onNewFile={() => {
+              resetAnalysis();
+              setDataUploaded(false);
+            }}
+          />
+
+          <button
+            onClick={() => {
+              resetAnalysis();
+              setDataUploaded(false);
+            }}
+            className="px-3 py-2 primarybg text-white rounded-lg text-sm hover:brightness-105"
+          >
+            Upload New File
+          </button>
+        </div>
       </div>
 
       {/* Metrics */}
@@ -84,7 +143,7 @@ export default function DashboardMain({
         <MetricCard title="Charts Generated" value={charts.length} description="Visuals auto-created" />
       </div>
 
-      {/* All charts (upload + chat-created) */}
+      {/* Charts */}
       <Charts charts={charts} />
 
       {/* Summary */}

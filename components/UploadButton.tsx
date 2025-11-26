@@ -4,10 +4,11 @@ import React, { useRef, ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAnalysis } from "@/context/AnalysisContext";
+import { createSession } from "@/lib/sessionApi";
 
 interface UploadButtonProps {
     onFileSelected?: (file: File, responseOrError?: any) => void;
-    onUploadSuccess?: () => void;
+    onUploadSuccess?: (sessionId: string) => void;
     accept?: string;
     uploadUrl?: string;
 }
@@ -20,58 +21,83 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { setAnalysisData, setLoading } = useAnalysis(); // GLOBAL LOADING
+    const { setAnalysisData, setLoading, setActiveSessionId } = useAnalysis();
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
     };
 
-    const isCsvFile = (file: File) => {
-        const name = file.name.toLowerCase();
-        return name.endsWith(".csv");
-    };
+    const isCsvFile = (file: File) => file.name.toLowerCase().endsWith(".csv");
 
-    const uploadSingleFile = async (file: File) => {
+    /** MAIN UPLOAD LOGIC */
+    const uploadFileAndCreateSession = async (file: File) => {
         const formData = new FormData();
         formData.append("file", file);
 
         try {
-            setLoading(true); // ⬅ SHOW FULL-SCREEN LOADER
+            setLoading(true);
 
-            const response = await axiosInstance.post(uploadUrl, formData, {
+            /** STEP 1 → UPLOAD FILE */
+            const uploadRes = await axiosInstance.post(uploadUrl, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            // Save the full API+AI response globally
-            setAnalysisData(response.data);
+            const uploaded = uploadRes.data;
 
-            onFileSelected?.(file, response);
-            onUploadSuccess?.();
+            const dataId = uploaded.datasetId;
+            const metrics = uploaded.data.metrics;
+            const charts = uploaded.data.charts;
+            const summary = uploaded.data.summary;
+
+
+            /** STEP 2 → CREATE SESSION */
+            const sessionRes = await createSession({
+                title: file.name.replace(".csv", ""),
+                data_id: dataId,
+                charts,
+                messages: [],
+                metrics,
+            });
+
+            const { session, session_token } = sessionRes;
+
+            /** STEP 3 → SAVE SESSION IDs/TOKENS */
+            localStorage.setItem("currentSessionId", session._id);
+            localStorage.setItem("sessionId", session._id);
+            setActiveSessionId(session._id);
+
+            if (session_token) {
+                localStorage.setItem("session_token", session_token);
+            }
+
+            /** STEP 4 → UPDATE UI / GLOBAL STATE */
+            setAnalysisData({
+                data: { charts, metrics, summary },
+            });
+
+            onFileSelected?.(file, uploaded);
+            onUploadSuccess?.(session._id);
         } catch (err) {
-            console.error("Upload failed", err);
+            console.error("UPLOAD FAILED:", err);
             onFileSelected?.(file, err);
         } finally {
-            setLoading(false); // ⬅ HIDE LOADER
+            setLoading(false);
         }
     };
 
+    /** When a file is chosen */
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (!files?.length) return;
-
-        const file = files[0];
+        const file = e.target.files?.[0];
+        if (!file) return;
 
         if (!isCsvFile(file)) {
             alert("Only CSV files allowed");
-            e.target.value = "";
             return;
         }
 
-        try {
-            await uploadSingleFile(file);
-        } finally {
-            e.target.value = ""; // reset input
-        }
+        await uploadFileAndCreateSession(file);
+
+        e.target.value = "";
     };
 
     return (
@@ -83,7 +109,6 @@ const UploadButton: React.FC<UploadButtonProps> = ({
                 Upload File
             </motion.button>
 
-            {/* Hidden Input */}
             <input
                 type="file"
                 ref={fileInputRef}
