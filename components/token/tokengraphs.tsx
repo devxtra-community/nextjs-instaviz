@@ -49,20 +49,16 @@ export default function TokenAccessDashboard() {
   const [alltokenCount, setAllTokenCount] = useState<number>(0);
   const [alltokenusage, setAlltokenusage] = useState<any[]>([]);
 
-  useEffect(() => {
-    document.getElementById("mobile-page-title")!.textContent =
-      "Token Access Overview";
-  }, []);
-
   const fetchAlltokens = async () => {
     try {
-      const res = await axiosAdmin.get("/admin/token/alltokens");
+      const res = await axiosAdmin.get("/admin/alltokens");
 
       const total =
         res.data?.alltokencount?.[0]?.totalTokens !== undefined
           ? res.data.alltokencount[0].totalTokens
           : 0;
 
+      console.log("Fetched total tokens:", total);
       setAllTokenCount(total);
     } catch (err) {
       console.log("Failed to fetch token count:", err);
@@ -71,23 +67,14 @@ export default function TokenAccessDashboard() {
 
   const fetchMontlytokenusage = async () => {
     try {
-      const res = await axiosAdmin.get("/admin/token/alltokenusage");
+      const res = await axiosAdmin.get("/admin/alltokenusage");
+      console.log("token usage fetched successfully", res.data);
 
       const totalTokenusage = res.data.totaltokeusagepermonth || [];
 
       const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
       ];
 
       const formattedMonths = months.map((monthName, index) => {
@@ -119,25 +106,10 @@ export default function TokenAccessDashboard() {
           Token Access Overview
         </h1>
       </div>
-    <div className="bg-[#F9FAFB] min-h-screen p-6 md:p-8 space-y-8">
-
-      {/* DESKTOP TITLE */}
-      <h1 className="hidden md:block text-3xl font-semibold text-gray-800 tracking-tight">
-        Token Access Overview
-      </h1>
-
-      {/* MOBILE TITLE */}
-      <h1 id="mobile-page-title" className="md:hidden text-xl font-bold mb-4"></h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
           <CardContent className="p-6 flex justify-between items-center">
-      {/* DASHBOARD STYLE CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
-        
-        {/* Total Tokens */}
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-5 flex justify-between items-center">
             <div>
               <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Total Tokens Issued
@@ -145,66 +117,48 @@ export default function TokenAccessDashboard() {
               <h2 className="text-2xl font-bold text-gray-900">
                 {alltokenCount}
               </h2>
+              <p className="text-xs font-semibold mt-1 text-green-500">
+                +12.3%
+              </p>
             </div>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg shadow-inner bg-gradient-to-r from-[#8B5CF6] to-[#AD49E1]">
               <Coins />
-
-            {/* ICON (Dashboard Style) */}
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <Coins size={26} className="text-white" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
           <CardContent className="p-6 flex justify-between items-center">
-        {/* Free Tokens Used */}
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-5 flex justify-between items-center">
             <div>
               <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Free Tokens Used
               </p>
               <h2 className="text-2xl font-bold text-gray-900">9.8K</h2>
               <p className="text-xs font-semibold mt-1 text-green-500">+5.6%</p>
-              <h2 className="text-2xl font-bold text-gray-900 mt-1">9.8K</h2>
             </div>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r from-[#8B5CF6] to-[#AD49E1] text-white">
               <DollarSign />
-
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <DollarSign size={26} className="text-white" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
           <CardContent className="p-6 flex justify-between items-center">
-        {/* Paid Tokens Used */}
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-5 flex justify-between items-center">
             <div>
               <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Paid Tokens Used
               </p>
               <h2 className="text-2xl font-bold text-gray-900">6.4K</h2>
               <p className="text-xs font-semibold mt-1 text-green-500">+8.1%</p>
-              <h2 className="text-2xl font-bold text-gray-900 mt-1">6.4K</h2>
             </div>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white">
               <DollarSign />
-
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <DollarSign size={26} className="text-white" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
           <CardContent className="p-6 flex justify-between items-center">
-        {/* Premium Users */}
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-5 flex justify-between items-center">
             <div>
               <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Premium Users
@@ -213,23 +167,15 @@ export default function TokenAccessDashboard() {
               <p className="text-xs font-semibold mt-1 text-green-500">
                 +11.4%
               </p>
-              <h2 className="text-2xl font-bold text-gray-900 mt-1">2.3K</h2>
             </div>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r from-[#AD49E1] to-[#9333EA] text-white">
               <Star />
-
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <Star size={26} className="text-white" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      {/* CHARTS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Free Token Usage */}
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
@@ -241,6 +187,9 @@ export default function TokenAccessDashboard() {
                   Overview of free token usage growth
                 </p>
               </div>
+              <span className="text-green-500 text-sm font-semibold">
+                +5.6% this month
+              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
@@ -249,19 +198,26 @@ export default function TokenAccessDashboard() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#A855F7" strokeWidth={3} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#8B5CF6"
+                  strokeWidth={3}
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Paid Token Usage */}
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 Paid Token Usage
               </h3>
+              <span className="text-green-500 text-sm font-semibold">
+                +8.1% this month
+              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
@@ -270,7 +226,12 @@ export default function TokenAccessDashboard() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#A855F7" strokeWidth={3} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#6366F1"
+                  strokeWidth={3}
+                />
               </LineChart>
             </ResponsiveContainer>
 
@@ -283,14 +244,15 @@ export default function TokenAccessDashboard() {
       </div>
 
       <div className="grid grid-cols-1">
-      {/* Premium Users Growth */}
-      <div className="grid grid-cols-1 mt-6">
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 Premium Users Growth
               </h3>
+              <span className="text-green-500 text-sm font-semibold">
+                +11.4% increase
+              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
@@ -299,7 +261,12 @@ export default function TokenAccessDashboard() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#A855F7" strokeWidth={3} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#AD49E1"
+                  strokeWidth={3}
+                />
               </LineChart>
             </ResponsiveContainer>
 
