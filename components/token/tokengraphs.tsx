@@ -113,6 +113,12 @@ export default function TokenAccessDashboard() {
   }, []);
 
   return (
+    <div className="bg-[#F9FAFB] min-h-screen">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-800 tracking-tight">
+          Token Access Overview
+        </h1>
+      </div>
     <div className="bg-[#F9FAFB] min-h-screen p-6 md:p-8 space-y-8">
 
       {/* DESKTOP TITLE */}
@@ -123,6 +129,9 @@ export default function TokenAccessDashboard() {
       {/* MOBILE TITLE */}
       <h1 id="mobile-page-title" className="md:hidden text-xl font-bold mb-4"></h1>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
+          <CardContent className="p-6 flex justify-between items-center">
       {/* DASHBOARD STYLE CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
         
@@ -130,13 +139,15 @@ export default function TokenAccessDashboard() {
         <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
           <CardContent className="p-5 flex justify-between items-center">
             <div>
-              <p className="text-xs text-gray-500 font-medium uppercase">
+              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Total Tokens Issued
               </p>
-              <h2 className="text-2xl font-bold text-gray-900 mt-1">
+              <h2 className="text-2xl font-bold text-gray-900">
                 {alltokenCount}
               </h2>
             </div>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg shadow-inner bg-gradient-to-r from-[#8B5CF6] to-[#AD49E1]">
+              <Coins />
 
             {/* ICON (Dashboard Style) */}
             <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
@@ -145,15 +156,21 @@ export default function TokenAccessDashboard() {
           </CardContent>
         </Card>
 
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
+          <CardContent className="p-6 flex justify-between items-center">
         {/* Free Tokens Used */}
         <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
           <CardContent className="p-5 flex justify-between items-center">
             <div>
-              <p className="text-xs text-gray-500 font-medium uppercase">
+              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Free Tokens Used
               </p>
+              <h2 className="text-2xl font-bold text-gray-900">9.8K</h2>
+              <p className="text-xs font-semibold mt-1 text-green-500">+5.6%</p>
               <h2 className="text-2xl font-bold text-gray-900 mt-1">9.8K</h2>
             </div>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r from-[#8B5CF6] to-[#AD49E1] text-white">
+              <DollarSign />
 
             <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
               <DollarSign size={26} className="text-white" />
@@ -161,15 +178,21 @@ export default function TokenAccessDashboard() {
           </CardContent>
         </Card>
 
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
+          <CardContent className="p-6 flex justify-between items-center">
         {/* Paid Tokens Used */}
         <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
           <CardContent className="p-5 flex justify-between items-center">
             <div>
-              <p className="text-xs text-gray-500 font-medium uppercase">
+              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Paid Tokens Used
               </p>
+              <h2 className="text-2xl font-bold text-gray-900">6.4K</h2>
+              <p className="text-xs font-semibold mt-1 text-green-500">+8.1%</p>
               <h2 className="text-2xl font-bold text-gray-900 mt-1">6.4K</h2>
             </div>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white">
+              <DollarSign />
 
             <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
               <DollarSign size={26} className="text-white" />
@@ -177,15 +200,23 @@ export default function TokenAccessDashboard() {
           </CardContent>
         </Card>
 
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
+          <CardContent className="p-6 flex justify-between items-center">
         {/* Premium Users */}
         <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
           <CardContent className="p-5 flex justify-between items-center">
             <div>
-              <p className="text-xs text-gray-500 font-medium uppercase">
+              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
                 Premium Users
+              </p>
+              <h2 className="text-2xl font-bold text-gray-900">2.3K</h2>
+              <p className="text-xs font-semibold mt-1 text-green-500">
+                +11.4%
               </p>
               <h2 className="text-2xl font-bold text-gray-900 mt-1">2.3K</h2>
             </div>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-r from-[#AD49E1] to-[#9333EA] text-white">
+              <Star />
 
             <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
               <Star size={26} className="text-white" />
@@ -194,6 +225,7 @@ export default function TokenAccessDashboard() {
         </Card>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
@@ -250,6 +282,7 @@ export default function TokenAccessDashboard() {
         </Card>
       </div>
 
+      <div className="grid grid-cols-1">
       {/* Premium Users Growth */}
       <div className="grid grid-cols-1 mt-6">
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
@@ -279,7 +312,6 @@ export default function TokenAccessDashboard() {
           </CardContent>
         </Card>
       </div>
-
     </div>
   );
 }

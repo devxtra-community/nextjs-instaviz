@@ -187,13 +187,15 @@ export function Navbar() {
                   }}
                   className="flex items-center gap-4 bg-gray-100 py-3 px-2 rounded-2xl text-left"
                 >
-                  <Image
-                    src={profilePic}
-                    width={50}
-                    height={50}
-                    alt="Profile"
-                    className="rounded-full"
-                  />
+                  <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
+                    <Image
+                      src={profilePic}
+                      alt="Profile"
+                      width={50}
+                      height={50}
+                      className="rounded-full border"
+                    />
+                  </div>
                   <span className="text-lg font-medium">
                     {email.length > 10 ? email.substring(0, 13) + "..." : email}
                   </span>

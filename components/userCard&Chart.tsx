@@ -115,7 +115,7 @@ export default function UserManagementDashboard() {
   const getActivetimedetails = async () => {
     try {
       const today = new Date().toISOString().slice(0, 10);
-      const res = await axiosAdmin.get(`/admin/user/activetime?day=${today}`);
+      const res = await axiosAdmin.get(`/admin/activetime?day=${today}`);
 
       const apiData = res.data?.hourlyActive || [];
 
@@ -148,19 +148,19 @@ export default function UserManagementDashboard() {
   }, []);
 
   return (
-    <div className="bg-[#f8f9fc] min-h-screen p-6 space-y-8">
-
+    <div className="bg-[#f8f9fc] min-h-screen">
+      
       {/* DASHBOARD CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {cards.map((card, index) => {
           const CardWrapper = (
             <Card
               key={index}
               className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100"
             >
-              <CardContent className="p-5 flex justify-between items-center">
+              <CardContent className="p-6 flex justify-between items-center">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">
+                  <p className="text-xs text-gray-500 font-medium mb-2">
                     {card.title}
                   </p>
                   <h2 className="text-2xl font-bold text-gray-900">
@@ -168,7 +168,7 @@ export default function UserManagementDashboard() {
                   </h2>
                 </div>
 
-                {/* Purple Icon Box — EXACT DASHBOARD STYLE */}
+                {/* Purple Icon Box */}
                 <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
                   {card.icon}
                 </div>
@@ -187,7 +187,7 @@ export default function UserManagementDashboard() {
       </div>
 
       {/* CHARTS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* New Users Per Month */}
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
