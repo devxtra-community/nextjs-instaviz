@@ -17,29 +17,58 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   async function handleLogin() {
-    try {
+    // Validation
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
 
-      const res = await axiosInstance.post("/auth/login", { email, password });
+    try {
+      setIsLoading(true);
+      
       const loginData = {
         email,
         password,
       };
+      
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
-      localStorage.setItem("sessionId", LoginResponse.data.sessionId);
       
-
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
+        localStorage.setItem("sessionId", LoginResponse.data.sessionId);
+        
+        toast.success("Login successful!");
         router.push("/home");
       }
     } catch (err: any) {
       console.error("login failed:", err);
-      toast.error(err?.response?.data?.message || "Login failed");
+      
+      const errorMessage = err?.response?.data?.message || "Login failed";
+      
+      // If account is suspended (403 status)
+      if (err?.response?.status === 403) {
+        toast.error(errorMessage, {
+          duration: 6000,
+          description: "Your account is suspended. Please contact support if you believe this is an error."
+        });
+      } else {
+        toast.error(errorMessage);
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
+
+  // Handle Enter key press
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !isLoading) {
+      handleLogin();
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -61,8 +90,10 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyPress={handleKeyPress}
                 placeholder="Enter your email"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-purple-400"
+                disabled={isLoading}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-purple-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -74,17 +105,21 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
                 placeholder="••••••••"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-purple-400"
+                disabled={isLoading}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#AD49E1] focus:ring-1 focus:ring-purple-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute bottom-2 right-2 primary cursor-pointer"
+                className="absolute bottom-2 right-2 primary cursor-pointer disabled:opacity-50"
+                disabled={isLoading}
               >
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
+            
             <p className="text-right text-sm mt-1">
               <Link href="/forgot-password" className="primary hover:underline">
                 Forgot Password?
@@ -94,15 +129,16 @@ export default function LoginPage() {
             <button
               onClick={handleLogin}
               type="button"
-              className="w-full rounded-md primarybg py-2.5 text-white font-medium cursor-pointer transition"
+              disabled={isLoading}
+              className="w-full rounded-md primarybg py-2.5 text-white font-medium cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
             >
-              Sign in
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
 
             <GoogleButton />
 
             <p className="text-center text-sm text-gray-600">
-              Don’t have an account?{" "}
+              Don't have an account?{" "}
               <Link href="/signup" className="primary hover:underline">
                 Sign up
               </Link>
