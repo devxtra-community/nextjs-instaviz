@@ -30,7 +30,7 @@ export default function UserManagementDashboard() {
   useEffect(() => {
     async function fetchCounts() {
       try {
-        const res = await axiosAdmin.get("/admin/getallusers");
+        const res = await axiosAdmin.get("/admin/user/stats");
         setCounts({
           totalCount: res.data.totalCount || 0,
           guestCount: res.data.guestCount || 0,
@@ -47,7 +47,7 @@ export default function UserManagementDashboard() {
   useEffect(() => {
     async function fetchMonthlyNewUsers() {
       try {
-        const res = await axiosAdmin.get("/admin/newuserpermonth");
+        const res = await axiosAdmin.get("/admin/user/newusers");
 
         const usersPerMonth = res.data.usersPerMonth || [];
 
@@ -115,7 +115,7 @@ export default function UserManagementDashboard() {
   const getActivetimedetails = async () => {
     try {
       const today = new Date().toISOString().slice(0, 10);
-      const res = await axiosAdmin.get(`/admin/activetime?day=${today}`);
+      const res = await axiosAdmin.get(`/admin/user/activetime?day=${today}`);
 
       const apiData = res.data?.hourlyActive || [];
 

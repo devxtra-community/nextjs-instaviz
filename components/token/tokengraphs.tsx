@@ -56,7 +56,7 @@ export default function TokenAccessDashboard() {
 
   const fetchAlltokens = async () => {
     try {
-      const res = await axiosAdmin.get("/admin/alltokens");
+      const res = await axiosAdmin.get("/admin/token/alltokens");
 
       const total =
         res.data?.alltokencount?.[0]?.totalTokens !== undefined
@@ -71,7 +71,7 @@ export default function TokenAccessDashboard() {
 
   const fetchMontlytokenusage = async () => {
     try {
-      const res = await axiosAdmin.get("/admin/alltokenusage");
+      const res = await axiosAdmin.get("/admin/token/alltokenusage");
 
       const totalTokenusage = res.data.totaltokeusagepermonth || [];
 

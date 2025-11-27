@@ -17,7 +17,7 @@ export default function UserHeatScoreCard() {
   useEffect(() => {
     async function fetchScore() {
       try {
-        const res = await axiosAdmin.get("/admin/userheatscore");
+        const res = await axiosAdmin.get("/admin/insights/userheatscore");
         setData(res.data);
       } catch (err) {
         console.log("Heat score error:", err);

@@ -16,7 +16,7 @@ export default function UploadFrequencyCard() {
   useEffect(() => {
     async function fetchFrequency() {
       try {
-        const res = await axiosAdmin.get("/admin/uploadfrequency");
+        const res = await axiosAdmin.get("/admin/insights/uploadfrequency");
         setData(res.data);
       } catch (err) {
         console.log("Upload frequency error:", err);

@@ -13,7 +13,7 @@ export default function DeviceUsageCard() {
   useEffect(() => {
     async function fetchDeviceStats() {
       try {
-        const res = await axiosAdmin.get("/admin/device");
+        const res = await axiosAdmin.get("/admin/insights/device");
 
         setMobilePercent(res.data.mobilePercentage);
         setDesktopPercent(res.data.desktopPercentage);

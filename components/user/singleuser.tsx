@@ -81,7 +81,7 @@ export default function UserProfilePage() {
   // Fetch single user
   const fetchUserSinglePage = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/singleuser/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singleuser/${id}`);
       const userData = res.data.singleuser;
       setUser(userData);
       setStatus(userData?.status || "active");
@@ -94,7 +94,7 @@ export default function UserProfilePage() {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      await axiosAdmin.put(`/admin/status/${id}`, {
+      await axiosAdmin.put(`/admin/user/status/${id}`, {
         status: newStatus,
       });
       setStatus(newStatus as "active" | "disabled");
@@ -108,7 +108,7 @@ export default function UserProfilePage() {
   // Fetch token
   const fetchSingleUserToken = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/singltoken/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singletoken/${id}`);
       setSingleToken(res.data.singletoken);
     } catch (err) {
       console.log(err);
@@ -119,7 +119,7 @@ export default function UserProfilePage() {
   const fetchUserActivity = async () => {
     try {
       setLoadingActivity(true);
-      const res = await axiosAdmin.get(`/admin/user-daily-active/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/user-daily-active/${id}`);
 
       if (res.data.success && res.data.dailyActiveTime) {
         const last7Days = res.data.dailyActiveTime.slice(-7);
@@ -137,7 +137,7 @@ export default function UserProfilePage() {
   const fetchAverageTime = async () => {
     try {
       setLoadingAverage(true);
-      const res = await axiosAdmin.get(`/admin/singleUsertime/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singleUsertime/${id}`);
 
       if (res.data.success && res.data.dailyActiveTime) {
         const daily = res.data.dailyActiveTime.map((d: any) => {
@@ -184,7 +184,7 @@ export default function UserProfilePage() {
       setSuspending(true);
       console.log(`Suspending user for ${suspendDays} days...`);
       
-      const res = await axiosAdmin.put(`/admin/suspend/${id}?days=${suspendDays}`);
+      const res = await axiosAdmin.put(`/admin/user/suspend/${id}?days=${suspendDays}`);
       
       console.log("Suspend response:", res.data);
       alert(`User suspended successfully for ${suspendDays} days`);
@@ -212,7 +212,7 @@ export default function UserProfilePage() {
       setUnsuspending(true);
       console.log("Unsuspending user...");
       
-      const res = await axiosAdmin.put(`/admin/unsuspend/${id}`);
+      const res = await axiosAdmin.put(`/admin/user/unsuspend/${id}`);
       
       console.log("Unsuspend response:", res.data);
       alert("User unsuspended successfully!");

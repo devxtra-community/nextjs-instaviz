@@ -12,7 +12,7 @@ export default function UploadSuccessRate() {
   useEffect(() => {
     const fetchSuccessRate = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/uploadsuccess");  
+        const res = await axiosAdmin.get("/admin/activities/uploadsuccess");  
         setSuccessRate(res.data.successRate);
       } catch (err) {
         console.log("Error fetching rate:", err);

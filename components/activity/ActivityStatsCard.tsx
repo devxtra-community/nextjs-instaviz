@@ -19,7 +19,7 @@ export default function ActivityStatsCards() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/uploadstats");
+        const res = await axiosAdmin.get("/admin/activities/uploadstats");
         const data = res.data;
 
         const formattedStats = [
