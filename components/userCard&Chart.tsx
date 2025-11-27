@@ -28,7 +28,6 @@ export default function UserManagementDashboard() {
     { name: string; users: number }[]
   >([]);
 
-
   useEffect(() => {
     async function fetchCounts() {
       try {
@@ -46,7 +45,6 @@ export default function UserManagementDashboard() {
     fetchCounts();
   }, []);
 
-
   useEffect(() => {
     async function fetchMonthlyNewUsers() {
       try {
@@ -54,7 +52,6 @@ export default function UserManagementDashboard() {
 
         const usersPerMonth = res.data.usersPerMonth || [];
 
-      
         const months = [
           "Jan",
           "Feb",
@@ -70,7 +67,6 @@ export default function UserManagementDashboard() {
           "Dec",
         ];
 
-        
         const formatted = months.map((monthName, index) => {
           const found = usersPerMonth.find(
             (item: any) => item._id?.month === index + 1
@@ -89,7 +85,6 @@ export default function UserManagementDashboard() {
 
     fetchMonthlyNewUsers();
   }, []);
-
 
   const cards = [
     {
@@ -119,64 +114,59 @@ export default function UserManagementDashboard() {
     },
   ];
 
-const [activeHours, setActiveHours] = useState<any[]>([]);
-const [averageActive, setAverageActive] = useState("0h 0m");
+  const [activeHours, setActiveHours] = useState<any[]>([]);
+  const [averageActive, setAverageActive] = useState("0h 0m");
 
-const getActivetimedetails = async () => {
-  try {
-    const today = new Date().toISOString().slice(0, 10);
-    const res = await axiosAdmin.get(`/admin/activetime?day=${today}`);
+  const getActivetimedetails = async () => {
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const res = await axiosAdmin.get(`/admin/activetime?day=${today}`);
 
-    const apiData = res.data?.hourlyActive || [];
+      const apiData = res.data?.hourlyActive || [];
 
-    const formatted = apiData.map((item: any) => {
-      const hour = item.hour;
-      const label =
-        hour === 0
-          ? "12 AM"
-          : hour < 12
-          ? `${hour} AM`
-          : hour === 12
-          ? "12 PM"
-          : `${hour - 12} PM`;
+      const formatted = apiData.map((item: any) => {
+        const hour = item.hour;
+        const label =
+          hour === 0
+            ? "12 AM"
+            : hour < 12
+            ? `${hour} AM`
+            : hour === 12
+            ? "12 PM"
+            : `${hour - 12} PM`;
 
-      return {
-        name: label,
-        value: item.active || 0,
-      };
-    });
+        return {
+          name: label,
+          value: item.active || 0,
+        };
+      });
 
-    setActiveHours(formatted);
-    setAverageActive(res.data?.averageFormatted || "0h 0m");
-  } catch (err) {
-    console.log("Average active time not fetched", err);
-  }
-};
+      setActiveHours(formatted);
+      setAverageActive(res.data?.averageFormatted || "0h 0m");
+    } catch (err) {
+      console.log("Average active time not fetched", err);
+    }
+  };
 
-
-
-useEffect(() => {
-  getActivetimedetails();
-}, []);
-
-
-
+  useEffect(() => {
+    getActivetimedetails();
+  }, []);
 
   return (
-    <div className="bg-[#f8f9fc] min-h-screen p-6 space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
+    <div className="bg-[#f8f9fc] min-h-screen p-8">
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">
         User Management Dashboard
       </h1>
 
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* User Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {cards.map((card, index) => {
           const CardContentWrapper = (
             <Card
               key={index}
               className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100"
             >
-              <CardContent className="p-4 flex justify-between items-center">
+              <CardContent className="p-6 flex justify-between items-center">
                 <div>
                   <p className="text-xs text-gray-500 font-medium">
                     {card.title}
@@ -211,9 +201,9 @@ useEffect(() => {
         })}
       </div>
 
-    
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-  
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* New Users per Month */}
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
@@ -282,67 +272,65 @@ useEffect(() => {
         </Card>
 
         {/* Average Active Time */}
-<Card className="rounded-2xl shadow-md bg-white border border-gray-100">
-  <CardContent className="p-6">
-    <div className="flex justify-between items-center mb-4">
-      <h3 className="text-lg font-semibold text-gray-900">
-        Average Active Time
-      </h3>
-      <span className="text-green-500 text-sm font-semibold">
-        +6.4% from last week
-      </span>
-    </div>
+        <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Average Active Time
+              </h3>
+              <span className="text-green-500 text-sm font-semibold">
+                +6.4% from last week
+              </span>
+            </div>
 
-    <ResponsiveContainer width="100%" height={250}>
-      <LineChart data={activeHours}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-        <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6b7280" }} />
-        <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} />
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={activeHours}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6b7280" }} />
+                <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} />
 
-        <Tooltip
-          content={({ active, payload, label }) => {
-            if (active && payload && payload.length > 0) {
-              const timeValue = payload?.[0]?.value ?? 0;
-              return (
-                <div
-                  style={{
-                    backgroundColor: "#AD49E1",
-                    borderRadius: "10px",
-                    padding: "8px 12px",
-                    color: "#fff",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length > 0) {
+                      const timeValue = payload?.[0]?.value ?? 0;
+                      return (
+                        <div
+                          style={{
+                            backgroundColor: "#AD49E1",
+                            borderRadius: "10px",
+                            padding: "8px 12px",
+                            color: "#fff",
+                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                          }}
+                        >
+                          <p style={{ margin: 0, fontWeight: "600" }}>{label}</p>
+                          <p style={{ margin: 0, fontSize: "12px" }}>
+                            {timeValue.toLocaleString()} active
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
                   }}
-                >
-                  <p style={{ margin: 0, fontWeight: "600" }}>{label}</p>
-                  <p style={{ margin: 0, fontSize: "12px" }}>
-                    {timeValue.toLocaleString()} active
-                  </p>
-                </div>
-              );
-            }
-            return null;
-          }}
-        />
+                />
 
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke="#AD49E1"
-          strokeWidth={3}
-          dot={{ r: 4, fill: "#AD49E1" }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#AD49E1"
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: "#AD49E1" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
 
-    <div className="text-center mt-4">
-      <h2 className="text-3xl font-bold text-gray-900">{averageActive}</h2>
-      <p className="text-sm text-gray-500">Avg. user active time per day</p>
-    </div>
-  </CardContent>
-</Card>
-
+            <div className="text-center mt-4">
+              <h2 className="text-3xl font-bold text-gray-900">{averageActive}</h2>
+              <p className="text-sm text-gray-500">Avg. user active time per day</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
-
