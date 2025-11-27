@@ -56,6 +56,7 @@ export default function DashboardMain({
           charts: session.charts || [],
           metrics: session.metrics || {},
           summary: session.data_id?.summary || [],
+          messages: session.messages || [],
         },
       });
 
@@ -113,7 +114,6 @@ export default function DashboardMain({
           </p>
         </div>
 
-        {/* RIGHT SIDE → Session dropdown + new file */}
         <div className="flex items-center gap-3 ">
           <SessionSelector
             onSessionChange={(id) => loadSession(id)}

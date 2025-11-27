@@ -13,7 +13,7 @@ export interface SessionFull {
   title: string;
   user_id?: string | null;
   session_token?: string | null;
-  messages: { fromAi?: string | null; fromUser?: string | null; createdAt?: string }[];
+  messages: { user?: string; ai?: string;  createdAt?: string }[];
   charts: any[];
   metrics: any;
   data_id?: any;
@@ -45,8 +45,8 @@ export async function getSession(id: string) {
   return res.data;
 }
 
-export async function appendMessage(sessionId: string, fromUser?: string, fromAi?: string) {
-  const res = await axiosInstance.post(`/session/${sessionId}/message`, { fromUser, fromAi });
+export async function appendMessage(sessionId: string, user?: string, ai?: string) {
+  const res = await axiosInstance.post(`/session/${sessionId}/message`, { user, ai });
   return res.data;
 }
 

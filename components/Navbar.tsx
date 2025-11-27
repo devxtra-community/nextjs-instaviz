@@ -54,6 +54,12 @@ export function Navbar() {
   useEffect(() => {
     if (!userId) return;
 
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.log("Token missing → skip user fetch");
+      return;
+    }
+
     (async () => {
       try {
         const res = await axiosInstance.get(`/user/${userId}`);
@@ -65,6 +71,7 @@ export function Navbar() {
       }
     })();
   }, [userId]);
+
 
   const handleLogout = async () => {
     try {

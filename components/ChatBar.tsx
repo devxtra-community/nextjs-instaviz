@@ -11,9 +11,8 @@ type ChatBarProps = {
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
   messages: { role: "user" | "ai"; text: string }[];
-  setMessages: React.Dispatch<
-    React.SetStateAction<{ role: "user" | "ai"; text: string }[]>
-  >;
+  setMessages: React.Dispatch<React.SetStateAction<{ role: "user" | "ai"; text: string }[]>>;
+
   mobile?: boolean;
   onClose?: () => void;
 };
@@ -46,12 +45,23 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       try {
         const session = await getSession(sessionId);
 
-        const restored = session.messages.map((m) => ({
-          role: m.fromUser ? "user" : "ai",
-          text: m.fromUser ?? m.fromAi ?? "",
-        })) as { role: "user" | "ai"; text: string }[];
+        const restored = session.messages.flatMap((m) => {
+          const arr: { role: "user" | "ai"; text: string }[] = [];
+
+          if (m.user && m.user.trim() !== "") {
+            arr.push({ role: "user", text: m.user });
+          }
+
+          if (m.ai && m.ai.trim() !== "") {
+            arr.push({ role: "ai", text: m.ai });
+          }
+
+          return arr;
+        });
+
 
         setMessages(restored);
+
       } catch (err) {
         console.log("Failed to load past messages:", err);
       }
@@ -100,9 +110,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   const scrollToBottom = () =>
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  // -----------------------------
-  // ✨ SEND MESSAGE FUNCTION
-  // -----------------------------
   const sendMessage = async () => {
     if (!input.trim() || aiTyping) return;
     if (!sessionId) return alert("No active session found!");
@@ -113,10 +120,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     // Update UI immediately
     setMessages((prev) => [...prev, { role: "user", text }]);
     setAiTyping(true);
-
-    // Save User Message → Backend
-    await appendMessage(sessionId, text, undefined);
-
     try {
       setLoading(true);
 
@@ -131,8 +134,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       // Show AI message
       setMessages((prev) => [...prev, { role: "ai", text: reply }]);
 
-      // Save AI → Backend
-      await appendMessage(sessionId, undefined, reply);
+      await appendMessage(sessionId, text, reply);
 
       // If chart created
       if (chart) {
@@ -150,9 +152,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     }
   };
 
-  // ---------------------------------------------------
-  // BEFORE FILE UPLOAD → Show prompt to upload first
-  // ---------------------------------------------------
   if (!dataUploaded) {
     return (
       <aside
@@ -172,9 +171,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     );
   }
 
-  // -------------------------
-  // AFTER UPLOAD → CHAT UI
-  // -------------------------
   return (
     <aside
       className={`
@@ -195,6 +191,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         ref={messagesRef}
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto space-y-3 pr-1"
+        style={{ scrollbarWidth: "none" }}
       >
         {messages.map((msg, i) => (
           <div

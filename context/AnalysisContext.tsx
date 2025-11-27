@@ -2,12 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { appendChart, getSession } from "@/lib/sessionApi";
+import { log } from "console";
 
 type AnalysisDataType = {
   data: {
     charts: any[];
     metrics: any;
     summary: string[];
+    messages:any[];
   };
 };
 
@@ -69,9 +71,18 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
 
   useEffect(() => {
     const init = async () => {
-      if (!activeSessionId) return;
+      if (
+        !activeSessionId ||
+        activeSessionId === "null" ||
+        activeSessionId === "undefined" ||
+        activeSessionId.length < 10 
+      ) {
+        console.log("No valid session found, skipping getSession()");
+        return;
+      }
 
       try {
+        console.log(activeSessionId);
         const session = await getSession(activeSessionId);
 
         setAnalysisData({
@@ -79,15 +90,17 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
             charts: session.charts || [],
             metrics: session.metrics || {},
             summary: session.data_id?.summary || [],
+            messages: session.messages || [],
           },
         });
       } catch (err) {
-        console.error("Failed to load session:", err);
+        console.error("Failed to load session → OK if first time visit", err);
       }
     };
 
     init();
   }, [activeSessionId]);
+
 
   return (
     <AnalysisContext.Provider

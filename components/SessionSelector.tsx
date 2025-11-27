@@ -51,16 +51,22 @@ export default function SessionSelector({ onSessionChange, onNewFile }: Props) {
     setDropdownOpen(false);
     onSessionChange(id);
   };
+  const formatTitle = (title: string) => {
+    if (!title) return "";
+    const cleaned = title.replace(/^\d+_/, "");
+    return cleaned.length > 25 ? cleaned.substring(0, 25) + "..." : cleaned;
+  };
+
 
   return (
     <div className="relative w-full max-w-xs">
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:border-teal-500 transition"
+        className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:border-[#ad49e1] transition"
       >
         <span className="text-gray-700 font-medium">
-          {sessions.find((s) => s._id === currentSession)?.title ||
-            "Select Session"}
+          {formatTitle(sessions.find((s) => s._id === currentSession)?.title || "Select Session")
+}
         </span>
 
         <ChevronDown
@@ -81,31 +87,18 @@ export default function SessionSelector({ onSessionChange, onNewFile }: Props) {
             <button
               key={session._id}
               onClick={() => handleSelect(session._id)}
-              className={`w-full text-left px-4 py-2 hover:bg-gray-100 text-sm ${currentSession === session._id
-                  ? "bg-gray-100 font-semibold"
-                  : ""
+              className={`w-full text-left px-4 py-2 hover:bg-purple-50 text-sm ${currentSession === session._id
+                ? "bg-purple-100 font-semibold"
+                : ""
                 }`}
             >
-              {session.title}
+              {formatTitle(session.title)}
               <span className="block text-[11px] text-gray-400">
                 updated {new Date(session.updatedAt).toLocaleDateString()}
               </span>
             </button>
           ))}
-
-          <div className="border-t border-gray-200 my-1" />
-
-          <button
-            onClick={() => {
-              setDropdownOpen(false);
-              localStorage.removeItem("currentSessionId");
-              localStorage.removeItem("sessionId");
-              onNewFile();
-            }}
-            className="flex items-center justify-center gap-2 w-full py-2 text-teal-700 font-medium hover:bg-teal-50 text-sm"
-          >
-            <PlusCircle className="w-4 h-4" /> Start New File
-          </button>
+          
         </div>
       ) : null}
     </div>
