@@ -14,7 +14,6 @@ import {
 import { Users, UserCheck, UserCog, Star } from "lucide-react";
 import { useState, useEffect } from "react";
 import axiosAdmin from "@/lib/axiosAdmin";
-import axiosInstance from "@/lib/axiosInstance";
 
 export default function UserManagementDashboard() {
   const [counts, setCounts] = useState({
@@ -88,29 +87,25 @@ export default function UserManagementDashboard() {
 
   const cards = [
     {
-      title: "All Users",
+      title: "ALL USERS",
       value: counts.totalCount,
-      percentage: "+8.2%",
-      icon: <Users />,
+      icon: <Users size={26} className="text-white" />,
       href: "/admin/user/allusers",
     },
     {
-      title: "Guest Users",
+      title: "GUEST USERS",
       value: counts.guestCount,
-      percentage: "-2.1%",
-      icon: <UserCog />,
+      icon: <UserCog size={26} className="text-white" />,
     },
     {
-      title: "Logged Users",
+      title: "LOGGED USERS",
       value: counts.loggedCount,
-      percentage: "+5.5%",
-      icon: <UserCheck />,
+      icon: <UserCheck size={26} className="text-white" />,
     },
     {
-      title: "Premium Users",
+      title: "PREMIUM USERS",
       value: counts.premiumCount,
-      percentage: "+12.8%",
-      icon: <Star />,
+      icon: <Star size={26} className="text-white" />,
     },
   ];
 
@@ -153,38 +148,28 @@ export default function UserManagementDashboard() {
   }, []);
 
   return (
-    <div className="bg-[#f8f9fc] min-h-screen p-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">
-        User Management Dashboard
-      </h1>
-
-      {/* User Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="bg-[#f8f9fc] min-h-screen">
+      
+      {/* DASHBOARD CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {cards.map((card, index) => {
-          const CardContentWrapper = (
+          const CardWrapper = (
             <Card
               key={index}
               className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100"
             >
               <CardContent className="p-6 flex justify-between items-center">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">
+                  <p className="text-xs text-gray-500 font-medium mb-2">
                     {card.title}
                   </p>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-gray-900">
                     {card.value.toLocaleString()}
                   </h2>
-                  <p
-                    className={`text-xs font-semibold ${
-                      card.percentage.includes("+")
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {card.percentage}
-                  </p>
                 </div>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg shadow-inner bg-[#AD49E1]">
+
+                {/* Purple Icon Box */}
+                <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
                   {card.icon}
                 </div>
               </CardContent>
@@ -193,17 +178,18 @@ export default function UserManagementDashboard() {
 
           return card.href ? (
             <Link key={index} href={card.href}>
-              {CardContentWrapper}
+              {CardWrapper}
             </Link>
           ) : (
-            CardContentWrapper
+            CardWrapper
           );
         })}
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* New Users per Month */}
+      {/* CHARTS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* New Users Per Month */}
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
@@ -219,19 +205,9 @@ export default function UserManagementDashboard() {
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={monthlyUsers}>
-                <defs>
-                  <linearGradient id="usersGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#AD49E1" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#AD49E1" stopOpacity={0.05} />
-                  </linearGradient>
-                </defs>
-
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6b7280" }} />
-                <YAxis
-                  tickFormatter={(value) => value.toLocaleString()}
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
-                />
+                <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} />
 
                 <Tooltip
                   content={({ active, payload, label }) => {
@@ -240,7 +216,7 @@ export default function UserManagementDashboard() {
                       return (
                         <div
                           style={{
-                            backgroundColor: "#AD49E1",
+                            backgroundColor: "#A855F7",
                             borderRadius: "10px",
                             padding: "8px 12px",
                             color: "#fff",
@@ -261,10 +237,9 @@ export default function UserManagementDashboard() {
                 <Line
                   type="monotone"
                   dataKey="users"
-                  stroke="#AD49E1"
+                  stroke="#A855F7"
                   strokeWidth={3}
-                  fill="url(#usersGradient)"
-                  dot={{ r: 4, fill: "#AD49E1" }}
+                  dot={{ r: 4, fill: "#A855F7" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -278,9 +253,6 @@ export default function UserManagementDashboard() {
               <h3 className="text-lg font-semibold text-gray-900">
                 Average Active Time
               </h3>
-              <span className="text-green-500 text-sm font-semibold">
-                +6.4% from last week
-              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
@@ -296,14 +268,16 @@ export default function UserManagementDashboard() {
                       return (
                         <div
                           style={{
-                            backgroundColor: "#AD49E1",
+                            backgroundColor: "#A855F7",
                             borderRadius: "10px",
                             padding: "8px 12px",
                             color: "#fff",
                             boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
                           }}
                         >
-                          <p style={{ margin: 0, fontWeight: "600" }}>{label}</p>
+                          <p style={{ margin: 0, fontWeight: "600" }}>
+                            {label}
+                          </p>
                           <p style={{ margin: 0, fontSize: "12px" }}>
                             {timeValue.toLocaleString()} active
                           </p>
@@ -317,16 +291,20 @@ export default function UserManagementDashboard() {
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke="#AD49E1"
+                  stroke="#A855F7"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "#AD49E1" }}
+                  dot={{ r: 4, fill: "#A855F7" }}
                 />
               </LineChart>
             </ResponsiveContainer>
 
             <div className="text-center mt-4">
-              <h2 className="text-3xl font-bold text-gray-900">{averageActive}</h2>
-              <p className="text-sm text-gray-500">Avg. user active time per day</p>
+              <h2 className="text-3xl font-bold text-gray-900">
+                {averageActive}
+              </h2>
+              <p className="text-sm text-gray-500">
+                Avg. user active time per day
+              </p>
             </div>
           </CardContent>
         </Card>
