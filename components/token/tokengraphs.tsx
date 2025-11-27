@@ -83,7 +83,7 @@ export default function TokenAccessDashboard() {
   }, []);
 
   return (
-    <div className="bg-[#F9FAFB] min-h-screen p-6 md:p-8">
+    <div className="bg-[#F9FAFB] min-h-screen">
 
       {/* DESKTOP TITLE */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
@@ -95,7 +95,7 @@ export default function TokenAccessDashboard() {
       {/* MOBILE TITLE */}
       <h1 id="mobile-page-title" className="md:hidden text-xl font-bold mb-4"></h1>
 
-      {/* STATS CARDS — EXACT SAME SPACING */}
+      {/* STATS CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
         <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
@@ -161,7 +161,7 @@ export default function TokenAccessDashboard() {
         </Card>
       </div>
 
-      {/* CHARTS — MATCHED SPACING */}
+      {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
@@ -218,18 +218,15 @@ export default function TokenAccessDashboard() {
             </ResponsiveContainer>
 
             <div className="text-center mt-5">
-              <h2 className="text-3xl font-bold text-gray-900">
-                {/* Example value */}
-                6.4K
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-900">6.4K</h2>
               <p className="text-sm text-gray-500">Total paid tokens used</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* PREMIUM USERS — MATCHED SPACING */}
-      <div className="grid grid-cols-1 mb-6">
+      {/* PREMIUM USERS */}
+      <div className="grid grid-cols-1">
         <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
