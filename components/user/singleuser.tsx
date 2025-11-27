@@ -13,6 +13,8 @@ import {
   RefreshCcw,
   Send,
   Clock,
+  UserX,
+  UserCheck,
 } from "lucide-react";
 import {
   LineChart,
@@ -33,7 +35,7 @@ interface UserType {
   location?: string;
   status?: "active" | "disabled";
   isSuspended?: boolean;
-  suspensionEnd?: string | null;
+  suspensionEnd?: string | null; 
 }
 
 interface DailyActiveTime {
@@ -64,8 +66,9 @@ export default function UserProfilePage() {
   const [averageTimeData, setAverageTimeData] = useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingAverage, setLoadingAverage] = useState(true);
-  const [suspend, setSuspend] = useState("");
+  const [suspendDays, setSuspendDays] = useState("");
   const [suspending, setSuspending] = useState(false);
+  const [unsuspending, setUnsuspending] = useState(false);
 
   // Helpers
   const secondsToHms = (seconds: number) => {
@@ -169,28 +172,28 @@ export default function UserProfilePage() {
     }
   };
 
-  // FIXED: Suspend user handler - only called when button is clicked
+  // Suspend user handler
   const handleUserSuspend = async () => {
     // Validation
-    if (!suspend || isNaN(Number(suspend)) || Number(suspend) <= 0) {
+    if (!suspendDays || isNaN(Number(suspendDays)) || Number(suspendDays) <= 0) {
       alert("Please enter a valid number of days (greater than 0)");
       return;
     }
 
     try {
       setSuspending(true);
-      console.log(`Suspending user for ${suspend} days...`);
+      console.log(`Suspending user for ${suspendDays} days...`);
       
-      const res = await axiosAdmin.put(`/admin/suspend/${id}?days=${suspend}`);
+      const res = await axiosAdmin.put(`/admin/suspend/${id}?days=${suspendDays}`);
       
       console.log("Suspend response:", res.data);
-      alert(`User suspended successfully for ${suspend} days`);
+      alert(`User suspended successfully for ${suspendDays} days`);
       
       // Refresh user data to show updated suspension status
       await fetchUserSinglePage();
       
       // Clear the input
-      setSuspend("");
+      setSuspendDays("");
     } catch (err: any) {
       console.error("Error suspending user:", err);
       alert(err.response?.data?.message || "Failed to suspend user. Please try again.");
@@ -199,7 +202,32 @@ export default function UserProfilePage() {
     }
   };
 
-  // FIXED: Remove handleUserSuspend from useEffect
+  // Unsuspend user handler
+  const handleUserUnsuspend = async () => {
+    if (!confirm("Are you sure you want to unsuspend this user?")) {
+      return;
+    }
+
+    try {
+      setUnsuspending(true);
+      console.log("Unsuspending user...");
+      
+      const res = await axiosAdmin.put(`/admin/unsuspend/${id}`);
+      
+      console.log("Unsuspend response:", res.data);
+      alert("User unsuspended successfully!");
+      
+      // Refresh user data to show updated suspension status
+      await fetchUserSinglePage();
+      
+    } catch (err: any) {
+      console.error("Error unsuspending user:", err);
+      alert(err.response?.data?.message || "Failed to unsuspend user. Please try again.");
+    } finally {
+      setUnsuspending(false);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchUserSinglePage();
@@ -416,30 +444,51 @@ export default function UserProfilePage() {
 
       {/* ACTION CONTROLS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-        {/* SUSPEND CARD - FIXED */}
+        {/* SUSPEND/UNSUSPEND CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">Suspend User</h3>
-          <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="Days"
-              value={suspend}
-              onChange={(e) => setSuspend(e.target.value)}
-              className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-32 text-sm"
-              min="1"
-            />
-            <button
-              className="flex-1 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-              onClick={handleUserSuspend}
-              disabled={suspending || !suspend}
-            >
-              {suspending ? "Suspending..." : "Suspend"}
-            </button>
-          </div>
-          {user.isSuspended && user.suspensionEnd && (
-            <p className="text-xs text-red-600 mt-2">
-              Currently suspended until {new Date(user.suspensionEnd).toLocaleDateString()}
-            </p>
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
+            {user.isSuspended ? "Unsuspend User" : "Suspend User"}
+          </h3>
+          
+          {user.isSuspended ? (
+            // UNSUSPEND UI
+            <div className="space-y-3">
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-sm">
+                <p className="text-red-800 font-medium mb-1">⚠️ User is currently suspended</p>
+                <p className="text-red-600 text-xs">
+                  Suspension ends: {user.suspensionEnd ? new Date(user.suspensionEnd).toLocaleString() : "Unknown"}
+                </p>
+              </div>
+              
+              <button
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                onClick={handleUserUnsuspend}
+                disabled={unsuspending}
+              >
+                <UserCheck size={16} />
+                {unsuspending ? "Unsuspending..." : "Unsuspend User"}
+              </button>
+            </div>
+          ) : (
+            // SUSPEND UI
+            <div className="flex gap-2">
+              <input
+                type="number"
+                placeholder="Days"
+                value={suspendDays}
+                onChange={(e) => setSuspendDays(e.target.value)}
+                className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-32 text-sm"
+                min="1"
+              />
+              <button
+                className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                onClick={handleUserSuspend}
+                disabled={suspending || !suspendDays}
+              >
+                <UserX size={16} />
+                {suspending ? "Suspending..." : "Suspend"}
+              </button>
+            </div>
           )}
         </div>
 
