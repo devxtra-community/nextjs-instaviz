@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { appendChart, getSession } from "@/lib/sessionApi";
+import { getSession } from "@/lib/sessionApi";
 import { log } from "console";
 
 type AnalysisDataType = {
@@ -54,7 +54,6 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
     // persist chart to backend session
     try {
       if (!activeSessionId) return;
-      await appendChart(activeSessionId, chart);
     } catch (err) {
       console.error("Failed to persist chart:", err);
     }

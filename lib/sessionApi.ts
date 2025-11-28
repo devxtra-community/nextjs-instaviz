@@ -51,18 +51,6 @@ export async function appendMessage(sessionId: string, user?: string, ai?: strin
   return res.data;
 }
 
-export async function appendChart(sessionId: string, chart: any) {
-  const res = await axiosInstance.post(`/session/${sessionId}/chart`, { chart });
-
-  if (!res.data) {
-    console.warn("Chart not saved: backend returned null");
-    return null;
-  }
-  
-  return res.data;
-}
-
-
 export async function updateSession(sessionId: string, update: Partial<any>) {
   const res = await axiosInstance.patch(`/session/${sessionId}`, update);
   return res.data;
