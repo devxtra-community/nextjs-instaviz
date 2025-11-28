@@ -10,7 +10,6 @@ import FullLoader from "@/components/FullLoader";
 import SessionSelector from "@/components/SessionSelector";
 import axiosInstance from "@/lib/axiosInstance";
 
-// Lazy load Chart component
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
   loading: () => (
@@ -36,12 +35,9 @@ export default function DashboardMain({
     resetAnalysis,
   } = useAnalysis();
 
-  // Remove buggy auto-load logic.
   const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-
-  /** Load a session */
   const loadSession = async (sessionId: string) => {
     try {
       const res = await axiosInstance.get(`/session/${sessionId}`);
@@ -64,7 +60,6 @@ export default function DashboardMain({
     }
   };
 
-  /** Auto-load only once */
   useEffect(() => {
     const saved = localStorage.getItem("currentSessionId");
     if (saved) {
@@ -72,17 +67,12 @@ export default function DashboardMain({
     }
   }, []);
 
-
-  /** BEFORE UPLOAD */
   if (!showData || !analysisData) {
     const isLogged =
-      typeof window !== "undefined" &&
-      !!localStorage.getItem("accessToken");
+      typeof window !== "undefined" && !!localStorage.getItem("accessToken");
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
-
-        {/* Show session selector ONLY when logged in */}
         {isLogged && (
           <div className="absolute top-20 right-6">
             <SessionSelector
@@ -116,21 +106,22 @@ export default function DashboardMain({
           <UploadButton
             onUploadSuccess={(newSessionId) => {
               localStorage.setItem("currentSessionId", newSessionId);
-              setRefreshSessions(prev => prev + 1);
+              setRefreshSessions((prev) => prev + 1);
               loadSession(newSessionId);
               setDataUploaded(true);
             }}
           />
-
         </motion.div>
       </main>
     );
   }
 
-  /** AFTER UPLOAD — Dashboard View */
   const metrics = analysisData.data.metrics;
   const charts = analysisData.data.charts;
   const summary = analysisData.data.summary;
+
+  const totalValues =
+    (metrics?.total_rows || 0) * (metrics?.total_columns || 0);
 
   return (
     <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-16 px-5 md:px-8 top-8">
@@ -161,21 +152,41 @@ export default function DashboardMain({
           <UploadButton
             onUploadSuccess={(newSessionId) => {
               localStorage.setItem("currentSessionId", newSessionId);
-              setRefreshSessions(prev => prev + 1);
+              setRefreshSessions((prev) => prev + 1);
               loadSession(newSessionId);
               setDataUploaded(true);
             }}
           />
-
         </div>
       </div>
 
       {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard title="Total Rows" value={metrics.total_rows} description="Records processed" />
-        <MetricCard title="Total Columns" value={metrics.total_columns} description="Attributes detected" />
-        <MetricCard title="Missing Values" value={metrics.missing_values} description="Incomplete entries" />
-        <MetricCard title="Charts Generated" value={charts.length} description="Visuals auto-created" />
+        <MetricCard
+          title="Total Rows"
+          value={metrics.total_rows}
+          description="Records processed"
+        />
+
+        <MetricCard
+          title="Total Columns"
+          value={metrics.total_columns}
+          description="Attributes detected"
+        />
+
+        <MetricCard
+          title="Missing Values"
+          value={metrics.missing_values}
+          total_rows={metrics.total_rows}
+          total_columns={metrics.total_columns}
+          description="Missing values / total cells"
+        />
+
+        <MetricCard
+          title="Charts Generated"
+          value={charts.length}
+          description="Visuals auto-created"
+        />
       </div>
 
       <Charts charts={charts} />
