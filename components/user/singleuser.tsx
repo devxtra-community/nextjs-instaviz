@@ -5,27 +5,8 @@ import { useParams } from "next/navigation";
 import axiosAdmin from "@/lib/axiosAdmin";
 import CustomSelect from "../CustomSelect";
 import Image from "next/image";
-import {
-  Mail,
-  MapPin,
-  Phone,
-  Bell,
-  PlusCircle,
-  RefreshCcw,
-  Send,
-  Clock,
-  UserX,
-  UserCheck,
-} from "lucide-react";
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import {Mail,MapPin,Phone,Bell,PlusCircle,RefreshCcw,Send,Clock,UserX,UserCheck,} from "lucide-react";
+import {LineChart,Line,BarChart,Bar,XAxis,Tooltip,ResponsiveContainer,} from "recharts";
 
 interface UserType {
   _id: string;
@@ -40,10 +21,8 @@ interface UserType {
 }
 
 interface DailyActiveTime {
-  date: string;
-  dayName: string;
-  totalSeconds: number;
-  formatted: string;
+  date: string;dayName: string;
+  totalSeconds: number;formatted: string;
 }
 
 interface AverageTimeData {
@@ -250,7 +229,7 @@ export default function UserProfilePage() {
     { name: "Apr", value: 24 },
     { name: "May", value: 27 },
   ];
-
+  
   const weeklyChartData =
     averageTimeData?.dailyActiveTime.map((item) => ({
       name: item.dayName.substring(0, 3),
@@ -262,7 +241,7 @@ export default function UserProfilePage() {
     if (active && payload && payload.length) {
       const p = payload[0].payload;
       return (
-        <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
+        <div className="rounded border border-gray-200 bg-white p-2 shadow-sm">
           <p className="text-sm font-medium text-gray-900">{p.name}</p>
           <p className="text-sm text-[#AD49E1]">{p.formatted}</p>
         </div>
@@ -273,14 +252,14 @@ export default function UserProfilePage() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
+      <div className="flex min-h-screen items-center justify-center px-4 text-gray-500">
         Loading user data...
       </div>
     );
 
   if (!user)
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
+      <div className="flex min-h-screen items-center justify-center px-4 text-red-500">
         User not found.
       </div>
     );
@@ -383,7 +362,7 @@ export default function UserProfilePage() {
             </button>
           </div>
 
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="mt-2 text-xs text-gray-500 md:mt-3">
             Current status:{" "}
             <span
               className={`font-semibold ${
@@ -507,7 +486,7 @@ export default function UserProfilePage() {
                 onClick={handleUserUnsuspend}
                 disabled={unsuspending}
               >
-                <UserCheck size={16} />
+                <UserCheck size={14} className="shrink-0 sm:h-4 sm:w-4" />
                 {unsuspending ? "Unsuspending..." : "Unsuspend User"}
               </button>
             </div>
@@ -526,7 +505,7 @@ export default function UserProfilePage() {
                 onClick={handleUserSuspend}
                 disabled={suspending || !suspendDays}
               >
-                <UserX size={16} />
+                <UserX size={14} className="shrink-0 sm:h-4 sm:w-4" />
                 {suspending ? "Suspending..." : "Suspend"}
               </button>
             </div>
