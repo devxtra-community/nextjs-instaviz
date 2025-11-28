@@ -7,29 +7,34 @@ const axiosInstance = axios.create({
 
 let isRefreshing = false;
 let waitingQueue: Array<(token: string | null) => void> = [];
-function addToQueue(cb: (token: string | null) => void) {
+
+// Queue helpers
+const addToQueue = (cb: (token: string | null) => void) => {
   waitingQueue.push(cb);
-}
-function runQueue(newToken: string | null) {
-  waitingQueue.forEach((ele) => ele(newToken));
+};
+
+const runQueue = (newToken: string | null) => {
+  waitingQueue.forEach((cb) => cb(newToken));
   waitingQueue = [];
-}
+};
 
 axiosInstance.interceptors.request.use((config) => {
-  console.log("insise axios req interceptor");
-
   const accessToken = localStorage.getItem("accessToken");
-  const sessionId = localStorage.getItem("sessionId")
+  const sessionId = localStorage.getItem("sessionId");
+  const sessionToken = localStorage.getItem("session_token");
 
   if (accessToken) {
-    console.log("user has token");
-
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
+
   if (sessionId) {
     config.headers["x-session-id"] = sessionId;
   }
-  
+
+  if (!accessToken && sessionToken) {
+    config.headers["x-session-token"] = sessionToken;
+  }
+
   return config;
 });
 
@@ -37,58 +42,68 @@ axiosInstance.interceptors.response.use(
   (response) => response,
 
   async (error) => {
-    console.log("inside axios ressponse");
+    const originalReq = error.config;
 
-    const ogRequest = error.config;
-    const accessToken = localStorage.getItem("accessToken");
+    if (!error.response) return Promise.reject(error);
 
-    if (error.response?.status === 401 && accessToken && !ogRequest.retry) {
-      console.log("inside requesting for new newaccesstoken");
-      console.log("detected 401");
+    const status = error.response.status;
+
+    if (status === 401) {
+      // Avoid infinite loop
+      if (originalReq._retry) {
+        return Promise.reject(error);
+      }
+      originalReq._retry = true;
+
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (!accessToken) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
-        console.log("one req is already refreshing");
         return new Promise((resolve, reject) => {
           addToQueue((newToken) => {
             if (!newToken) {
-              resolve(Promise.reject(error));
+              reject(error);
               return;
             }
-            ogRequest.headers.Authorization = `Bearer ${newToken}`;
-            resolve(axiosInstance(ogRequest));
+
+            originalReq.headers.Authorization = `Bearer ${newToken}`;
+            resolve(axiosInstance(originalReq));
           });
         });
       }
-
-      ogRequest.retry = true;
       isRefreshing = true;
 
       try {
-        const refreshResp = await axios.post(
+        const refreshRes = await axios.post(
           `${process.env.NEXT_PUBLIC_API}/auth/newRefreshToken`,
           {},
           { withCredentials: true }
         );
 
-        const newAccessToken = refreshResp.data.newAccessToken;
+        const newToken = refreshRes.data.newAccessToken;
 
-        localStorage.setItem("accessToken", newAccessToken);
-        runQueue(newAccessToken);
+        localStorage.setItem("accessToken", newToken);
+
+        runQueue(newToken);
         isRefreshing = false;
-        ogRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-        return axiosInstance(ogRequest);
-      } catch (err) {
-        console.log("inside axios error");
+        // Retry failed request
+        originalReq.headers.Authorization = `Bearer ${newToken}`;
+        return axiosInstance(originalReq);
+      } catch (refreshError) {
+        console.error("REFRESH FAILED:", refreshError);
+
         runQueue(null);
         isRefreshing = false;
-        const error = err as AxiosError;
-        const status = error?.response?.status;
-        if (status == 401) {
-          localStorage.clear();
-          window.location.href = "/login";
-        } else {
-          alert("Something went wrong. Please try again.");
-        }
+
+        // Refresh token expired → logout user
+        localStorage.clear();
+        window.location.href = "/login";
+
+        return Promise.reject(refreshError);
       }
     }
 

@@ -218,3 +218,36 @@ html {
   --dotted-bg: radial-gradient(#d3d3d3 1px, transparent 1px) 0 0 / 18px 18px
     #ffffff;
 }
+
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #9b59ff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink 1.4s infinite both;
+}
+
+.dot.delay-150 {
+  animation-delay: 0.2s;
+}
+
+.dot.delay-300 {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% {
+    opacity: .2;
+    transform: translateY(0px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: .2;
+    transform: translateY(0px);
+  }
+}

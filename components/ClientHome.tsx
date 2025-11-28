@@ -9,7 +9,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProfileCard from "@/components/SkeletonModel";
 
 const ClientHome: React.FC = () => {
-  const [dataUploaded, setDataUploaded] = useState<boolean>(false);
+  const saved =
+    typeof window !== "undefined"
+      ? localStorage.getItem("currentSessionId")
+      : null;
+
+  const [dataUploaded, setDataUploaded] = useState<boolean>(!!saved);
+
   const [chatOpen, setChatOpen] = useState<boolean>(false);
 
   // Shared Chat State
@@ -18,6 +24,7 @@ const ClientHome: React.FC = () => {
   >([]);
 
   const [initialLoad, setInitialLoad] = useState(true);
+
   useEffect(() => {
     const timer = setTimeout(() => setInitialLoad(false), 800);
     return () => clearTimeout(timer);
@@ -36,14 +43,12 @@ const ClientHome: React.FC = () => {
       <Navbar />
 
       <div className="flex flex-row md:pr-96">
-
-        {/* Dashboard */}
         <DashboardMain
           showData={dataUploaded}
           setDataUploaded={setDataUploaded}
         />
 
-        {/* Desktop ChatBar (ALWAYS mounted) */}
+        {/* Desktop ChatBar */}
         <div className="hidden md:block">
           <ChatBar
             dataUploaded={dataUploaded}
@@ -52,7 +57,6 @@ const ClientHome: React.FC = () => {
             setMessages={setMessages}
             mobile={false}
           />
-
         </div>
       </div>
 
@@ -75,7 +79,9 @@ const ClientHome: React.FC = () => {
             className="fixed bottom-0 left-0 right-0 bg-white z-50 rounded-t-2xl p-3 md:hidden h-[55vh] shadow-lg"
           >
             <div className="flex justify-between items-center pb-2 border-b">
-              <h2 className="text-violet-700 font-semibold">InstaviZ AI Chat</h2>
+              <h2 className="text-violet-700 font-semibold">
+                InstaviZ AI Chat
+              </h2>
               <button
                 onClick={() => setChatOpen(false)}
                 className="text-gray-500 text-sm"
@@ -84,7 +90,6 @@ const ClientHome: React.FC = () => {
               </button>
             </div>
 
-            {/* Mobile uses same ChatBar component */}
             <ChatBar
               dataUploaded={dataUploaded}
               setDataUploaded={setDataUploaded}
@@ -96,8 +101,6 @@ const ClientHome: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-
     </div>
   );
 };
