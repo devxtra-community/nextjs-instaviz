@@ -130,12 +130,11 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       console.log(res.data.chart.chart);
 
       const reply = res.data.reply || "";
-      const chart = res.data.chart.chart; 
+      const chart = res.data.chart.chart;
 
       setMessages(prev => [...prev, { role: "ai", text: reply }]);
 
-      if(chart)
-      {
+      if (chart) {
         addNewChart(chart);
       }
 
@@ -249,12 +248,16 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         </button>
       )}
 
-      {/* INPUT BOX */}
-      <div className="relative mt-2 flex">
+      <div className="relative mt-2 flex items-end gap-2">
         <textarea
           disabled={aiTyping}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            const el = e.target;
+            el.style.height = "34px"; // reset to initial height
+            el.style.height = Math.min(el.scrollHeight, 110) + "px"; // expand naturally
+          }}
           onKeyDown={(e) => {
             if (!aiTyping && e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -262,19 +265,35 @@ export const ChatBar: React.FC<ChatBarProps> = ({
             }
           }}
           placeholder="Ask anything about your data…"
-          className="w-full px-3 py-2 border rounded-lg text-xs shadow resize-none max-h-[120px]"
-          rows={1}
+          className="
+    w-full px-3 py-2
+    border rounded-xl text-sm
+    shadow-sm leading-5
+    resize-none overflow-hidden
+    transition-colors duration-150
+    focus:border-[#AD49E1]
+    outline-none
+    placeholder-gray-400
+  "
+          style={{
+            height: "34px",
+            maxHeight: "110px",
+          }}
         />
+
 
         <button
           disabled={aiTyping}
           onClick={sendMessage}
-          className={`ml-2 p-2 rounded-full ${aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
-            }`}
+          className={`p-3 rounded-full shrink-0 ${aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
+            } transition`}
         >
-          <FiSend size={14} />
+          <FiSend size={16} />
         </button>
       </div>
+
+
+
     </aside>
   );
 };

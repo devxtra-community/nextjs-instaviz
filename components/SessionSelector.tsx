@@ -129,7 +129,7 @@ export default function SessionSelector({ onSessionChange, onNewFile, refreshTri
     return cleaned.length > 25 ? cleaned.substring(0, 25) + "..." : cleaned;
   };
   return (
-  <div className="relative w-[260px]">
+  <div className="relative w-[260px] ">
 
     {/* DROPDOWN BUTTON */}
     <button
@@ -138,7 +138,7 @@ export default function SessionSelector({ onSessionChange, onNewFile, refreshTri
         w-full flex items-center justify-between
         px-4 py-2 bg-white border border-gray-300 
         rounded-lg shadow-sm hover:border-[#ad49e1]
-        transition text-sm font-medium
+        transition text-sm font-medium hover:cursor-pointer
       "
     >
       {/* FIXED WIDTH TITLE BOX */}
