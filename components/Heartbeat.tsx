@@ -10,12 +10,12 @@ export default function Heartbeat() {
     const init = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.log("No access token  stop heartbeat.");
+        console.log("No access token, stopping heartbeat.");
         return;
       }
 
       try {
-        const res = await axiosInstance.post("/session/start", {
+        const res = await axiosInstance.post("/admin/start", {
           screenWidth: window.innerWidth,
           screenHeight: window.innerHeight,
         });
@@ -25,7 +25,7 @@ export default function Heartbeat() {
       }
 
       interval = setInterval(() => {
-        axiosInstance.post("/session/heartbeat").catch((err) => {
+        axiosInstance.post("/admin/heartbeat").catch((err) => {
           console.error("Heartbeat error:", err);
         });
       }, 15000);
@@ -34,12 +34,11 @@ export default function Heartbeat() {
     init();
 
     const endSession = () => {
-      axiosInstance.post("/session/end").catch(() => {});
+      axiosInstance.post("/admin/end").catch(() => {});
     };
 
     window.addEventListener("beforeunload", endSession);
 
-    
     return () => {
       if (interval) clearInterval(interval);
       endSession();
