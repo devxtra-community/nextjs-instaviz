@@ -18,10 +18,11 @@ export default function CheckoutButton({
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  
+
   const handleCheckout = async () => {
     const finalToken = localStorage.getItem("accessToken");
 
+    console.log(finalToken);
     if (!finalToken) {
       toast.error("Please login to continue");
       setTimeout(() => {
@@ -49,7 +50,28 @@ export default function CheckoutButton({
 
   return (
     <>
-      <Toaster richColors position="top-center" />
+      <Toaster
+        richColors
+        position="top-center"
+        style={{
+          marginTop: "60px",
+          fontSize: "14px",
+          zIndex: 9999,
+        }}
+        toastOptions={{
+          style: {
+            backgroundColor: "#ffecec",
+            color: "#b00020",
+            border: "1px solid #ff5c5c",
+            borderRadius: "10px",
+            padding: "10px 18px",
+            fontWeight: 500,
+            boxShadow: "0 4px 12px rgba(255, 0, 0, 0.15)",
+          },
+          className: "transition-all duration-300",
+        }}
+      />
+
       <button
         onClick={handleCheckout}
         disabled={loading}

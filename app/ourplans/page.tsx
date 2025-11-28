@@ -50,9 +50,11 @@ export default function PlansPage() {
                   flex flex-col items-center rounded-3xl card-custom-top-right p-6 sm:p-8 transition
                   w-full min-w-[85vw] sm:min-w-[20rem] sm:w-80
                   hover:shadow-md cursor-pointer
-                  ${plan.highlight || plan.offerlabel
-                    ? "bg-white border-2 border-[#AD49E1] relative"
-                    : "bg-white border border-[#e8d7fa]"}
+                  ${
+                    plan.highlight || plan.offerlabel
+                      ? "bg-white border-2 border-[#AD49E1] relative"
+                      : "bg-white border border-[#e8d7fa]"
+                  }
                   ${idx === 0 ? "opacity-95" : ""}
                   ${idx === 2 ? "border-2 border-[#9929D5] relative" : ""}
                 `}
@@ -61,11 +63,13 @@ export default function PlansPage() {
                 {(plan.label || plan.offerlabel) && (
                   <span
                     className={`absolute top-6 right-6 px-3 py-1 text-xs rounded-full font-semibold
-                    ${plan.highlight || plan.offerlabel
-                      ? "bg-[#f5e8ff] primary"
-                      : idx === 2
-                      ? "primarybg text-white"
-                      : "bg-[#f5e8ff] primary"}`}
+                    ${
+                      plan.highlight || plan.offerlabel
+                        ? "bg-[#f5e8ff] primary"
+                        : idx === 2
+                        ? "primarybg text-white"
+                        : "bg-[#f5e8ff] primary"
+                    }`}
                   >
                     {plan.label || plan.offerlabel}
                   </span>
@@ -94,12 +98,12 @@ export default function PlansPage() {
                 <ul className="text-gray-800 text-xs sm:text-sm space-y-2 mb-4 w-full">
                   {plan.features?.map((f: string) => (
                     <li key={f} className="flex items-center">
-                      <span className="mr-2 primary">✔</span>{" "}
-                      <span>{f}</span>
+                      <span className="mr-2 primary">✔</span> <span>{f}</span>
                     </li>
                   ))}
 
-                  {plan.unavailable && plan.unavailable.length > 0 &&
+                  {plan.unavailable &&
+                    plan.unavailable.length > 0 &&
                     plan.unavailable.map((f: string) => (
                       <li key={f} className="flex items-center opacity-60">
                         <span className="mr-2 text-gray-400">✘</span>{" "}
@@ -117,7 +121,9 @@ export default function PlansPage() {
             ))}
 
             {plans.length === 0 && (
-              <p className="text-center text-gray-500 w-full">No plans available.</p>
+              <p className="text-center text-gray-500 w-full">
+                No plans available.
+              </p>
             )}
           </div>
         </div>
