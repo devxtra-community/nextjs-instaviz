@@ -117,40 +117,41 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     const text = input.trim();
     setInput("");
 
-    // Update UI immediately
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    setMessages(prev => [...prev, { role: "user", text }]);
     setAiTyping(true);
+
     try {
       setLoading(true);
 
-      const res = await axiosInstance.post("/chat", {
-        message: text,
-        sessionId,
+      const res = await axiosInstance.post(`/session/${sessionId}/message`, {
+        user: text,
       });
 
-      const reply = res.data.reply;
-      const chart = res.data.chart;
+      console.log(res.data.chart.chart);
 
-      // Show AI message
-      setMessages((prev) => [...prev, { role: "ai", text: reply }]);
+      const reply = res.data.reply || "";
+      const chart = res.data.chart.chart; 
 
-      await appendMessage(sessionId, text, reply);
+      setMessages(prev => [...prev, { role: "ai", text: reply }]);
 
-      // If chart created
-      if (chart) {
-        await appendChart(sessionId, chart);
+      if(chart)
+      {
+        addNewChart(chart);
       }
+
     } catch (err) {
       console.log(err);
-      setMessages((prev) => [
+      setMessages(prev => [
         ...prev,
-        { role: "ai", text: "Error communicating with server." },
+        { role: "ai", text: "Error communicating with server." }
       ]);
     } finally {
       setAiTyping(false);
       setLoading(false);
     }
   };
+
+
 
   if (!dataUploaded) {
     return (
@@ -183,7 +184,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     >
       {/* HEADER */}
       <div className="flex justify-between items-center mb-2">
-        <h1 className="text-lg font-semibold primary">Ask InstaviZ AI</h1>
+        <h1 className="text-lg font-semibold primary mt-4">Ask InstaviZ AI</h1>
       </div>
 
       {/* CHAT MESSAGES */}

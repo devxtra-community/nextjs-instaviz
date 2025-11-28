@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import MetricCard from "@/components/metricCard";
 import dynamic from "next/dynamic";
@@ -36,16 +36,12 @@ export default function DashboardMain({
     resetAnalysis,
   } = useAnalysis();
 
-  /** Auto-load previously open session (when user refreshes page) */
-  useEffect(() => {
-    if (!showData) return;
-    if (!analysisData) return;
+  // Remove buggy auto-load logic.
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const [refreshSessions, setRefreshSessions] = useState(0);
 
-    const saved = localStorage.getItem("currentSessionId");
-    if (saved && saved !== activeSessionId) loadSession(saved);
-  }, []);
 
-  /** Load session and update UI */
+  /** Load a session */
   const loadSession = async (sessionId: string) => {
     try {
       const res = await axiosInstance.get(`/session/${sessionId}`);
@@ -62,15 +58,44 @@ export default function DashboardMain({
 
       setActiveSessionId(sessionId);
       setDataUploaded(true);
+      localStorage.setItem("currentSessionId", sessionId);
     } catch (err) {
       console.error("Failed to load session:", err);
     }
   };
 
-  /** BEFORE UPLOAD — No session, no data */
+  /** Auto-load only once */
+  useEffect(() => {
+    const saved = localStorage.getItem("currentSessionId");
+    if (saved) {
+      loadSession(saved);
+    }
+  }, []);
+
+
+  /** BEFORE UPLOAD */
   if (!showData || !analysisData) {
+    const isLogged =
+      typeof window !== "undefined" &&
+      !!localStorage.getItem("accessToken");
+
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+
+        {/* Show session selector ONLY when logged in */}
+        {isLogged && (
+          <div className="absolute top-20 right-6">
+            <SessionSelector
+              onSessionChange={(id) => loadSession(id)}
+              onNewFile={() => {
+                resetAnalysis();
+                localStorage.removeItem("currentSessionId");
+                setDataUploaded(false);
+              }}
+            />
+          </div>
+        )}
+
         {loading && <FullLoader />}
 
         <motion.div
@@ -82,25 +107,33 @@ export default function DashboardMain({
           <h1 className="text-3xl font-bold primary mb-3">
             Start Visualizing Smarter
           </h1>
+
           <p className="text-gray-500 leading-relaxed mb-6 text-[15px]">
             InstaviZ turns your spreadsheets into interactive dashboards —
             powered by intelligent AI for instant insights.
           </p>
 
-          {/* Upload CSV */}
-          <UploadButton onUploadSuccess={() => setDataUploaded(true)} />
+          <UploadButton
+            onUploadSuccess={(newSessionId) => {
+              localStorage.setItem("currentSessionId", newSessionId);
+              setRefreshSessions(prev => prev + 1);
+              loadSession(newSessionId);
+              setDataUploaded(true);
+            }}
+          />
+
         </motion.div>
       </main>
     );
   }
 
-  /** AFTER UPLOAD — Dashboard displaying session data */
+  /** AFTER UPLOAD — Dashboard View */
   const metrics = analysisData.data.metrics;
   const charts = analysisData.data.charts;
   const summary = analysisData.data.summary;
 
   return (
-    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-6 px-5 md:px-8 top-12">
+    <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-16 px-5 md:px-8 top-8">
       {loading && <FullLoader />}
 
       {/* Header */}
@@ -114,24 +147,26 @@ export default function DashboardMain({
           </p>
         </div>
 
-        <div className="flex items-center gap-3 ">
+        <div className="flex items-center gap-3">
           <SessionSelector
+            refreshTrigger={refreshSessions}
             onSessionChange={(id) => loadSession(id)}
             onNewFile={() => {
               resetAnalysis();
+              localStorage.removeItem("currentSessionId");
               setDataUploaded(false);
             }}
           />
 
-          <button
-            onClick={() => {
-              resetAnalysis();
-              setDataUploaded(false);
+          <UploadButton
+            onUploadSuccess={(newSessionId) => {
+              localStorage.setItem("currentSessionId", newSessionId);
+              setRefreshSessions(prev => prev + 1);
+              loadSession(newSessionId);
+              setDataUploaded(true);
             }}
-            className="px-3 py-2 primarybg text-white rounded-lg text-sm hover:brightness-105"
-          >
-            Upload New File
-          </button>
+          />
+
         </div>
       </div>
 
@@ -143,7 +178,6 @@ export default function DashboardMain({
         <MetricCard title="Charts Generated" value={charts.length} description="Visuals auto-created" />
       </div>
 
-      {/* Charts */}
       <Charts charts={charts} />
 
       {/* Summary */}
