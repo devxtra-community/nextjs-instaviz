@@ -92,8 +92,7 @@ export default function DashboardMain({
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
           {summary.map((point: string, i: number) => (
-            <li key={i}>• {point}</li>
-          ))}
+            <li key={i}>• {point}</li>))}
         </ul>
       </div>
     </main>
