@@ -126,11 +126,9 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       const res = await axiosInstance.post(`/session/${sessionId}/message`, {
         user: text,
       });
-
-      console.log(res.data.chart.chart);
-
+      
       const reply = res.data.reply || "";
-      const chart = res.data.chart.chart;
+      const chart = res.data.chart?.chart || null;
 
       setMessages(prev => [...prev, { role: "ai", text: reply }]);
 
