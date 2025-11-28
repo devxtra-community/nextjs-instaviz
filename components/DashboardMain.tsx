@@ -30,7 +30,7 @@ export default function DashboardMain({
   // BEFORE UPLOAD
   if (!showData || !analysisData) {
     return (
-      <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+      <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
 
         {loading && <FullLoader />}
 
@@ -88,7 +88,7 @@ export default function DashboardMain({
       <Charts charts={charts} />
 
       {/* Summary */}
-      <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
+      <div className="mt-6 bg-linear-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
           {summary.map((point: string, i: number) => (
