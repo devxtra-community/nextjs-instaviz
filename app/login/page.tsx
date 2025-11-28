@@ -7,15 +7,19 @@ import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import GoogleButton from "@/components/GoogleButton";
 import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 export default function LoginPage() {
   useRedirectIfLoggedIn();
-  const router = useRouter();
 
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
 
   async function handleLogin() {
     try {
@@ -29,7 +33,12 @@ export default function LoginPage() {
 
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
-        router.push("/home");
+
+        if (redirect) {
+          router.push(redirect);
+        } else {
+          router.push("/home");
+        }
       }
     } catch (err: any) {
       toast.error(`${err.response.data.message}`);

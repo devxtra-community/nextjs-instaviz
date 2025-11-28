@@ -22,11 +22,10 @@ export default function CheckoutButton({
   const handleCheckout = async () => {
     const finalToken = localStorage.getItem("accessToken");
 
-    console.log(finalToken);
     if (!finalToken) {
       toast.error("Please login to continue");
       setTimeout(() => {
-        router.push("/login");
+        router.push(`/login?redirect=/ourplans`);
       }, 1500);
       return;
     }
