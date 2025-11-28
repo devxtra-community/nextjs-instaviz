@@ -13,7 +13,7 @@ export default function DeviceUsageCard() {
   useEffect(() => {
     async function fetchDeviceStats() {
       try {
-        const res = await axiosAdmin.get("/admin/device");
+        const res = await axiosAdmin.get("/admin/insights/device");
 
         setMobilePercent(res.data.mobilePercentage);
         setDesktopPercent(res.data.desktopPercentage);
@@ -28,7 +28,7 @@ export default function DeviceUsageCard() {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardHeader>
-        <CardTitle>Users Device Split</CardTitle>
+        <CardTitle className="text-md font-semibold">Users Device Split</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">

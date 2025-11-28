@@ -25,7 +25,7 @@ export default function UploadTrendChart() {
   useEffect(() => {
     const fetchTrend = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/weeklyuploads")
+        const res = await axiosAdmin.get("/admin/activities/weeklyuploads")
         console.log("Fetched Trend:", res.data)
 
         const order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]

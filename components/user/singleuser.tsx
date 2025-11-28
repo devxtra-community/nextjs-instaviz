@@ -12,6 +12,9 @@ import {
   PlusCircle,
   RefreshCcw,
   Send,
+  Clock,
+  UserX,
+  UserCheck,
 } from "lucide-react";
 import {
   LineChart,
@@ -19,7 +22,6 @@ import {
   BarChart,
   Bar,
   XAxis,
-  YAxis,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -32,6 +34,8 @@ interface UserType {
   phone?: string;
   location?: string;
   status?: "active" | "disabled";
+  isSuspended?: boolean;
+  suspensionEnd?: string | null; 
 }
 
 interface DailyActiveTime {
@@ -41,6 +45,17 @@ interface DailyActiveTime {
   formatted: string;
 }
 
+interface AverageTimeData {
+  dailyActiveTime: DailyActiveTime[];
+  totalSeconds: number;
+  totalFormatted?: string;
+  averagePerDay: {
+    seconds: number;
+    formatted: string;
+  };
+  totalDaysTracked?: number;
+}
+
 export default function UserProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState<UserType | null>(null);
@@ -48,13 +63,26 @@ export default function UserProfilePage() {
   const [status, setStatus] = useState<"active" | "disabled">("active");
   const [singleToken, setSingleToken] = useState<number | null>(null);
   const [activityData, setActivityData] = useState<DailyActiveTime[]>([]);
+  const [averageTimeData, setAverageTimeData] = useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
+  const [loadingAverage, setLoadingAverage] = useState(true);
+  const [suspendDays, setSuspendDays] = useState("");
+  const [suspending, setSuspending] = useState(false);
+  const [unsuspending, setUnsuspending] = useState(false);
 
+  // Helpers
+  const secondsToHms = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return `${h}h ${m}m ${s}s`;
+  };
+
+  // Fetch single user
   const fetchUserSinglePage = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/singleuser/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singleuser/${id}`);
       const userData = res.data.singleuser;
-
       setUser(userData);
       setStatus(userData?.status || "active");
     } catch (err) {
@@ -66,32 +94,34 @@ export default function UserProfilePage() {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      await axiosAdmin.put(`/admin/status/${id}`, {
+      await axiosAdmin.put(`/admin/user/status/${id}`, {
         status: newStatus,
       });
       setStatus(newStatus as "active" | "disabled");
-      console.log("Status updated successfully:", newStatus);
+      alert("Status updated successfully!");
     } catch (err) {
       console.error("Error updating status:", err);
+      alert("Failed to update status. Please try again.");
     }
   };
 
+  // Fetch token
   const fetchSingleUserToken = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/singltoken/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singletoken/${id}`);
       setSingleToken(res.data.singletoken);
     } catch (err) {
       console.log(err);
     }
   };
 
+  // Fetch last 7 days activity
   const fetchUserActivity = async () => {
     try {
       setLoadingActivity(true);
-      const res = await axiosAdmin.get(`/admin/user-daily-active/${id}`);
-      
+      const res = await axiosAdmin.get(`/admin/user/user-daily-active/${id}`);
+
       if (res.data.success && res.data.dailyActiveTime) {
-        // Get last 7 days only for the chart
         const last7Days = res.data.dailyActiveTime.slice(-7);
         setActivityData(last7Days);
       }
@@ -103,13 +133,108 @@ export default function UserProfilePage() {
     }
   };
 
-  useEffect(() => {
-    fetchSingleUserToken();
-    fetchUserActivity();
-  }, [id]);
+  // Fetch weekly average
+  const fetchAverageTime = async () => {
+    try {
+      setLoadingAverage(true);
+      const res = await axiosAdmin.get(`/admin/user/singleUsertime/${id}`);
+
+      if (res.data.success && res.data.dailyActiveTime) {
+        const daily = res.data.dailyActiveTime.map((d: any) => {
+          const totalSeconds = typeof d.totalSeconds === "number" ? d.totalSeconds : Number(d.totalSeconds || 0);
+          return {
+            date: d.date || "",
+            dayName: d.dayName || "",
+            totalSeconds,
+            formatted: secondsToHms(totalSeconds),
+          } as DailyActiveTime;
+        });
+
+        const normalized: AverageTimeData = {
+          ...res.data,
+          dailyActiveTime: daily,
+          totalSeconds: typeof res.data.totalSeconds === "number" ? res.data.totalSeconds : Number(res.data.totalSeconds || 0),
+          averagePerDay: {
+            seconds: res.data.averagePerDay?.seconds || 0,
+            formatted: secondsToHms(res.data.averagePerDay?.seconds || 0),
+          },
+        };
+
+        setAverageTimeData(normalized);
+      } else {
+        setAverageTimeData(null);
+      }
+    } catch (err) {
+      console.error("Error fetching average time:", err);
+      setAverageTimeData(null);
+    } finally {
+      setLoadingAverage(false);
+    }
+  };
+
+  // Suspend user handler
+  const handleUserSuspend = async () => {
+    // Validation
+    if (!suspendDays || isNaN(Number(suspendDays)) || Number(suspendDays) <= 0) {
+      alert("Please enter a valid number of days (greater than 0)");
+      return;
+    }
+
+    try {
+      setSuspending(true);
+      console.log(`Suspending user for ${suspendDays} days...`);
+      
+      const res = await axiosAdmin.put(`/admin/user/suspend/${id}?days=${suspendDays}`);
+      
+      console.log("Suspend response:", res.data);
+      alert(`User suspended successfully for ${suspendDays} days`);
+      
+      // Refresh user data to show updated suspension status
+      await fetchUserSinglePage();
+      
+      // Clear the input
+      setSuspendDays("");
+    } catch (err: any) {
+      console.error("Error suspending user:", err);
+      alert(err.response?.data?.message || "Failed to suspend user. Please try again.");
+    } finally {
+      setSuspending(false);
+    }
+  };
+
+  // Unsuspend user handler
+  const handleUserUnsuspend = async () => {
+    if (!confirm("Are you sure you want to unsuspend this user?")) {
+      return;
+    }
+
+    try {
+      setUnsuspending(true);
+      console.log("Unsuspending user...");
+      
+      const res = await axiosAdmin.put(`/admin/user/unsuspend/${id}`);
+      
+      console.log("Unsuspend response:", res.data);
+      alert("User unsuspended successfully!");
+      
+      // Refresh user data to show updated suspension status
+      await fetchUserSinglePage();
+      
+    } catch (err: any) {
+      console.error("Error unsuspending user:", err);
+      alert(err.response?.data?.message || "Failed to unsuspend user. Please try again.");
+    } finally {
+      setUnsuspending(false);
+    }
+  };
 
   useEffect(() => {
-    if (id) fetchUserSinglePage();
+    if (id) {
+      fetchUserSinglePage();
+      fetchSingleUserToken();
+      fetchUserActivity();
+      fetchAverageTime();
+    }
   }, [id]);
 
   const tokenData = [
@@ -120,24 +245,20 @@ export default function UserProfilePage() {
     { name: "May", value: 27 },
   ];
 
-  // Convert seconds to hours for chart display
-  const chartData = activityData.map((item) => ({
-    name: item.dayName.substring(0, 3), // Mon, Tue, etc.
-    active: item.totalSeconds / 3600, // Convert to hours
-    formatted: item.formatted, // Keep formatted string for tooltip
-  }));
+  const weeklyChartData =
+    averageTimeData?.dailyActiveTime.map((item) => ({
+      name: item.dayName.substring(0, 3),
+      hours: +(item.totalSeconds / 3600).toFixed(2),
+      formatted: item.formatted,
+    })) || [];
 
-  // Custom tooltip for activity chart
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
+      const p = payload[0].payload;
       return (
         <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-          <p className="text-sm font-medium text-gray-900">
-            {payload[0].payload.name}
-          </p>
-          <p className="text-sm text-[#AD49E1]">
-            {payload[0].payload.formatted}
-          </p>
+          <p className="text-sm font-medium text-gray-900">{p.name}</p>
+          <p className="text-sm text-[#AD49E1]">{p.formatted}</p>
         </div>
       );
     }
@@ -198,22 +319,26 @@ export default function UserProfilePage() {
                 <MapPin size={15} /> {user.location || "Unknown"}
               </div>
             </div>
+
+            {/* Show suspension status if suspended */}
+            {user.isSuspended && user.suspensionEnd && (
+              <div className="mt-3 bg-red-500 bg-opacity-20 border border-white rounded-lg px-3 py-2 text-sm">
+                ⚠️ Account Suspended until {new Date(user.suspensionEnd).toLocaleString()}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-        
         {/* TOKEN CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
             Available Tokens
           </h3>
           <div className="flex justify-between items-center">
-            <p className="text-3xl font-bold text-gray-900">
-              {singleToken ?? 0}
-            </p>
+            <p className="text-3xl font-bold text-gray-900">{singleToken ?? 0}</p>
             <div className="w-28 h-12">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={tokenData}>
@@ -250,44 +375,42 @@ export default function UserProfilePage() {
 
           <p className="text-xs text-gray-500 mt-2">
             Current status:{" "}
-            <span
-              className={`font-semibold ${
-                status === "active" ? "text-green-600" : "text-red-600"
-              }`}
-            >
+            <span className={`font-semibold ${status === "active" ? "text-green-600" : "text-red-600"}`}>
               {status === "active" ? "Active" : "Disabled"}
             </span>
           </p>
         </div>
 
-        {/* ACTIVITY CARD */}
+        {/* WEEKLY ACTIVITY CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
-            Weekly Activity (Last 7 Days)
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide flex items-center gap-2">
+            <Clock size={16} />
+            Average Active Time (Weekly)
           </h3>
-          
-          {loadingActivity ? (
-            <div className="flex items-center justify-center h-16">
+
+          {loadingAverage ? (
+            <div className="flex items-center justify-center h-20">
               <p className="text-xs text-gray-500">Loading...</p>
             </div>
-          ) : chartData.length > 0 ? (
-            <div className="w-full h-16">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <Line
-                    type="monotone"
-                    dataKey="active"
-                    stroke="#AD49E1"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <XAxis dataKey="name" hide />
-                </LineChart>
-              </ResponsiveContainer>
+          ) : averageTimeData && Array.isArray(averageTimeData.dailyActiveTime) && averageTimeData.dailyActiveTime.length > 0 ? (
+            <div>
+              <div className="mb-3">
+                <p className="text-2xl font-bold text-gray-900">{secondsToHms(averageTimeData.averagePerDay.seconds)}</p>
+                <p className="text-xs text-gray-500">Average per day (Mon – Sun)</p>
+              </div>
+
+              <div className="w-full h-16">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={weeklyChartData}>
+                    <Line type="monotone" dataKey="hours" stroke="#AD49E1" strokeWidth={2} dot={{ fill: "#AD49E1", r: 3 }} />
+                    <XAxis dataKey="name" hide />
+                    <Tooltip content={<CustomTooltip />} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-16">
+            <div className="flex items-center justify-center h-20">
               <p className="text-xs text-gray-500">No activity data</p>
             </div>
           )}
@@ -298,15 +421,9 @@ export default function UserProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
         {/* ADD TOKENS */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
-            Add Tokens
-          </h3>
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">Add Tokens</h3>
           <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="Count"
-              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm"
-            />
+            <input type="number" placeholder="Count" className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm" />
             <button className="flex items-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
               <PlusCircle size={14} /> Add
             </button>
@@ -315,15 +432,9 @@ export default function UserProfilePage() {
 
         {/* UPDATE TOKENS */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
-            Update Tokens
-          </h3>
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">Update Tokens</h3>
           <div className="flex gap-2 items-center">
-            <input
-              type="text"
-              placeholder="Select Count"
-              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm"
-            />
+            <input type="text" placeholder="Select Count" className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm" />
             <button className="flex items-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
               <RefreshCcw size={14} /> Update
             </button>
@@ -333,29 +444,57 @@ export default function UserProfilePage() {
 
       {/* ACTION CONTROLS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-        
-        {/* SUSPEND CARD */}
+        {/* SUSPEND/UNSUSPEND CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
-            Suspend User
+            {user.isSuspended ? "Unsuspend User" : "Suspend User"}
           </h3>
-          <div className="flex gap-2">
-            <button className="flex-1 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
-              Suspend
-            </button>
-            <input
-              type="text"
-              placeholder="7 Days"
-              className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm w-32"
-            />
-          </div>
+          
+          {user.isSuspended ? (
+            // UNSUSPEND UI
+            <div className="space-y-3">
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-sm">
+                <p className="text-red-800 font-medium mb-1">⚠️ User is currently suspended</p>
+                <p className="text-red-600 text-xs">
+                  Suspension ends: {user.suspensionEnd ? new Date(user.suspensionEnd).toLocaleString() : "Unknown"}
+                </p>
+              </div>
+              
+              <button
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                onClick={handleUserUnsuspend}
+                disabled={unsuspending}
+              >
+                <UserCheck size={16} />
+                {unsuspending ? "Unsuspending..." : "Unsuspend User"}
+              </button>
+            </div>
+          ) : (
+            // SUSPEND UI
+            <div className="flex gap-2">
+              <input
+                type="number"
+                placeholder="Days"
+                value={suspendDays}
+                onChange={(e) => setSuspendDays(e.target.value)}
+                className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-32 text-sm"
+                min="1"
+              />
+              <button
+                className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                onClick={handleUserSuspend}
+                disabled={suspending || !suspendDays}
+              >
+                <UserX size={16} />
+                {suspending ? "Suspending..." : "Suspend"}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* EMAIL & ALERT CARD */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center gap-3">
-          <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
-            Actions
-          </h3>
+          <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">Actions</h3>
 
           <div className="flex flex-col sm:flex-row gap-2">
             <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">

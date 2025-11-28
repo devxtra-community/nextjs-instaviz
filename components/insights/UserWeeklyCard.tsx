@@ -46,7 +46,7 @@ export default function UserWeeklyGrowthCard() {
   useEffect(() => {
     async function fetchWeeklyUser() {
       try {
-        const res = await axiosAdmin.get("/admin/weeklyuser");
+        const res = await axiosAdmin.get("/admin/insights/weeklyuser");
         setData(res.data.data);
       } catch (err) {
         console.error("Error fetching weekly user:", err);
@@ -63,7 +63,7 @@ export default function UserWeeklyGrowthCard() {
   return (
     <Card className="p-4">
       <CardHeader>
-        <CardTitle className="text-sm font-medium">
+        <CardTitle className="text-md font-semibold">
           Weekly User Growth(Current Week)
         </CardTitle>
       </CardHeader>

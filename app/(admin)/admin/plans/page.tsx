@@ -1,89 +1,145 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import axiosAdmin from "@/lib/axiosAdmin";
 import { Pencil, Trash2, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface Plan {
   _id: string;
   title: string;
-  price: string;
+  price: string | number;
   billed: string;
-  features: string;
-  offerlabel: string;
+  features: string | string[] | null | undefined;
+  offerlabel?: string;
 }
+
+const normalizeFeaturesToString = (features: Plan["features"]) => {
+  if (typeof features === "string") return features;
+  if (Array.isArray(features)) return features.join("\n");
+  return "";
+};
+
+const featuresStringToArray = (value: string | undefined | null) =>
+  (value || "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 
 export default function AdminPlansPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const [addPlan, setAddPlan] = useState({
+  const emptyPlanForForm = {
     title: "",
     price: "",
     billed: "",
     features: "",
     offerlabel: "",
-  });
+  };
 
-  // Fetch all plans
+  const [addForm, setAddForm] = useState({ ...emptyPlanForForm });
+  const [editForm, setEditForm] = useState<any>(null);
+
+  // ⭐ ADD MOBILE TITLE SUPPORT
+  useEffect(() => {
+    document.getElementById("mobile-page-title")!.textContent =
+      "Manage Pricing Plans";
+  }, []);
+
   const fetchPlans = async () => {
+    setLoading(true);
     try {
       const res = await axiosAdmin.get("/admin/plans");
-      setPlans(res.data.plans || []);
-    } catch {
+      const incoming = res.data?.plans || [];
+
+      setPlans(
+        incoming.map((p: Plan) => ({
+          ...p,
+          features: normalizeFeaturesToString(p.features),
+        }))
+      );
+    } catch (err) {
       alert("Failed to load plans");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchPlans();
   }, []);
 
-  // Add Plan
   const addPlanHandler = async () => {
     try {
-      await axiosAdmin.post("/admin/plans", addPlan);
+      const payload = {
+        title: addForm.title,
+        price: Number(addForm.price),
+        billed: addForm.billed,
+        features: featuresStringToArray(addForm.features),
+        ...(addForm.offerlabel?.trim() && { offerlabel: addForm.offerlabel }),
+      };
+
+      await axiosAdmin.post("/admin/plans", payload);
+
       setShowAddModal(false);
-      setAddPlan({ title: "", price: "", billed: "", features: "", offerlabel: "" });
+      setAddForm({ ...emptyPlanForForm });
       fetchPlans();
-      alert("Plan added successfully!");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to add plan");
     }
   };
 
-  // Update Plan
+  const startEdit = (plan: Plan) => {
+    setSelectedPlan(plan);
+    setEditForm({
+      ...plan,
+      features: normalizeFeaturesToString(plan.features),
+    });
+    setShowEditModal(true);
+  };
+
   const updatePlanHandler = async () => {
+    if (!selectedPlan) return;
+
     try {
-      await axiosAdmin.put(`/admin/plans/${selectedPlan?._id}`, selectedPlan);
+      const payload = {
+        title: editForm.title,
+        price: Number(editForm.price),
+        billed: editForm.billed,
+        features: featuresStringToArray(editForm.features),
+        ...(editForm.offerlabel?.trim() && { offerlabel: editForm.offerlabel }),
+      };
+
+      await axiosAdmin.put(`/admin/plans/${selectedPlan._id}`, payload);
+
       setShowEditModal(false);
       setSelectedPlan(null);
+      setEditForm(null);
       fetchPlans();
-      alert("Plan updated successfully!");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to update plan");
     }
   };
 
-  // Delete plan
   const confirmDelete = async () => {
     if (!deleteId) return;
 
     try {
       const res = await axiosAdmin.delete(`/admin/plans/${deleteId}`);
 
-      if (res.data.success) {
-        setPlans(plans.filter((p) => p._id !== deleteId));
-        alert("Plan deleted successfully!");
-      } else {
-        alert("Failed to delete plan.");
+      if (res.data?.success) {
+        setPlans((prev) => prev.filter((p) => p._id !== deleteId));
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to delete plan.");
     }
 
@@ -93,27 +149,41 @@ export default function AdminPlansPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Manage Pricing Plans</h1>
+
+      {/* DESKTOP TITLE */}
+      <h1 className="text-2xl font-semibold mb-6 hidden md:block">
+        Manage Pricing Plans
+      </h1>
+
+      {/* MOBILE TITLE */}
+      <h1 id="mobile-page-title" className="md:hidden text-xl font-bold mb-4"></h1>
 
       <button
         onClick={() => setShowAddModal(true)}
         className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 mb-6"
       >
-        <Plus size={18} /> Add New Plan
+        <Plus size={16} /> Add New Plan
       </button>
 
-      {/* Plans List */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {loading && <p className="col-span-full text-gray-500">Loading...</p>}
+        {!loading && plans.length === 0 && (
+          <p className="col-span-full text-gray-500">No plans found.</p>
+        )}
+
         {plans.map((plan) => {
-          const featureList = plan.features.split("\n").filter((line) => line.trim() !== "");
+          const featureList = featuresStringToArray(plan.features as any);
 
           return (
-            <div key={plan._id} className="bg-white border rounded-xl p-6 shadow">
-              <div className="flex justify-between mb-3">
+            <div
+              key={plan._id}
+              className="bg-white border rounded-2xl p-6 shadow-md hover:shadow-lg transition"
+            >
+              <div className="flex justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">{plan.title}</h2>
                   {plan.offerlabel && (
-                    <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded mt-1 inline-block">
+                    <span className="inline-block mt-2 bg-purple-600 text-white text-xs px-2 py-1 rounded">
                       {plan.offerlabel}
                     </span>
                   )}
@@ -121,13 +191,10 @@ export default function AdminPlansPage() {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => {
-                      setSelectedPlan(plan);
-                      setShowEditModal(true);
-                    }}
-                    className="p-2 bg-gray-100 rounded hover:bg-gray-200"
+                    onClick={() => startEdit(plan)}
+                    className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
-                    <Pencil size={18} />
+                    <Pencil size={16} />
                   </button>
 
                   <button
@@ -135,17 +202,17 @@ export default function AdminPlansPage() {
                       setDeleteId(plan._id);
                       setShowDeleteModal(true);
                     }}
-                    className="p-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
+                    className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
 
-              <p className="text-purple-600 font-bold text-2xl">${plan.price}</p>
-              <p className="text-gray-500 text-sm mb-3">{plan.billed}</p>
+              <p className="text-purple-600 font-bold text-3xl">${plan.price}</p>
+              <p className="text-gray-500 text-sm mb-4">{plan.billed}</p>
 
-              <ul className="text-sm text-gray-700 list-disc pl-5">
+              <ul className="text-sm text-gray-700 list-disc pl-5 space-y-1">
                 {featureList.map((f, i) => (
                   <li key={i}>{f}</li>
                 ))}
@@ -155,57 +222,80 @@ export default function AdminPlansPage() {
         })}
       </div>
 
-      {/* DELETE MODAL */}
+      {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-80">
-            <h2 className="text-lg font-semibold mb-3">Delete Plan?</h2>
-            <p className="text-gray-600 text-sm mb-5">
-              Are you sure you want to delete this plan? This action cannot be undone.
-            </p>
-
-            <div className="flex justify-end gap-3">
-              <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 bg-gray-300 rounded">
-                Cancel
-              </button>
-              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded">
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ADD MODAL */}
-      {showAddModal && (
-        <Modal title="Add New Plan" onClose={() => setShowAddModal(false)} onSubmit={addPlanHandler}>
-          <PlanForm plan={addPlan} setPlan={setAddPlan} />
+        <Modal
+          title="Delete Plan"
+          submitLabel="Delete"
+          onClose={() => setShowDeleteModal(false)}
+          onSubmit={confirmDelete}
+        >
+          <p className="text-gray-600 text-sm mb-5">
+            Are you sure you want to delete this plan?
+          </p>
         </Modal>
       )}
 
-      {/* EDIT MODAL */}
-      {showEditModal && selectedPlan && (
-        <Modal title="Edit Plan" onClose={() => setShowEditModal(false)} onSubmit={updatePlanHandler}>
-          <PlanForm plan={selectedPlan} setPlan={setSelectedPlan} />
+      {/* Add Modal */}
+      {showAddModal && (
+        <Modal
+          title="Add New Plan"
+          submitLabel="Save"
+          onClose={() => {
+            setShowAddModal(false);
+            setAddForm({ ...emptyPlanForForm });
+          }}
+          onSubmit={addPlanHandler}
+        >
+          <PlanForm plan={addForm} setPlan={setAddForm} />
+        </Modal>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && editForm && (
+        <Modal
+          title={`Edit: ${selectedPlan?.title}`}
+          submitLabel="Update"
+          onClose={() => {
+            setShowEditModal(false);
+            setEditForm(null);
+            setSelectedPlan(null);
+          }}
+          onSubmit={updatePlanHandler}
+        >
+          <PlanForm plan={editForm} setPlan={setEditForm} />
         </Modal>
       )}
     </div>
   );
 }
 
-function Modal({ title, onClose, onSubmit, children }: any) {
+function Modal({
+  title,
+  onClose,
+  onSubmit,
+  children,
+  submitLabel = "Save",
+}: any) {
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-xl w-96">
+      <div className="bg-white p-6 rounded-2xl w-96 max-w-full shadow-lg">
         <h2 className="text-xl font-semibold mb-4">{title}</h2>
+
         {children}
 
-        <div className="flex justify-end gap-2 mt-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+        <div className="flex justify-end gap-2 mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 rounded-lg"
+          >
             Cancel
           </button>
-          <button onClick={onSubmit} className="px-4 py-2 bg-purple-600 text-white rounded">
-            Save
+          <button
+            onClick={onSubmit}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg"
+          >
+            {submitLabel}
           </button>
         </div>
       </div>
@@ -214,43 +304,48 @@ function Modal({ title, onClose, onSubmit, children }: any) {
 }
 
 function PlanForm({ plan, setPlan }: any) {
+  const update = (field: string, value: any) =>
+    setPlan((prev: any) => ({ ...prev, [field]: value }));
+
   return (
-    <>
+    <div>
+      <label className="block mb-1 font-medium text-sm">Title</label>
       <input
-        className="border w-full px-3 py-2 rounded mb-3"
-        placeholder="Title"
+        className="border w-full px-3 py-2 rounded-lg mb-3"
         value={plan.title}
-        onChange={(e) => setPlan({ ...plan, title: e.target.value })}
+        onChange={(e) => update("title", e.target.value)}
       />
 
+      <label className="block mb-1 font-medium text-sm">Price</label>
       <input
-        className="border w-full px-3 py-2 rounded mb-3"
-        placeholder="Price"
+        className="border w-full px-3 py-2 rounded-lg mb-3"
         value={plan.price}
-        onChange={(e) => setPlan({ ...plan, price: e.target.value })}
+        onChange={(e) => update("price", e.target.value)}
       />
 
+      <label className="block mb-1 font-medium text-sm">Billed</label>
       <input
-        className="border w-full px-3 py-2 rounded mb-3"
-        placeholder="Billed (/year)"
+        className="border w-full px-3 py-2 rounded-lg mb-3"
         value={plan.billed}
-        onChange={(e) => setPlan({ ...plan, billed: e.target.value })}
+        onChange={(e) => update("billed", e.target.value)}
       />
 
+      <label className="block mb-1 font-medium text-sm">
+        Features (one per line)
+      </label>
       <textarea
-        className="border w-full px-3 py-2 rounded mb-3"
-        placeholder="Features (one per line)"
+        className="border w-full px-3 py-2 rounded-lg mb-3"
         rows={4}
         value={plan.features}
-        onChange={(e) => setPlan({ ...plan, features: e.target.value })}
+        onChange={(e) => update("features", e.target.value)}
       />
 
+      <label className="block mb-1 font-medium text-sm">Offer Label</label>
       <input
-        className="border w-full px-3 py-2 rounded mb-3"
-        placeholder="Offer Label"
+        className="border w-full px-3 py-2 rounded-lg mb-3"
         value={plan.offerlabel}
-        onChange={(e) => setPlan({ ...plan, offerlabel: e.target.value })}
+        onChange={(e) => update("offerlabel", e.target.value)}
       />
-    </>
+    </div>
   );
 }

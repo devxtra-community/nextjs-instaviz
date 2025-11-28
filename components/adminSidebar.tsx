@@ -23,7 +23,7 @@ type SidebarProps = {
 function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const menuItems = [
     {icon : LayoutDashboard , label : 'Dashboard' , href : '/admin/dashboard'},
-    { icon: Users, label: "User Actions", href: "/admin/user" },
+    { icon: Users, label: "Users", href: "/admin/user" },
     { icon: Activity, label: "Activities", href: "/admin/activities" },
     { icon: Coins, label: "Tokens", href: "/admin/token" },
     { icon: TrendingUp, label: "Insights", href: "/admin/insights" },

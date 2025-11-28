@@ -10,7 +10,7 @@ export default function Heartbeat() {
     const init = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.log("No access token → skipping heartbeat.");
+        console.log("No access token  stop heartbeat.");
         return;
       }
 
@@ -39,7 +39,7 @@ export default function Heartbeat() {
 
     window.addEventListener("beforeunload", endSession);
 
-    // ---- Cleanup ----
+    
     return () => {
       if (interval) clearInterval(interval);
       endSession();

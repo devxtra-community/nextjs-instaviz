@@ -12,11 +12,13 @@ const nextConfig = {
         hostname: "ymhpjbqatqaqarydzijp.supabase.co",
         pathname: "/**",
       },
+      // ✅ FIX: allow ANY external HTTPS image
       {
         protocol: "https",
         hostname: "**",
         pathname: "/**",
       },
+      // (optional) allow HTTP images too
       {
         protocol: "http",
         hostname: "**",

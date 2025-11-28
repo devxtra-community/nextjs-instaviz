@@ -14,7 +14,7 @@ export default function AllUsers() {
  
   const alluserstopage = async () => {
     try {
-      const responsedata = await axiosAdmin.get("/admin/alluserspage");
+      const responsedata = await axiosAdmin.get("/admin/user/allusers");
       console.log("inside response", responsedata.data.alluser);
 
       const users = responsedata.data.alluser.map((u: any) => ({
