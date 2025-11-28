@@ -115,7 +115,7 @@ export default function UserManagementDashboard() {
   const getActivetimedetails = async () => {
     try {
       const today = new Date().toISOString().slice(0, 10);
-      const res = await axiosAdmin.get(`/admin/activetime?day=${today}`);
+      const res = await axiosAdmin.get(`/admin/user/activetime?day=${today}`);
 
       const apiData = res.data?.hourlyActive || [];
 

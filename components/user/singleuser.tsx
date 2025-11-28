@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axiosAdmin from "@/lib/axiosAdmin";
+import CustomSelect from "../CustomSelect";
 import Image from "next/image";
 import {
   Mail,
@@ -35,7 +36,7 @@ interface UserType {
   location?: string;
   status?: "active" | "disabled";
   isSuspended?: boolean;
-  suspensionEnd?: string | null; 
+  suspensionEnd?: string | null;
 }
 
 interface DailyActiveTime {
@@ -63,7 +64,8 @@ export default function UserProfilePage() {
   const [status, setStatus] = useState<"active" | "disabled">("active");
   const [singleToken, setSingleToken] = useState<number | null>(null);
   const [activityData, setActivityData] = useState<DailyActiveTime[]>([]);
-  const [averageTimeData, setAverageTimeData] = useState<AverageTimeData | null>(null);
+  const [averageTimeData, setAverageTimeData] =
+    useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingAverage, setLoadingAverage] = useState(true);
   const [suspendDays, setSuspendDays] = useState("");
@@ -141,7 +143,10 @@ export default function UserProfilePage() {
 
       if (res.data.success && res.data.dailyActiveTime) {
         const daily = res.data.dailyActiveTime.map((d: any) => {
-          const totalSeconds = typeof d.totalSeconds === "number" ? d.totalSeconds : Number(d.totalSeconds || 0);
+          const totalSeconds =
+            typeof d.totalSeconds === "number"
+              ? d.totalSeconds
+              : Number(d.totalSeconds || 0);
           return {
             date: d.date || "",
             dayName: d.dayName || "",
@@ -153,7 +158,10 @@ export default function UserProfilePage() {
         const normalized: AverageTimeData = {
           ...res.data,
           dailyActiveTime: daily,
-          totalSeconds: typeof res.data.totalSeconds === "number" ? res.data.totalSeconds : Number(res.data.totalSeconds || 0),
+          totalSeconds:
+            typeof res.data.totalSeconds === "number"
+              ? res.data.totalSeconds
+              : Number(res.data.totalSeconds || 0),
           averagePerDay: {
             seconds: res.data.averagePerDay?.seconds || 0,
             formatted: secondsToHms(res.data.averagePerDay?.seconds || 0),
@@ -174,7 +182,6 @@ export default function UserProfilePage() {
 
   // Suspend user handler
   const handleUserSuspend = async () => {
-    // Validation
     if (!suspendDays || isNaN(Number(suspendDays)) || Number(suspendDays) <= 0) {
       alert("Please enter a valid number of days (greater than 0)");
       return;
@@ -182,21 +189,21 @@ export default function UserProfilePage() {
 
     try {
       setSuspending(true);
-      console.log(`Suspending user for ${suspendDays} days...`);
-      
-      const res = await axiosAdmin.put(`/admin/user/suspend/${id}?days=${suspendDays}`);
-      
-      console.log("Suspend response:", res.data);
+
+      const res = await axiosAdmin.put(
+        `/admin/user/suspend/${id}?days=${suspendDays}`
+      );
+
       alert(`User suspended successfully for ${suspendDays} days`);
-      
-      // Refresh user data to show updated suspension status
+
       await fetchUserSinglePage();
-      
-      // Clear the input
       setSuspendDays("");
     } catch (err: any) {
       console.error("Error suspending user:", err);
-      alert(err.response?.data?.message || "Failed to suspend user. Please try again.");
+      alert(
+        err.response?.data?.message ||
+          "Failed to suspend user. Please try again."
+      );
     } finally {
       setSuspending(false);
     }
@@ -210,19 +217,18 @@ export default function UserProfilePage() {
 
     try {
       setUnsuspending(true);
-      console.log("Unsuspending user...");
-      
+
       const res = await axiosAdmin.put(`/admin/user/unsuspend/${id}`);
-      
-      console.log("Unsuspend response:", res.data);
+
       alert("User unsuspended successfully!");
-      
-      // Refresh user data to show updated suspension status
+
       await fetchUserSinglePage();
-      
     } catch (err: any) {
       console.error("Error unsuspending user:", err);
-      alert(err.response?.data?.message || "Failed to unsuspend user. Please try again.");
+      alert(
+        err.response?.data?.message ||
+          "Failed to unsuspend user. Please try again."
+      );
     } finally {
       setUnsuspending(false);
     }
@@ -280,50 +286,54 @@ export default function UserProfilePage() {
     );
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-4 md:p-5">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-5 tracking-tight">
+    <div className="min-h-screen bg-[#F9FAFB] px-3 py-4 sm:px-4 md:px-6">
+      <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-5 tracking-tight">
         User Profile
       </h1>
 
       {/* HEADER CARD */}
-      <div className="rounded-2xl shadow-sm overflow-hidden mb-6 bg-gradient-to-r from-[#AD49E1] via-[#C56BE8] to-[#E19BFF] text-white">
-        <div className="flex flex-col md:flex-row items-center gap-6 p-6">
-          <div className="relative w-28 h-28">
+      <div className="rounded-2xl shadow-sm overflow-hidden mb-5 bg-gradient-to-r from-[#AD49E1] via-[#C56BE8] to-[#E19BFF] text-white">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-4 sm:gap-6 p-4 sm:p-6 text-center md:text-left">
+          <div className="relative w-20 h-20 sm:w-28 sm:h-28">
             {user.picture ? (
               <Image
                 src={user.picture}
                 alt={user.name}
                 width={120}
                 height={120}
-                className="rounded-full object-cover border-4 border-white shadow-lg"
+                className="rounded-full object-cover border-4 border-white shadow-lg w-full h-full"
               />
             ) : (
-              <div className="w-28 h-28 flex items-center justify-center rounded-full bg-[#E8C7F7] text-[#AD49E1] text-3xl font-semibold border-4 border-white shadow-lg">
+              <div className="w-full h-full flex items-center justify-center rounded-full bg-[#E8C7F7] text-[#AD49E1] text-2xl sm:text-3xl font-semibold border-4 border-white shadow-lg">
                 {user.name?.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
 
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-semibold mb-1">{user.name}</h2>
-            <p className="text-sm opacity-90">Premium User</p>
+          <div className="flex-1 text-center md:text-left mt-2 md:mt-0">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-1">
+              {user.name}
+            </h2>
+            <p className="text-xs sm:text-sm opacity-90">Premium User</p>
 
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-3 text-sm opacity-90">
-              <div className="flex items-center gap-1.5">
-                <Mail size={15} /> {user.email}
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-3 text-xs sm:text-sm opacity-90">
+              <div className="flex items-center gap-1.5 break-all">
+                <Mail size={14} /> <span>{user.email}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Phone size={15} /> {user.phone || "+91 00000 00000"}
+                <Phone size={14} />{" "}
+                <span>{user.phone || "+91 00000 00000"}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <MapPin size={15} /> {user.location || "Unknown"}
+                <MapPin size={14} />{" "}
+                <span>{user.location || "Unknown"}</span>
               </div>
             </div>
 
-            {/* Show suspension status if suspended */}
             {user.isSuspended && user.suspensionEnd && (
-              <div className="mt-3 bg-red-500 bg-opacity-20 border border-white rounded-lg px-3 py-2 text-sm">
-                ⚠️ Account Suspended until {new Date(user.suspensionEnd).toLocaleString()}
+              <div className="mt-3 bg-red-500/20 border border-white/80 rounded-lg px-3 py-2 text-xs sm:text-sm">
+                ⚠️ Account Suspended until{" "}
+                {new Date(user.suspensionEnd).toLocaleString()}
               </div>
             )}
           </div>
@@ -331,18 +341,24 @@ export default function UserProfilePage() {
       </div>
 
       {/* MAIN GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 mb-6">
         {/* TOKEN CARD */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-2 text-xs sm:text-sm uppercase tracking-wide">
             Available Tokens
           </h3>
-          <div className="flex justify-between items-center">
-            <p className="text-3xl font-bold text-gray-900">{singleToken ?? 0}</p>
-            <div className="w-28 h-12">
+          <div className="flex justify-between items-center gap-3">
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900">
+              {singleToken ?? 0}
+            </p>
+            <div className="w-24 h-14 sm:w-28 sm:h-16">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={tokenData}>
-                  <Bar dataKey="value" fill="#AD49E1" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="value"
+                    fill="#AD49E1"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -350,24 +366,18 @@ export default function UserProfilePage() {
         </div>
 
         {/* STATUS CARD */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-2 text-xs sm:text-sm uppercase tracking-wide">
             Account Status
           </h3>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as "active" | "disabled")}
-              className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-gray-700 text-sm bg-gray-50 hover:bg-white focus:ring-2 focus:ring-[#E5B4F6] transition"
-            >
-              <option value="active">🟢 Active</option>
-              <option value="disabled">🔴 Disabled</option>
-            </select>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <CustomSelect value={status} onChange={(v:any) => setStatus(v)} />
+
 
             <button
               onClick={() => handleStatusChange(status)}
-              className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm shadow-sm"
+              className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm shadow-sm"
             >
               Done
             </button>
@@ -375,34 +385,50 @@ export default function UserProfilePage() {
 
           <p className="text-xs text-gray-500 mt-2">
             Current status:{" "}
-            <span className={`font-semibold ${status === "active" ? "text-green-600" : "text-red-600"}`}>
+            <span
+              className={`font-semibold ${
+                status === "active" ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {status === "active" ? "Active" : "Disabled"}
             </span>
           </p>
         </div>
 
         {/* WEEKLY ACTIVITY CARD */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide flex items-center gap-2">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide flex items-center gap-2">
             <Clock size={16} />
             Average Active Time (Weekly)
           </h3>
 
           {loadingAverage ? (
-            <div className="flex items-center justify-center h-20">
+            <div className="flex items-center justify-center h-16 sm:h-20">
               <p className="text-xs text-gray-500">Loading...</p>
             </div>
-          ) : averageTimeData && Array.isArray(averageTimeData.dailyActiveTime) && averageTimeData.dailyActiveTime.length > 0 ? (
+          ) : averageTimeData &&
+            Array.isArray(averageTimeData.dailyActiveTime) &&
+            averageTimeData.dailyActiveTime.length > 0 ? (
             <div>
               <div className="mb-3">
-                <p className="text-2xl font-bold text-gray-900">{secondsToHms(averageTimeData.averagePerDay.seconds)}</p>
-                <p className="text-xs text-gray-500">Average per day (Mon – Sun)</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">
+                  {secondsToHms(averageTimeData.averagePerDay.seconds)}
+                </p>
+                <p className="text-[11px] sm:text-xs text-gray-500">
+                  Average per day (Mon – Sun)
+                </p>
               </div>
 
-              <div className="w-full h-16">
+              <div className="w-full h-20 sm:h-24">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyChartData}>
-                    <Line type="monotone" dataKey="hours" stroke="#AD49E1" strokeWidth={2} dot={{ fill: "#AD49E1", r: 3 }} />
+                    <Line
+                      type="monotone"
+                      dataKey="hours"
+                      stroke="#AD49E1"
+                      strokeWidth={2}
+                      dot={{ fill: "#AD49E1", r: 3 }}
+                    />
                     <XAxis dataKey="name" hide />
                     <Tooltip content={<CustomTooltip />} />
                   </LineChart>
@@ -410,7 +436,7 @@ export default function UserProfilePage() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-20">
+            <div className="flex items-center justify-center h-16 sm:h-20">
               <p className="text-xs text-gray-500">No activity data</p>
             </div>
           )}
@@ -418,24 +444,36 @@ export default function UserProfilePage() {
       </div>
 
       {/* TOKEN CONTROLS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-6">
         {/* ADD TOKENS */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">Add Tokens</h3>
-          <div className="flex gap-2">
-            <input type="number" placeholder="Count" className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm" />
-            <button className="flex items-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide">
+            Add Tokens
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="number"
+              placeholder="Count"
+              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm"
+            />
+            <button className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
               <PlusCircle size={14} /> Add
             </button>
           </div>
         </div>
 
         {/* UPDATE TOKENS */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">Update Tokens</h3>
-          <div className="flex gap-2 items-center">
-            <input type="text" placeholder="Select Count" className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm" />
-            <button className="flex items-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide">
+            Update Tokens
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-2 items-stretch">
+            <input
+              type="text"
+              placeholder="Select Count"
+              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm"
+            />
+            <button className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
               <RefreshCcw size={14} /> Update
             </button>
           </div>
@@ -443,25 +481,29 @@ export default function UserProfilePage() {
       </div>
 
       {/* ACTION CONTROLS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-6">
         {/* SUSPEND/UNSUSPEND CARD */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 className="text-[#AD49E1] font-semibold mb-3 text-sm uppercase tracking-wide">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide">
             {user.isSuspended ? "Unsuspend User" : "Suspend User"}
           </h3>
-          
+
           {user.isSuspended ? (
-            // UNSUSPEND UI
             <div className="space-y-3">
-              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-sm">
-                <p className="text-red-800 font-medium mb-1">⚠️ User is currently suspended</p>
-                <p className="text-red-600 text-xs">
-                  Suspension ends: {user.suspensionEnd ? new Date(user.suspensionEnd).toLocaleString() : "Unknown"}
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-xs sm:text-sm">
+                <p className="text-red-800 font-medium mb-1">
+                  ⚠️ User is currently suspended
+                </p>
+                <p className="text-red-600 text-[11px] sm:text-xs">
+                  Suspension ends:{" "}
+                  {user.suspensionEnd
+                    ? new Date(user.suspensionEnd).toLocaleString()
+                    : "Unknown"}
                 </p>
               </div>
-              
+
               <button
-                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition text-xs sm:text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                 onClick={handleUserUnsuspend}
                 disabled={unsuspending}
               >
@@ -470,18 +512,17 @@ export default function UserProfilePage() {
               </button>
             </div>
           ) : (
-            // SUSPEND UI
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="number"
                 placeholder="Days"
                 value={suspendDays}
                 onChange={(e) => setSuspendDays(e.target.value)}
-                className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-32 text-sm"
+                className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-full sm:w-32 text-sm"
                 min="1"
               />
               <button
-                className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition text-xs sm:text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                 onClick={handleUserSuspend}
                 disabled={suspending || !suspendDays}
               >
@@ -493,14 +534,16 @@ export default function UserProfilePage() {
         </div>
 
         {/* EMAIL & ALERT CARD */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center gap-3">
-          <h3 className="text-[#AD49E1] font-semibold mb-2 text-sm uppercase tracking-wide">Actions</h3>
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col justify-center gap-3">
+          <h3 className="text-[#AD49E1] font-semibold mb-1 text-xs sm:text-sm uppercase tracking-wide">
+            Actions
+          </h3>
 
-          <div className="flex flex-col sm:flex-row gap-2">
-            <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
               <Bell size={16} /> Token Alert
             </button>
-            <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-sm">
+            <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
               <Send size={16} /> Send Email
             </button>
           </div>
