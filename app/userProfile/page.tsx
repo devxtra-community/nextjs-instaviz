@@ -193,7 +193,13 @@ export default function ProfilePage() {
       toast.error("Logout failed");
     }
   };
-
+  const switchPassword = () => {
+    if (isChangingPassword == true) {
+      setIsChangingPassword(false);
+    } else {
+      setIsChangingPassword(true);
+    }
+  };
   return (
     <div className="min-h-screen p-6 flex justify-center bg-dot-fade ">
       <Toaster richColors position="top-center" />
@@ -240,7 +246,7 @@ export default function ProfilePage() {
           <div className="mt-8">
             <button
               className="text-md text-red-500 cursor-pointer handwriting tracking-wider hover:underline"
-              onClick={() => setIsChangingPassword(true)}
+              onClick={() => switchPassword()}
             >
               Change password
             </button>

@@ -28,7 +28,7 @@ export default function GoogleCallbackPage() {
 
   return (
     <div className="h-screen flex items-center justify-center">
-      <p className="text-gray-500 text-lg">Signing you in with Google...</p>
+      <p className="text-gray-500 text-lg">You are now login into InstaviZ...</p>
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  
+
   async function handleLogin() {
     try {
       const loginData = {
@@ -26,7 +26,6 @@ export default function LoginPage() {
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
       localStorage.setItem("sessionId", LoginResponse.data.sessionId);
-      
 
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
@@ -38,15 +37,12 @@ export default function LoginPage() {
   }
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      {/* Left Section */}
       <Toaster richColors position="top-center" />
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
-        {/* Logo / Header */}
         <div className="lg:hidden mb-6 flex items-center">
           <h1 className="text-4xl font-semibold primary">Instaviz</h1>
         </div>
 
-        {/* Form */}
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
 
@@ -117,12 +113,9 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Section (Enhanced) */}
       <div className="hidden md:flex flex-1 items-center justify-center relative bg-linear-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden">
-        {/* Dot Pattern Overlay */}
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-size-[20px_20px]" />
 
-        {/* Floating Illustration */}
         <motion.img
           src="/giphy.gif"
           alt="Data Visualization"
@@ -131,7 +124,6 @@ export default function LoginPage() {
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Motivational Text */}
         <div className="absolute bottom-12 text-center px-4 z-20">
           <h2 className="text-white text-3xl font-semibold drop-shadow-lg">
             Visualize. Analyze. Grow.
@@ -141,7 +133,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Soft Gradient Glow */}
         <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent z-0" />
       </div>
     </div>
