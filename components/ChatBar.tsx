@@ -5,9 +5,9 @@ import { FiSend, FiArrowDownCircle } from "react-icons/fi";
 import VioletAIAvatar from "./VioletAIAvatar";
 import { useAnalysis } from "@/context/AnalysisContext";
 import axiosInstance from "@/lib/axiosInstance";
-import { appendMessage, appendChart, getSession } from "@/lib/sessionApi";
+import { appendMessage, getSession } from "@/lib/sessionApi";
 
-type ChatBarProps = {
+type ChatBarProps = { 
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
   messages: { role: "user" | "ai"; text: string }[];
@@ -126,7 +126,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       const res = await axiosInstance.post(`/session/${sessionId}/message`, {
         user: text,
       });
-      
+
       const reply = res.data.reply || "";
       const chart = res.data.chart?.chart || null;
 
