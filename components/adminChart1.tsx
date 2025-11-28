@@ -1,33 +1,55 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Bar, BarChart, CartesianGrid, XAxis, LabelList, Cell } from "recharts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import axiosAdmin from "@/lib/axiosAdmin"
+import { useEffect, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  LabelList,
+  Cell,
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import axiosAdmin from "@/lib/axiosAdmin";
 
-const COLORS = ["#AD49E1", "#4B2E83"]  // same as pie chart
+const COLORS = ["#AD49E1", "#4B2E83"];
 
 export function ChartBarMultiple() {
+  const [isMounted, setIsMounted] = useState(false); // <— FIX 1
   const [chartData, setChartData] = useState([
     { device: "Desktop", value: 0, color: COLORS[0] },
     { device: "Mobile", value: 0, color: COLORS[1] },
-  ])
+  ]);
+
+  // Ensure chart renders ONLY on client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []); // <— FIX 2
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/dashboard/userdevices")
+        const res = await axiosAdmin.get("/admin/dashboard/userdevices");
         setChartData([
           { device: "Desktop", value: res.data.desktop, color: COLORS[0] },
           { device: "Mobile", value: res.data.mobile, color: COLORS[1] },
-        ])
+        ]);
       } catch (err) {
-        console.log("Bar chart stats error:", err)
+        console.log("Bar chart stats error:", err);
       }
-    }
+    };
 
-    fetchStats()
-  }, [])
+    fetchStats();
+  }, []);
+
+  // Prevent SSR hydration mismatch
+  if (!isMounted) return null; // <— FIX 3
 
   return (
     <Card className="w-full">
@@ -48,7 +70,6 @@ export function ChartBarMultiple() {
             style={{ fontSize: 14, fontWeight: 600 }}
           />
 
-          {/* Correct color usage */}
           <Bar dataKey="value" radius={8} barSize={70}>
             {chartData.map((entry, i) => (
               <Cell key={`cell-${i}`} fill={entry.color} />
@@ -67,5 +88,5 @@ export function ChartBarMultiple() {
         </BarChart>
       </CardContent>
     </Card>
-  )
+  );
 }
