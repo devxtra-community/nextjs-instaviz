@@ -19,11 +19,6 @@ export default function TokenAccessDashboard() {
   const [alltokenCount, setAllTokenCount] = useState<number>(0);
   const [alltokenusage, setAlltokenusage] = useState<any[]>([]);
 
-  useEffect(() => {
-    document.getElementById("mobile-page-title")!.textContent =
-      "Token Access Overview";
-  }, []);
-
   const fetchAlltokens = async () => {
     try {
       const res = await axiosAdmin.get("/admin/token/alltokens");
@@ -33,6 +28,7 @@ export default function TokenAccessDashboard() {
           ? res.data.alltokencount[0].totalTokens
           : 0;
 
+      console.log("Fetched total tokens:", total);
       setAllTokenCount(total);
     } catch (err) {
       console.log("Failed to fetch token count:", err);
@@ -42,22 +38,13 @@ export default function TokenAccessDashboard() {
   const fetchMontlytokenusage = async () => {
     try {
       const res = await axiosAdmin.get("/admin/token/alltokenusage");
+      console.log("token usage fetched successfully", res.data);
 
       const totalTokenusage = res.data.totaltokeusagepermonth || [];
 
       const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
       ];
 
       const formattedMonths = months.map((monthName, index) => {
@@ -107,6 +94,9 @@ export default function TokenAccessDashboard() {
               <h2 className="text-2xl font-bold text-gray-900">
                 {alltokenCount}
               </h2>
+              <p className="text-xs font-semibold mt-1 text-green-500">
+                +12.3%
+              </p>
             </div>
 
             <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
@@ -175,6 +165,9 @@ export default function TokenAccessDashboard() {
                   Overview of free token usage growth
                 </p>
               </div>
+              <span className="text-green-500 text-sm font-semibold">
+                +5.6% this month
+              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
@@ -200,6 +193,9 @@ export default function TokenAccessDashboard() {
               <h3 className="text-lg font-semibold text-gray-900">
                 Paid Token Usage
               </h3>
+              <span className="text-green-500 text-sm font-semibold">
+                +8.1% this month
+              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
@@ -233,6 +229,9 @@ export default function TokenAccessDashboard() {
               <h3 className="text-lg font-semibold text-gray-900">
                 Premium Users Growth
               </h3>
+              <span className="text-green-500 text-sm font-semibold">
+                +11.4% increase
+              </span>
             </div>
 
             <ResponsiveContainer width="100%" height={250}>
