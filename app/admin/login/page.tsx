@@ -6,8 +6,10 @@ import axiosAdmin from "@/lib/axiosAdmin";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import useRedirectAdmin from "@/components/hooks/useRedirectAdmin";
 
 export default function AdminLoginPage() {
+  useRedirectAdmin();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -25,7 +27,7 @@ export default function AdminLoginPage() {
       if (res.data.success) {
         localStorage.setItem("adminAccessToken", res.data.accessToken);
         document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=900`;
-        
+
         router.push("/admin/dashboard");
       }
     } catch (err: any) {
@@ -103,12 +105,12 @@ export default function AdminLoginPage() {
 
       <div
         className="hidden md:flex flex-1 items-center justify-center relative 
-        bg-gradient-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden"
+        bg-linear-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden"
       >
         <div
           className="absolute inset-0 opacity-20 
           bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] 
-          bg-[size:20px_20px]"
+          bg-size[20px_20px]"
         />
 
         <motion.img
@@ -128,7 +130,7 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-0" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent z-0" />
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export default function PeakHoursChart() {
   useEffect(() => {
     const fetchPeakHours = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/peakhours");  
+        const res = await axiosAdmin.get("/admin/activities/peakhours");  
         setHours(res.data);
       } catch (err) {
         console.log("Peak Hours Fetch Error:", err);

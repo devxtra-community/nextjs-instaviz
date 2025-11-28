@@ -3,14 +3,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axiosAdmin from "@/lib/axiosAdmin";
+import CustomSelect from "../CustomSelect";
 import Image from "next/image";
 import {Mail,MapPin,Phone,Bell,PlusCircle,RefreshCcw,Send,Clock,UserX,UserCheck,} from "lucide-react";
 import {LineChart,Line,BarChart,Bar,XAxis,Tooltip,ResponsiveContainer,} from "recharts";
 
 interface UserType {
-  _id: string;name: string;email: string;
-  picture?: string;phone?: string;
-  location?: string;status?: "active" | "disabled";isSuspended?: boolean;
+  _id: string;
+  name: string;
+  email: string;
+  picture?: string;
+  phone?: string;
+  location?: string;
+  status?: "active" | "disabled";
+  isSuspended?: boolean;
   suspensionEnd?: string | null;
 }
 
@@ -38,7 +44,7 @@ export default function UserProfilePage() {
   const [singleToken, setSingleToken] = useState<number | null>(null);
   const [activityData, setActivityData] = useState<DailyActiveTime[]>([]);
   const [averageTimeData, setAverageTimeData] =
-  useState<AverageTimeData | null>(null);
+    useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingAverage, setLoadingAverage] = useState(true);
   const [suspendDays, setSuspendDays] = useState("");
@@ -56,7 +62,7 @@ export default function UserProfilePage() {
   // Fetch single user
   const fetchUserSinglePage = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/singleuser/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singleuser/${id}`);
       const userData = res.data.singleuser;
       setUser(userData);
       setStatus(userData?.status || "active");
@@ -69,7 +75,7 @@ export default function UserProfilePage() {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      await axiosAdmin.put(`/admin/status/${id}`, {
+      await axiosAdmin.put(`/admin/user/status/${id}`, {
         status: newStatus,
       });
       setStatus(newStatus as "active" | "disabled");
@@ -83,7 +89,7 @@ export default function UserProfilePage() {
   // Fetch token
   const fetchSingleUserToken = async () => {
     try {
-      const res = await axiosAdmin.get(`/admin/singltoken/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singletoken/${id}`);
       setSingleToken(res.data.singletoken);
     } catch (err) {
       console.log(err);
@@ -94,7 +100,7 @@ export default function UserProfilePage() {
   const fetchUserActivity = async () => {
     try {
       setLoadingActivity(true);
-      const res = await axiosAdmin.get(`/admin/user-daily-active/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/user-daily-active/${id}`);
 
       if (res.data.success && res.data.dailyActiveTime) {
         const last7Days = res.data.dailyActiveTime.slice(-7);
@@ -112,7 +118,7 @@ export default function UserProfilePage() {
   const fetchAverageTime = async () => {
     try {
       setLoadingAverage(true);
-      const res = await axiosAdmin.get(`/admin/singleUsertime/${id}`);
+      const res = await axiosAdmin.get(`/admin/user/singleUsertime/${id}`);
 
       if (res.data.success && res.data.dailyActiveTime) {
         const daily = res.data.dailyActiveTime.map((d: any) => {
@@ -155,24 +161,18 @@ export default function UserProfilePage() {
 
   // Suspend user handler
   const handleUserSuspend = async () => {
-    if (
-      !suspendDays ||
-      isNaN(Number(suspendDays)) ||
-      Number(suspendDays) <= 0
-    ) {
+    if (!suspendDays || isNaN(Number(suspendDays)) || Number(suspendDays) <= 0) {
       alert("Please enter a valid number of days (greater than 0)");
       return;
     }
 
     try {
       setSuspending(true);
-      console.log(`Suspending user for ${suspendDays} days...`);
 
       const res = await axiosAdmin.put(
-        `/admin/suspend/${id}?days=${suspendDays}`
+        `/admin/user/suspend/${id}?days=${suspendDays}`
       );
 
-      console.log("Suspend response:", res.data);
       alert(`User suspended successfully for ${suspendDays} days`);
 
       await fetchUserSinglePage();
@@ -196,11 +196,9 @@ export default function UserProfilePage() {
 
     try {
       setUnsuspending(true);
-      console.log("Unsuspending user...");
 
-      const res = await axiosAdmin.put(`/admin/unsuspend/${id}`);
+      const res = await axiosAdmin.put(`/admin/user/unsuspend/${id}`);
 
-      console.log("Unsuspend response:", res.data);
       alert("User unsuspended successfully!");
 
       await fetchUserSinglePage();
@@ -267,58 +265,52 @@ export default function UserProfilePage() {
     );
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10">
-      {/* Page Title */}
-      <h1 className="mb-4 text-xl font-semibold tracking-tight text-gray-800 sm:mb-5 sm:text-2xl md:text-3xl">
+    <div className="min-h-screen bg-[#F9FAFB] px-3 py-4 sm:px-4 md:px-6">
+      <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-5 tracking-tight">
         User Profile
       </h1>
 
       {/* HEADER CARD */}
-      <div className="mb-4 overflow-hidden rounded-xl bg-gradient-to-r from-[#AD49E1] via-[#C56BE8] to-[#E19BFF] text-white shadow-md sm:mb-5 sm:rounded-2xl md:mb-6 lg:mb-8">
-        <div className="flex flex-col items-center gap-4 p-4 sm:gap-5 sm:p-5 md:flex-row md:gap-6 md:p-7 lg:p-8">
-          {/* Profile Picture */}
-          <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32">
+      <div className="rounded-2xl shadow-sm overflow-hidden mb-5 bg-gradient-to-r from-[#AD49E1] via-[#C56BE8] to-[#E19BFF] text-white">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-4 sm:gap-6 p-4 sm:p-6 text-center md:text-left">
+          <div className="relative w-20 h-20 sm:w-28 sm:h-28">
             {user.picture ? (
               <Image
                 src={user.picture}
                 alt={user.name}
-                width={128}
-                height={128}
-                className="rounded-full border-3 border-white object-cover shadow-lg sm:border-4"
+                width={120}
+                height={120}
+                className="rounded-full object-cover border-4 border-white shadow-lg w-full h-full"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center rounded-full border-3 border-white bg-[#E8C7F7] text-2xl font-semibold text-[#AD49E1] shadow-lg sm:border-4 sm:text-3xl lg:text-4xl">
+              <div className="w-full h-full flex items-center justify-center rounded-full bg-[#E8C7F7] text-[#AD49E1] text-2xl sm:text-3xl font-semibold border-4 border-white shadow-lg">
                 {user.name?.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
 
-          {/* User Info */}
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="mb-1 text-xl font-semibold sm:text-2xl md:text-3xl lg:text-4xl">
+          <div className="flex-1 text-center md:text-left mt-2 md:mt-0">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-1">
               {user.name}
             </h2>
-            <p className="text-xs opacity-90 sm:text-sm md:text-base">Premium User</p>
+            <p className="text-xs sm:text-sm opacity-90">Premium User</p>
 
-            {/* Contact Info */}
-            <div className="mt-2 flex flex-col gap-2 text-xs opacity-90 sm:mt-3 sm:gap-3 sm:text-sm md:flex-row md:flex-wrap md:text-base lg:mt-4">
-              <div className="flex items-center justify-center gap-1.5 md:justify-start">
-                <Mail size={14} className="shrink-0 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                <span className="truncate">{user.email}</span>
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-3 text-xs sm:text-sm opacity-90">
+              <div className="flex items-center gap-1.5 break-all">
+                <Mail size={14} /> <span>{user.email}</span>
               </div>
-              <div className="flex items-center justify-center gap-1.5 md:justify-start">
-                <Phone size={14} className="shrink-0 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+              <div className="flex items-center gap-1.5">
+                <Phone size={14} />{" "}
                 <span>{user.phone || "+91 00000 00000"}</span>
               </div>
-              <div className="flex items-center justify-center gap-1.5 md:justify-start">
-                <MapPin size={14} className="shrink-0 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+              <div className="flex items-center gap-1.5">
+                <MapPin size={14} />{" "}
                 <span>{user.location || "Unknown"}</span>
               </div>
             </div>
 
-            {/* Suspension Status */}
             {user.isSuspended && user.suspensionEnd && (
-              <div className="mt-3 inline-block rounded-lg border border-white bg-red-500 bg-opacity-20 px-3 py-2 text-xs sm:text-sm md:mt-4 md:text-base">
+              <div className="mt-3 bg-red-500/20 border border-white/80 rounded-lg px-3 py-2 text-xs sm:text-sm">
                 ⚠️ Account Suspended until{" "}
                 {new Date(user.suspensionEnd).toLocaleString()}
               </div>
@@ -327,18 +319,18 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      {/* MAIN GRID - Stats Cards */}
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:mb-5 sm:gap-4 md:mb-6 md:grid-cols-2 md:gap-5 lg:mb-8 lg:grid-cols-3 xl:gap-6">
+      {/* MAIN GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 mb-6">
         {/* TOKEN CARD */}
-        <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 lg:p-6">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:text-sm md:mb-3">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-2 text-xs sm:text-sm uppercase tracking-wide">
             Available Tokens
           </h3>
-          <div className="flex items-center justify-between">
-            <p className="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
+          <div className="flex justify-between items-center gap-3">
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900">
               {singleToken ?? 0}
             </p>
-            <div className="h-10 w-20 sm:h-12 sm:w-28 lg:h-14 lg:w-32">
+            <div className="w-24 h-14 sm:w-28 sm:h-16">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={tokenData}>
                   <Bar
@@ -353,26 +345,18 @@ export default function UserProfilePage() {
         </div>
 
         {/* STATUS CARD */}
-        <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 lg:p-6">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:text-sm md:mb-3">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-2 text-xs sm:text-sm uppercase tracking-wide">
             Account Status
           </h3>
 
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-            <select
-              value={status}
-              onChange={(e) =>
-                setStatus(e.target.value as "active" | "disabled")
-              }
-              className="flex-1 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#E5B4F6] sm:text-sm lg:py-2.5"
-            >
-              <option value="active">🟢 Active</option>
-              <option value="disabled">🔴 Disabled</option>
-            </select>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <CustomSelect value={status} onChange={(v:any) => setStatus(v)} />
+
 
             <button
               onClick={() => handleStatusChange(status)}
-              className="flex items-center justify-center gap-1.5 rounded-md bg-[#AD49E1] px-4 py-2 text-xs font-medium text-white shadow-sm transition hover:bg-[#9b34d1] active:scale-95 sm:text-sm lg:px-5 lg:py-2.5"
+              className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm shadow-sm"
             >
               Done
             </button>
@@ -391,30 +375,30 @@ export default function UserProfilePage() {
         </div>
 
         {/* WEEKLY ACTIVITY CARD */}
-        <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 md:col-span-2 lg:col-span-1 lg:p-6">
-          <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:text-sm">
-            <Clock size={14} className="sm:h-4 sm:w-4" />
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide flex items-center gap-2">
+            <Clock size={16} />
             Average Active Time (Weekly)
           </h3>
 
           {loadingAverage ? (
-            <div className="flex h-20 items-center justify-center lg:h-24">
-              <p className="text-xs text-gray-500 sm:text-sm">Loading...</p>
+            <div className="flex items-center justify-center h-16 sm:h-20">
+              <p className="text-xs text-gray-500">Loading...</p>
             </div>
           ) : averageTimeData &&
             Array.isArray(averageTimeData.dailyActiveTime) &&
             averageTimeData.dailyActiveTime.length > 0 ? (
             <div>
-              <div className="mb-3 md:mb-4">
-                <p className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">
+              <div className="mb-3">
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">
                   {secondsToHms(averageTimeData.averagePerDay.seconds)}
                 </p>
-                <p className="text-xs text-gray-500 sm:text-sm">
+                <p className="text-[11px] sm:text-xs text-gray-500">
                   Average per day (Mon – Sun)
                 </p>
               </div>
 
-              <div className="h-14 w-full sm:h-16 lg:h-20">
+              <div className="w-full h-20 sm:h-24">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyChartData}>
                     <Line
@@ -431,66 +415,65 @@ export default function UserProfilePage() {
               </div>
             </div>
           ) : (
-            <div className="flex h-20 items-center justify-center lg:h-24">
-              <p className="text-xs text-gray-500 sm:text-sm">No activity data</p>
+            <div className="flex items-center justify-center h-16 sm:h-20">
+              <p className="text-xs text-gray-500">No activity data</p>
             </div>
           )}
         </div>
       </div>
 
       {/* TOKEN CONTROLS */}
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:mb-5 sm:gap-4 md:mb-6 md:grid-cols-2 md:gap-5 lg:mb-8 xl:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-6">
         {/* ADD TOKENS */}
-        <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 lg:p-6">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:text-sm md:mb-4">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide">
             Add Tokens
           </h3>
-          <div className="flex gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="number"
               placeholder="Count"
-              className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E5B4F6] sm:text-sm lg:py-2.5"
+              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm"
             />
-            <button className="flex items-center gap-1.5 whitespace-nowrap rounded-md bg-[#AD49E1] px-3 py-2 text-xs font-medium text-white transition hover:bg-[#9b34d1] active:scale-95 sm:px-4 sm:text-sm lg:px-5 lg:py-2.5">
-              <PlusCircle size={14} className="shrink-0 sm:h-4 sm:w-4" /> Add
+            <button className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
+              <PlusCircle size={14} /> Add
             </button>
           </div>
         </div>
 
         {/* UPDATE TOKENS */}
-        <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 lg:p-6">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:text-sm md:mb-4">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide">
             Update Tokens
           </h3>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 items-stretch">
             <input
               type="text"
               placeholder="Select Count"
-              className="flex-1 rounded-md border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E5B4F6] sm:text-sm lg:py-2.5"
+              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none text-sm"
             />
-            <button className="flex items-center gap-1.5 whitespace-nowrap rounded-md bg-[#AD49E1] px-3 py-2 text-xs font-medium text-white transition hover:bg-[#9b34d1] active:scale-95 sm:px-4 sm:text-sm lg:px-5 lg:py-2.5">
-              <RefreshCcw size={14} className="shrink-0 sm:h-4 sm:w-4" /> Update
+            <button className="flex items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
+              <RefreshCcw size={14} /> Update
             </button>
           </div>
         </div>
       </div>
 
       {/* ACTION CONTROLS */}
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 md:gap-5 xl:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-6">
         {/* SUSPEND/UNSUSPEND CARD */}
-        <div className="rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 lg:p-6">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:text-sm md:mb-4">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+          <h3 className="text-[#AD49E1] font-semibold mb-3 text-xs sm:text-sm uppercase tracking-wide">
             {user.isSuspended ? "Unsuspend User" : "Suspend User"}
           </h3>
 
           {user.isSuspended ? (
-            // UNSUSPEND UI
-            <div className="space-y-3 md:space-y-4">
-              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs sm:text-sm lg:p-4">
-                <p className="mb-1 font-medium text-red-800">
+            <div className="space-y-3">
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-xs sm:text-sm">
+                <p className="text-red-800 font-medium mb-1">
                   ⚠️ User is currently suspended
                 </p>
-                <p className="text-xs text-red-600 sm:text-sm">
+                <p className="text-red-600 text-[11px] sm:text-xs">
                   Suspension ends:{" "}
                   {user.suspensionEnd
                     ? new Date(user.suspensionEnd).toLocaleString()
@@ -499,7 +482,7 @@ export default function UserProfilePage() {
               </div>
 
               <button
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-green-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-400 sm:text-sm lg:py-2.5"
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition text-xs sm:text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                 onClick={handleUserUnsuspend}
                 disabled={unsuspending}
               >
@@ -508,18 +491,17 @@ export default function UserProfilePage() {
               </button>
             </div>
           ) : (
-            // SUSPEND UI
-            <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="number"
                 placeholder="Days"
                 value={suspendDays}
                 onChange={(e) => setSuspendDays(e.target.value)}
-                className="w-full rounded-md border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E5B4F6] sm:w-24 sm:text-sm lg:w-28 lg:py-2.5"
+                className="border border-gray-200 rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-[#E5B4F6] focus:outline-none w-full sm:w-32 text-sm"
                 min="1"
               />
               <button
-                className="flex flex-1 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-red-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-400 sm:text-sm lg:py-2.5"
+                className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md font-medium hover:bg-red-700 transition text-xs sm:text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                 onClick={handleUserSuspend}
                 disabled={suspending || !suspendDays}
               >
@@ -531,17 +513,17 @@ export default function UserProfilePage() {
         </div>
 
         {/* EMAIL & ALERT CARD */}
-        <div className="flex flex-col justify-center gap-3 rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:rounded-xl sm:p-5 md:gap-4 lg:p-6">
-          <h3 className="mb-0 text-xs font-semibold uppercase tracking-wide text-[#AD49E1] sm:mb-1 sm:text-sm">
+        <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col justify-center gap-3">
+          <h3 className="text-[#AD49E1] font-semibold mb-1 text-xs sm:text-sm uppercase tracking-wide">
             Actions
           </h3>
 
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-            <button className="flex w-full items-center justify-center gap-1.5 rounded-md bg-[#AD49E1] px-4 py-2 text-xs font-medium text-white transition hover:bg-[#9b34d1] active:scale-95 sm:text-sm lg:py-2.5">
-              <Bell size={14} className="shrink-0 sm:h-4 sm:w-4" /> Token Alert
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
+              <Bell size={16} /> Token Alert
             </button>
-            <button className="flex w-full items-center justify-center gap-1.5 rounded-md bg-[#AD49E1] px-4 py-2 text-xs font-medium text-white transition hover:bg-[#9b34d1] active:scale-95 sm:text-sm lg:py-2.5">
-              <Send size={14} className="shrink-0 sm:h-4 sm:w-4" /> Send Email
+            <button className="flex w-full items-center justify-center gap-1.5 bg-[#AD49E1] text-white px-4 py-2 rounded-md font-medium hover:bg-[#9b34d1] transition text-xs sm:text-sm">
+              <Send size={16} /> Send Email
             </button>
           </div>
         </div>

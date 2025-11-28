@@ -47,6 +47,12 @@ export default function AdminPlansPage() {
   const [addForm, setAddForm] = useState({ ...emptyPlanForForm });
   const [editForm, setEditForm] = useState<any>(null);
 
+  // ⭐ ADD MOBILE TITLE SUPPORT
+  useEffect(() => {
+    document.getElementById("mobile-page-title")!.textContent =
+      "Manage Pricing Plans";
+  }, []);
+
   const fetchPlans = async () => {
     setLoading(true);
     try {
@@ -73,9 +79,9 @@ export default function AdminPlansPage() {
     try {
       const payload = {
         title: addForm.title,
-        price: Number(addForm.price), 
+        price: Number(addForm.price),
         billed: addForm.billed,
-        features: featuresStringToArray(addForm.features), 
+        features: featuresStringToArray(addForm.features),
         ...(addForm.offerlabel?.trim() && { offerlabel: addForm.offerlabel }),
       };
 
@@ -89,7 +95,6 @@ export default function AdminPlansPage() {
       alert("Failed to add plan");
     }
   };
-
 
   const startEdit = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -106,9 +111,9 @@ export default function AdminPlansPage() {
     try {
       const payload = {
         title: editForm.title,
-        price: Number(editForm.price), // FIX ✔ number
+        price: Number(editForm.price),
         billed: editForm.billed,
-        features: featuresStringToArray(editForm.features), // FIX ✔ array
+        features: featuresStringToArray(editForm.features),
         ...(editForm.offerlabel?.trim() && { offerlabel: editForm.offerlabel }),
       };
 
@@ -144,7 +149,14 @@ export default function AdminPlansPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Manage Pricing Plans</h1>
+
+      {/* DESKTOP TITLE */}
+      <h1 className="text-2xl font-semibold mb-6 hidden md:block">
+        Manage Pricing Plans
+      </h1>
+
+      {/* MOBILE TITLE */}
+      <h1 id="mobile-page-title" className="md:hidden text-xl font-bold mb-4"></h1>
 
       <button
         onClick={() => setShowAddModal(true)}
@@ -210,7 +222,7 @@ export default function AdminPlansPage() {
         })}
       </div>
 
- 
+      {/* Delete Modal */}
       {showDeleteModal && (
         <Modal
           title="Delete Plan"

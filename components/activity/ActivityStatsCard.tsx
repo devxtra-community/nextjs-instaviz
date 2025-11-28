@@ -7,10 +7,10 @@ import { Upload, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const icons: any = {
-  total: <Upload size={40} />,
-  success: <CheckCircle2 size={40} />,
-  failed: <XCircle size={40} />,
-  hour: <Clock size={40} />
+  total: <Upload size={26} strokeWidth={2} className="text-white" />,
+  success: <CheckCircle2 size={26} strokeWidth={2} className="text-white" />,
+  failed: <XCircle size={26} strokeWidth={2} className="text-white" />,
+  hour: <Clock size={26} strokeWidth={2} className="text-white" />
 };
 
 export default function ActivityStatsCards() {
@@ -19,30 +19,14 @@ export default function ActivityStatsCards() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/uploadstats")
+        const res = await axiosAdmin.get("/admin/activities/uploadstats");
         const data = res.data;
 
         const formattedStats = [
-          {
-            title: "Total Uploads",
-            value: data.total,
-            icon: icons.total
-          },
-          {
-            title: "Successful Uploads",
-            value: data.success,
-            icon: icons.success
-          },
-          {
-            title: "Failed Uploads",
-            value: data.failed,
-            icon: icons.failed
-          },
-          {
-            title: "Peak Upload Hour",
-            value: data.peakHour,
-            icon: icons.hour
-          }
+          { title: "Total Uploads", value: data.total, icon: icons.total },
+          { title: "Successful Uploads", value: data.success, icon: icons.success },
+          { title: "Failed Uploads", value: data.failed, icon: icons.failed },
+          { title: "Peak Upload Hour", value: data.peakHour, icon: icons.hour }
         ];
 
         setStats(formattedStats);
@@ -55,7 +39,7 @@ export default function ActivityStatsCards() {
   }, []);
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((s, i) => (
         <motion.div
           key={i}
@@ -63,15 +47,24 @@ export default function ActivityStatsCards() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.1 }}
         >
-          <Card className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition">
-            <CardContent className="p-2">
-              <div className="flex justify-between items-center">
-                <p className="text-l text-gray-500">{s.title}</p>
-                <div className="w-8 h-8 rounded-lg bg-[#AD49E1]/10 flex items-center justify-center text-[#AD49E1]">
-                  {s.icon}
-                </div>
+          <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
+            <CardContent className="p-5 flex justify-between items-center">
+
+              {/* LEFT SIDE */}
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                  {s.title}
+                </p>
+                <h2 className="text-2xl font-bold text-gray-900 mt-1">
+                  {s.value}
+                </h2>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mt-1">{s.value}</h2>
+
+              {/* PURPLE ICON BOX — EXACT DASHBOARD STYLE */}
+              <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
+                {s.icon}
+              </div>
+
             </CardContent>
           </Card>
         </motion.div>
