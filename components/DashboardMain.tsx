@@ -9,6 +9,7 @@ import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
 import SessionSelector from "@/components/SessionSelector";
 import axiosInstance from "@/lib/axiosInstance";
+import { toast, Toaster } from "sonner";
 
 // Lazy load Chart component
 const Charts = dynamic(() => import("@/components/chart"), {
@@ -40,7 +41,6 @@ export default function DashboardMain({
   const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-
   /** Load a session */
   const loadSession = async (sessionId: string) => {
     try {
@@ -59,8 +59,9 @@ export default function DashboardMain({
       setActiveSessionId(sessionId);
       setDataUploaded(true);
       localStorage.setItem("currentSessionId", sessionId);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load session:", err);
+      toast.warning(`${err.response.data.message}`);
     }
   };
 
@@ -72,16 +73,14 @@ export default function DashboardMain({
     }
   }, []);
 
-
   /** BEFORE UPLOAD */
   if (!showData || !analysisData) {
     const isLogged =
-      typeof window !== "undefined" &&
-      !!localStorage.getItem("accessToken");
+      typeof window !== "undefined" && !!localStorage.getItem("accessToken");
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
-
+        <Toaster richColors position="top-center" />
         {/* Show session selector ONLY when logged in */}
         {isLogged && (
           <div className="absolute top-20 right-6">
@@ -116,12 +115,11 @@ export default function DashboardMain({
           <UploadButton
             onUploadSuccess={(newSessionId) => {
               localStorage.setItem("currentSessionId", newSessionId);
-              setRefreshSessions(prev => prev + 1);
+              setRefreshSessions((prev) => prev + 1);
               loadSession(newSessionId);
               setDataUploaded(true);
             }}
           />
-
         </motion.div>
       </main>
     );
@@ -161,21 +159,36 @@ export default function DashboardMain({
           <UploadButton
             onUploadSuccess={(newSessionId) => {
               localStorage.setItem("currentSessionId", newSessionId);
-              setRefreshSessions(prev => prev + 1);
+              setRefreshSessions((prev) => prev + 1);
               loadSession(newSessionId);
               setDataUploaded(true);
             }}
           />
-
         </div>
       </div>
 
       {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard title="Total Rows" value={metrics.total_rows} description="Records processed" />
-        <MetricCard title="Total Columns" value={metrics.total_columns} description="Attributes detected" />
-        <MetricCard title="Missing Values" value={metrics.missing_values} description="Incomplete entries" />
-        <MetricCard title="Charts Generated" value={charts.length} description="Visuals auto-created" />
+        <MetricCard
+          title="Total Rows"
+          value={metrics.total_rows}
+          description="Records processed"
+        />
+        <MetricCard
+          title="Total Columns"
+          value={metrics.total_columns}
+          description="Attributes detected"
+        />
+        <MetricCard
+          title="Missing Values"
+          value={metrics.missing_values}
+          description="Incomplete entries"
+        />
+        <MetricCard
+          title="Charts Generated"
+          value={charts.length}
+          description="Visuals auto-created"
+        />
       </div>
 
       <Charts charts={charts} />
