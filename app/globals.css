@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=BBH+Sans+Hegarty&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Story+Script&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -47,6 +48,22 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+.title {
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+
+.subtitle {
+  font-family: "Lato", sans-serif;
+}
+
+.handwriting {
+  font-family: "Story Script", cursive;
+}
+
+.logo {
+  font-family: "BBH Sans Hegarty", sans-serif;
+}
+
 h1,
 h2 {
   font-family: "Domine", serif;
@@ -81,7 +98,9 @@ h2 {
 .hoverColor:hover {
   color: #b958ed;
 }
-
+.hoverBg:hover {
+  background-color: #b958ed;
+}
 
 @keyframes fadeIn {
   from {
@@ -195,10 +214,9 @@ html {
   scroll-behavior: smooth;
 }
 
-
 :root {
-  --dotted-bg: 
-    radial-gradient(#d3d3d3 1px, transparent 1px) 0 0 / 18px 18px #ffffff;
+  --dotted-bg: radial-gradient(#d3d3d3 1px, transparent 1px) 0 0 / 18px 18px
+    #ffffff;
 }
 
 

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function FullLoader() {
   return (
-    <div className="fixed w-9/12  inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-50 top-17">
+    <div className="fixed inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-[9999]">
       
       <motion.div
         animate={{ rotate: 360 }}

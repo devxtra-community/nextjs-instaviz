@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
-
 import CheckoutButton from "@/components/CheckoutButton";
 import axiosInstance from "@/lib/axiosInstance";
 
@@ -25,9 +24,7 @@ export default function PlansPage() {
   return (
     <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4 pt-24">
       <Navbar />
-      <h1 className="text-3xl font-bold text-center mb-1 primary">
-        Our Plans
-      </h1>
+      <h1 className="text-3xl font-bold text-center mb-1 primary">Our Plans</h1>
 
       <div className="flex justify-center">
         <div className="w-full max-w-6xl">
@@ -38,7 +35,7 @@ export default function PlansPage() {
             {plans.map((plan: any) => (
               <div
                 key={plan._id}
-                style={{ overflow: "visible" }}  // keep visible for safety
+                style={{ overflow: "visible" }}  
                 className={`
                   relative flex flex-col items-center rounded-3xl
                   card-custom-top-right p-6 sm:p-8 transition

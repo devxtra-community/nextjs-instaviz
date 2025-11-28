@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import useRedirectIfLoggedIn from "@/components/hooks/useRedirectIfLoggedIn";
 
 import axiosInstance from "@/lib/axiosInstance";
@@ -13,14 +14,17 @@ import GoogleButton from "@/components/GoogleButton";
 
 export default function LoginPage() {
   useRedirectIfLoggedIn();
+
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+
   async function handleLogin() {
-    // Validation
     if (!email || !password) {
       toast.error("Please enter both email and password");
       return;
@@ -36,13 +40,16 @@ export default function LoginPage() {
       
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
-      
+      localStorage.setItem("sessionId", LoginResponse.data.sessionId);
+
       if (LoginResponse.data.success) {
         localStorage.setItem("accessToken", LoginResponse.data.accessToken);
-        localStorage.setItem("sessionId", LoginResponse.data.sessionId);
-        
-        toast.success("Login successful!");
-        router.push("/home");
+
+        if (redirect) {
+          router.push(redirect);
+        } else {
+          router.push("/home");
+        }
       }
     } catch (err: any) {
       console.error("login failed:", err);
@@ -75,6 +82,10 @@ export default function LoginPage() {
       <Toaster richColors position="top-center" />
 
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
+        <div className="lg:hidden mb-6 flex items-center">
+          <h1 className="text-4xl font-semibold primary">Instaviz</h1>
+        </div>
+
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Welcome back</h2>
           <p className="mt-1 text-base primary">
@@ -148,6 +159,8 @@ export default function LoginPage() {
       </div>
 
       <div className="hidden md:flex flex-1 items-center justify-center relative bg-linear-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] overflow-hidden">
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,#ffffff_1px,transparent_1px)] bg-size-[20px_20px]" />
+
         <motion.img
           src="/giphy.gif"
           alt="Data Visualization"
