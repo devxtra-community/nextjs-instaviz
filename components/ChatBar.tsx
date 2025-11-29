@@ -25,7 +25,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   onClose,
 }) => {
   const [input, setInput] = useState("");
-  const { addNewChart, setLoading } = useAnalysis();
+  const { addNewChart } = useAnalysis();
 
   const [userImage, setUserImage] = useState("/user.jpg");
   const [aiTyping, setAiTyping] = useState(false);
@@ -121,8 +121,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     setAiTyping(true);
 
     try {
-      setLoading(true);
-
       const res = await axiosInstance.post(`/session/${sessionId}/message`, {
         user: text,
       });
@@ -144,7 +142,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       ]);
     } finally {
       setAiTyping(false);
-      setLoading(false);
     }
   };
 
