@@ -3,7 +3,7 @@ import { XCircle } from "lucide-react";
 
 export default function CancelPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-50 to-white px-6 text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-red-50 to-white px-6 text-center">
       <XCircle className="text-red-500 w-16 h-16 mb-4" />
       <h1 className="text-3xl font-bold text-red-700 mb-2">Payment Cancelled</h1>
       <p className="text-gray-700 max-w-md mb-6">

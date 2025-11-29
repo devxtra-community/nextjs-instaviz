@@ -11,7 +11,11 @@ interface CheckoutButtonProps {
   butto: string;
 }
 
-export default function CheckoutButton({ plan, highlight, butto }: CheckoutButtonProps) {
+export default function CheckoutButton({
+  plan,
+  highlight,
+  butto,
+}: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -20,15 +24,17 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
 
     console.log(finalToken);
     if (!finalToken) {
-      toast.error("Please login to continue")
+      toast.error("Please login to continue");
       setTimeout(() => {
-        router.push("/login");
-      }, 1500)
+        router.push(`/login?redirect=/ourplans`);
+      }, 1500);
       return;
     }
     setLoading(true);
     try {
-      const { data } = await axios.post("/payment/create-checkout-session", { plan });
+      const { data } = await axios.post("/payment/create-checkout-session", {
+        plan,
+      });
       if (data.url) {
         window.location.href = data.url;
       } else {
@@ -54,31 +60,30 @@ export default function CheckoutButton({ plan, highlight, butto }: CheckoutButto
         }}
         toastOptions={{
           style: {
-            backgroundColor: "#ffecec", 
-            color: "#b00020", 
-            border: "1px solid #ff5c5c", 
+            backgroundColor: "#ffecec",
+            color: "#b00020",
+            border: "1px solid #ff5c5c",
             borderRadius: "10px",
             padding: "10px 18px",
             fontWeight: 500,
-            boxShadow: "0 4px 12px rgba(255, 0, 0, 0.15)", 
+            boxShadow: "0 4px 12px rgba(255, 0, 0, 0.15)",
           },
           className: "transition-all duration-300",
         }}
       />
 
-
       <button
         onClick={handleCheckout}
         disabled={loading}
         className={`mt-auto px-6 py-2 text-xs sm:text-base rounded-xl font-semibold shadow cursor-pointer w-full transition
-        ${highlight
+        ${
+          highlight
             ? "primarybg text-white hover:brightness-110 disabled:opacity-70"
             : "bg-[#f3e8ff] primary hover:bg-[#ead6ff] disabled:opacity-60"
-          }`}
+        }`}
       >
         {loading ? "Redirecting..." : butto}
       </button>
-
     </>
   );
 }
