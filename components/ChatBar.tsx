@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { FiSend, FiArrowDownCircle } from "react-icons/fi";
 import VioletAIAvatar from "./VioletAIAvatar";
