@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,6 +24,7 @@ export function Navbar() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
+  const [userToken, setUserToken] = useState(0);
 
   const [loadingProfile, setLoadingProfile] = useState(true);
 
@@ -53,7 +53,11 @@ export function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!userId) return;
+    tokenCheck();
+
+    if (!userId) {
+      return;
+    }
 
     const loadProfile = async () => {
       try {
@@ -75,7 +79,26 @@ export function Navbar() {
     };
 
     loadProfile();
-  }, [userId]);
+  }, [userId, userToken]);
+
+  const tokenCheck = async () => {
+    try {
+      console.log("inside token check in frontend : ", userId);
+      const token = await axiosInstance.get("/user/token");
+      console.log(token.data);
+      let userToken = token.data.token;
+      if (typeof userToken === "number") {
+        setUserToken(userToken);
+        console.log("token from the loggedin user")
+      } else {
+        setUserToken(2);
+        console.log("user doesnt loggedin so default ")
+      }
+    } catch (err) {
+      console.log("err on tokencheck at navbar", err);
+      console.log("error from the tokencheck at navbar", err);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -92,17 +115,38 @@ export function Navbar() {
     router.push("/userprofile");
   };
 
+  console.log("userToken →", userToken);
+
+  // Small reusable token badge
+  const TokenBadge = () => {
+    if (userToken <= 0) return null;
+
+    return (
+      <div className="flex items-center">
+        <div className="relative inline-flex items-center">
+          <span className="relative flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-[11px] font-semibold text-orange-700 shadow-sm">
+            <span className="text-[14px] animate-pulse">🔥</span>
+            <span>{userToken} Tokens</span>
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
       <div className="flex items-center justify-between px-6 py-3 mx-auto">
-
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold primary tracking-tight">
+        <Link
+          href="/"
+          className="text-2xl font-extrabold primary tracking-tight"
+        >
           InstaviZ
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
+          {!isLoggedIn && <TokenBadge />}
 
           <Link
             href="/home"
@@ -123,7 +167,6 @@ export function Navbar() {
           {/* AUTH */}
           {isLoggedIn ? (
             <div className="relative">
-
               {loadingProfile ? (
                 <div className="w-[45px] h-[45px] rounded-full bg-gray-200 animate-pulse border" />
               ) : (
@@ -177,6 +220,7 @@ export function Navbar() {
             className="md:hidden bg-white shadow-lg border-t"
           >
             <div className="flex flex-col p-5 space-y-4">
+              {!isLoggedIn && <TokenBadge />}
 
               <Link
                 href="/home"
