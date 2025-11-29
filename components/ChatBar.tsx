@@ -4,14 +4,14 @@ import { FiSend, FiArrowDownCircle } from "react-icons/fi";
 import VioletAIAvatar from "./VioletAIAvatar";
 import { useAnalysis } from "@/context/AnalysisContext";
 import axiosInstance from "@/lib/axiosInstance";
+import { appendMessage, getSession } from "@/lib/sessionApi";
 
-type ChatBarProps = {
+type ChatBarProps = { 
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
   messages: { role: "user" | "ai"; text: string }[];
-  setMessages: React.Dispatch<
-    React.SetStateAction<{ role: "user" | "ai"; text: string }[]>
-  >;
+  setMessages: React.Dispatch<React.SetStateAction<{ role: "user" | "ai"; text: string }[]>>;
+
   mobile?: boolean;
   onClose?: () => void;
 };
@@ -25,30 +25,61 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 }) => {
   const [input, setInput] = useState("");
   const { addNewChart, setLoading } = useAnalysis();
+
   const [userImage, setUserImage] = useState("/user.jpg");
   const [aiTyping, setAiTyping] = useState(false);
 
-
-
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  // Auto-scroll when new messages arrive
+  const sessionId = typeof window !== "undefined"
+    ? localStorage.getItem("currentSessionId")
+    : null;
+
+  useEffect(() => {
+    if (!sessionId) return;
+
+    (async () => {
+      try {
+        const session = await getSession(sessionId);
+
+        const restored = session.messages.flatMap((m) => {
+          const arr: { role: "user" | "ai"; text: string }[] = [];
+
+          if (m.user && m.user.trim() !== "") {
+            arr.push({ role: "user", text: m.user });
+          }
+
+          if (m.ai && m.ai.trim() !== "") {
+            arr.push({ role: "ai", text: m.ai });
+          }
+
+          return arr;
+        });
+
+
+        setMessages(restored);
+
+      } catch (err) {
+        console.log("Failed to load past messages:", err);
+      }
+    })();
+  }, [sessionId]);
+
+  // Auto-scroll when new messages added
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Load user profile image (if logged in)
   useEffect(() => {
-    const finalToken = localStorage.getItem("accessToken");
-
-
-    if (!finalToken) return;
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
 
     let decoded: any;
     try {
-      decoded = JSON.parse(atob(finalToken.split(".")[1])); // lightweight decode
+      decoded = JSON.parse(atob(token.split(".")[1]));
     } catch {
       return;
     }
@@ -60,45 +91,53 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       try {
         const res = await axiosInstance.get(`/user/${id}`);
         if (res.data.user?.picture) setUserImage(res.data.user.picture);
-      } catch {
-        console.log("Failed to load user picture");
-      }
+      } catch { }
     })();
   }, []);
 
-
-  // Detect if user has scrolled up
+  // Scroll detection
   const handleScroll = () => {
     if (!messagesRef.current) return;
     const el = messagesRef.current;
-    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
-    setShowScrollButton(!atBottom);
+
+    const isAtBottom =
+      el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+
+    setShowScrollButton(!isAtBottom);
   };
 
-  const scrollToBottom = () => {
+  const scrollToBottom = () =>
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const sendMessage = async () => {
-    if (aiTyping) return;
-    if (!input.trim()) return;
+    if (!input.trim() || aiTyping) return;
+    if (!sessionId) return alert("No active session found!");
 
-    const text = input;
+    const text = input.trim();
     setInput("");
 
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    setMessages(prev => [...prev, { role: "user", text }]);
     setAiTyping(true);
 
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/chat", { message: text });
-      const data = res.data;
 
-      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
-      if (data.chart) addNewChart(data.chart);
+      const res = await axiosInstance.post(`/session/${sessionId}/message`, {
+        user: text,
+      });
 
-    } catch {
-      setMessages((prev) => [
+      const reply = res.data.reply || "";
+      const chart = res.data.chart?.chart || null;
+
+      setMessages(prev => [...prev, { role: "ai", text: reply }]);
+
+      if (chart) {
+        addNewChart(chart);
+      }
+
+    } catch (err) {
+      console.log(err);
+      setMessages(prev => [
         ...prev,
         { role: "ai", text: "Error communicating with server." }
       ]);
@@ -109,35 +148,20 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   };
 
 
-  // BEFORE UPLOAD
+
   if (!dataUploaded) {
     return (
       <aside
-        className={`
-        ${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"}
-        w-full fixed
-        ${mobile ? "bottom-0" : "top-12 right-0"}
-        bg-white p-4 flex flex-col
-        border-t md:border-l border-gray-200
-      `}
+        className={`${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"
+          } w-full fixed ${mobile ? "bottom-0" : "top-12 right-0"
+          } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
       >
-        <div className="flex justify-between items-center mb-3">
-          <h1 className="text-lg font-semibold primary mt-2">
-            InstaviZ AI Chat
-          </h1>
-          {mobile && (
-            <button onClick={onClose} className="primary text-xl font-bold">
-              ×
-            </button>
-          )}
-        </div>
-
         <div className="text-center mt-40">
           <h2 className="text-lg font-semibold primary mb-2">
             Upload a file to chat with InstaviZ AI
           </h2>
           <p className="text-sm text-gray-500">
-            InstaviZ AI is ready to answer — upload your CSV to begin.
+            InstaviZ AI is ready — upload your CSV to get started.
           </p>
         </div>
       </aside>
@@ -148,141 +172,125 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     <aside
       className={`
       flex flex-col bg-white
-      ${mobile ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl" : "h-[93vh] fixed right-0 top-12 md:w-96"}
-      p-4 border-t md:border-l border-gray-200
-    `}
+      ${mobile
+          ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl"
+          : "h-[93vh] fixed right-0 top-12 md:w-96"
+        }
+      p-4 border-t md:border-l border-gray-200`}
     >
       {/* HEADER */}
       <div className="flex justify-between items-center mb-2">
-        <h1 className="text-lg font-semibold primary">Ask InstaviZ AI</h1>
-        {mobile && (
-          <button onClick={onClose} className="primary text-xl">
-            ×
-          </button>
-        )}
+        <h1 className="text-lg font-semibold primary mt-4">Ask InstaviZ AI</h1>
       </div>
 
       {/* CHAT MESSAGES */}
       <div
         ref={messagesRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto space-y-3 pr-1 "
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="flex-1 overflow-y-auto space-y-3 pr-1"
+        style={{ scrollbarWidth: "none" }}
       >
-        {messages.map((m, i) => (
+        {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
-              } items-end gap-2`}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
+              } gap-2`}
           >
-
-            {/* AI SIDE (avatar left, bubble right) */}
-            {m.role === "ai" && (
+            {/* AI */}
+            {msg.role === "ai" && (
               <>
                 <VioletAIAvatar />
-
-                <div
-                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-gray-50 text-gray-800"
-                >
-                  {m.text}
+                <div className="px-3 py-1.5 bg-gray-50 text-gray-800 rounded-xl text-xs shadow-sm max-w-[80%]">
+                  {msg.text}
                 </div>
               </>
             )}
 
-            {/* USER SIDE (bubble left, avatar right) */}
-            {m.role === "user" && (
+            {/* USER */}
+            {msg.role === "user" && (
               <>
-                <div
-                  className="px-3 py-1.5 rounded-xl text-xs shadow-sm max-w-[80%] bg-[#f7edff] primary"
-                >
-                  {m.text}
+                <div className="px-3 py-1.5 bg-[#f7edff] primary rounded-xl text-xs shadow-sm max-w-[80%]">
+                  {msg.text}
                 </div>
-
                 <img
                   src={userImage}
                   className="w-6 h-6 rounded-full border object-cover"
-                  alt="User"
                 />
               </>
             )}
-
           </div>
         ))}
 
         {aiTyping && (
-          <div className="flex justify-start items-center gap-2 pl-1">
+          <div className="flex items-center gap-2">
             <VioletAIAvatar />
-
             <div className="flex gap-1">
-              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]"></span>
-              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]"></span>
-              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]"></span>
+              <span className="dot" />
+              <span className="dot delay-150" />
+              <span className="dot delay-300" />
             </div>
           </div>
         )}
 
-
-
-        {/* Scroll Anchor */}
         <div ref={bottomRef} />
       </div>
 
-      {/* SCROLL TO BOTTOM BUTTON */}
+      {/* Scroll button */}
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
-          className="absolute right-4 bottom-20 bg-white shadow-md p-2 rounded-full border hover:cursor-pointer"
+          className="absolute right-4 bottom-20 bg-white shadow px-2 py-1 rounded-full border"
         >
           <FiArrowDownCircle size={20} className="primary" />
         </button>
       )}
 
-      {/* INPUT SECTION */}
-      <div className="relative mt-2 flex">
+      <div className="relative mt-2 flex items-end gap-2">
         <textarea
           disabled={aiTyping}
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+            const el = e.target;
+            el.style.height = "34px"; // reset to initial height
+            el.style.height = Math.min(el.scrollHeight, 110) + "px"; // expand naturally
           }}
           onKeyDown={(e) => {
-            if (aiTyping) return;
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (!aiTyping && e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               sendMessage();
             }
           }}
-          placeholder={aiTyping ? "AI is thinking..." : "Ask questions about your data..."}
-          className="w-full px-3 py-2 rounded-lg border border-[#e9e0f8]
-          text-gray-700 shadow text-xs resize-none leading-snug
-          max-h-[120px] overflow-hidden focus:border-[#ad49e1] 
-          focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          rows={1}
+          placeholder="Ask anything about your data…"
+          className="
+    w-full px-3 py-2
+    border rounded-xl text-sm
+    shadow-sm leading-5
+    resize-none overflow-hidden
+    transition-colors duration-150
+    focus:border-[#AD49E1]
+    outline-none
+    placeholder-gray-400
+  "
+          style={{
+            height: "34px",
+            maxHeight: "110px",
+          }}
         />
 
 
         <button
           disabled={aiTyping}
           onClick={sendMessage}
-          className={`
-    right-2 top-3 rounded-full p-2 transition
-    ${aiTyping ? "bg-gray-200 cursor-not-allowed" : "primary hover:bg-[#f4e9ff]"}
-  `}
+          className={`p-3 rounded-full shrink-0 ${aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
+            } transition`}
         >
-          {aiTyping ? (
-            <div className="flex gap-1 px-1">
-              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:0ms]"></span>
-              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:150ms]"></span>
-              <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:300ms]"></span>
-            </div>
-          ) : (
-            <FiSend size={15} />
-          )}
+          <FiSend size={16} />
         </button>
-
       </div>
+
+
+
     </aside>
   );
 };
