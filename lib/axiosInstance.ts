@@ -58,9 +58,6 @@ axiosInstance.interceptors.response.use(
 
       const accessToken = localStorage.getItem("accessToken");
 
-      if (!accessToken) {
-        return Promise.reject(error);
-      }
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {

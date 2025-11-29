@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleArrowOutUpRight, LogOutIcon } from "lucide-react";
+import { CircleArrowOutUpRight, CoinsIcon, LogOutIcon } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { jwtDecode } from "jwt-decode";
+
 
 interface DecodedToken {
   id?: string;
@@ -27,6 +28,7 @@ export function Navbar() {
   const [userId, setUserId] = useState("");
 
   const [loadingProfile, setLoadingProfile] = useState(true);
+  
 
   const router = useRouter();
   const pathname = usePathname();
@@ -58,9 +60,11 @@ export function Navbar() {
     const loadProfile = async () => {
       try {
         const res = await axiosInstance.get(`/user/${userId}`);
+        console.log(res.data);
 
         setName(res.data.user.name);
         setEmail(res.data.user.email);
+        ;
 
         if (res.data.user?.picture) {
           setProfilePic(res.data.user.picture);
@@ -95,15 +99,16 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
       <div className="flex items-center justify-between px-6 py-3 mx-auto">
-
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold primary tracking-tight">
+        <Link
+          href="/"
+          className="text-2xl font-extrabold primary tracking-tight"
+        >
           InstaviZ
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
-
           <Link
             href="/home"
             className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
@@ -123,7 +128,6 @@ export function Navbar() {
           {/* AUTH */}
           {isLoggedIn ? (
             <div className="relative">
-
               {loadingProfile ? (
                 <div className="w-[45px] h-[45px] rounded-full bg-gray-200 animate-pulse border" />
               ) : (
@@ -177,7 +181,6 @@ export function Navbar() {
             className="md:hidden bg-white shadow-lg border-t"
           >
             <div className="flex flex-col p-5 space-y-4">
-
               <Link
                 href="/home"
                 onClick={() => setMenuOpen(false)}
