@@ -4,15 +4,13 @@ import { FiSend, FiArrowDownCircle } from "react-icons/fi";
 import VioletAIAvatar from "./VioletAIAvatar";
 import { useAnalysis } from "@/context/AnalysisContext";
 import axiosInstance from "@/lib/axiosInstance";
-import { getSession } from "@/lib/sessionApi";
+import { appendMessage, getSession } from "@/lib/sessionApi";
 
-type ChatBarProps = {
+type ChatBarProps = { 
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
   messages: { role: "user" | "ai"; text: string }[];
-  setMessages: React.Dispatch<
-    React.SetStateAction<{ role: "user" | "ai"; text: string }[]>
-  >;
+  setMessages: React.Dispatch<React.SetStateAction<{ role: "user" | "ai"; text: string }[]>>;
 
   mobile?: boolean;
   onClose?: () => void;
@@ -23,6 +21,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   messages,
   setMessages,
   mobile = false,
+  onClose,
 }) => {
   const [input, setInput] = useState("");
   const { addNewChart, setLoading } = useAnalysis();
@@ -32,13 +31,11 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const sessionId =
-    typeof window !== "undefined"
-      ? localStorage.getItem("currentSessionId")
-      : null;
+  const sessionId = typeof window !== "undefined"
+    ? localStorage.getItem("currentSessionId")
+    : null;
 
   useEffect(() => {
     if (!sessionId) return;
@@ -61,17 +58,21 @@ export const ChatBar: React.FC<ChatBarProps> = ({
           return arr;
         });
 
+
         setMessages(restored);
+
       } catch (err) {
         console.log("Failed to load past messages:", err);
       }
     })();
   }, [sessionId]);
 
+  // Auto-scroll when new messages added
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Load user profile image (if logged in)
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) return;
@@ -90,10 +91,11 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       try {
         const res = await axiosInstance.get(`/user/${id}`);
         if (res.data.user?.picture) setUserImage(res.data.user.picture);
-      } catch {}
+      } catch { }
     })();
   }, []);
 
+  // Scroll detection
   const handleScroll = () => {
     if (!messagesRef.current) return;
     const el = messagesRef.current;
@@ -114,32 +116,30 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     const text = input.trim();
     setInput("");
 
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "34px";
-    }
-
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    setMessages(prev => [...prev, { role: "user", text }]);
     setAiTyping(true);
 
     try {
       setLoading(true);
 
-      const res = await axiosInstance.post(
-        `/session/${sessionId}/message`,
-        { user: text }
-      );
+      const res = await axiosInstance.post(`/session/${sessionId}/message`, {
+        user: text,
+      });
 
       const reply = res.data.reply || "";
       const chart = res.data.chart?.chart || null;
 
-      setMessages((prev) => [...prev, { role: "ai", text: reply }]);
+      setMessages(prev => [...prev, { role: "ai", text: reply }]);
 
-      if (chart) addNewChart(chart);
+      if (chart) {
+        addNewChart(chart);
+      }
+
     } catch (err) {
       console.log(err);
-      setMessages((prev) => [
+      setMessages(prev => [
         ...prev,
-        { role: "ai", text: "Error communicating with server." },
+        { role: "ai", text: "Error communicating with server." }
       ]);
     } finally {
       setAiTyping(false);
@@ -147,14 +147,14 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     }
   };
 
+
+
   if (!dataUploaded) {
     return (
       <aside
-        className={`${
-          mobile ? "h-[55vh]" : "h-[93vh] md:w-96"
-        } w-full fixed ${
-          mobile ? "bottom-0" : "top-12 right-0"
-        } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
+        className={`${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"
+          } w-full fixed ${mobile ? "bottom-0" : "top-12 right-0"
+          } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
       >
         <div className="text-center mt-40">
           <h2 className="text-lg font-semibold primary mb-2">
@@ -170,13 +170,20 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 
   return (
     <aside
-      className={`flex flex-col bg-white ${
-        mobile
+      className={`
+      flex flex-col bg-white
+      ${mobile
           ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl"
           : "h-[93vh] fixed right-0 top-12 md:w-96"
-      } p-4 border-t md:border-l border-gray-200`}
+        }
+      p-4 border-t md:border-l border-gray-200`}
     >
-      <h1 className="text-lg font-semibold primary mt-4">Ask InstaviZ AI</h1>
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-lg font-semibold primary mt-4">Ask InstaviZ AI</h1>
+      </div>
+
+      {/* CHAT MESSAGES */}
       <div
         ref={messagesRef}
         onScroll={handleScroll}
@@ -186,37 +193,28 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            } gap-2`}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
+              } gap-2`}
           >
+            {/* AI */}
             {msg.role === "ai" && (
               <>
                 <VioletAIAvatar />
-                <div
-                  className="
-                    px-3 py-1.5 bg-gray-50 text-gray-800 rounded-xl text-xs shadow-sm
-                    max-w-[75%] break-words whitespace-pre-wrap
-                  "
-                >
+                <div className="px-3 py-1.5 bg-gray-50 text-gray-800 rounded-xl text-xs shadow-sm max-w-[80%]">
                   {msg.text}
                 </div>
               </>
             )}
 
+            {/* USER */}
             {msg.role === "user" && (
               <>
-                <div
-                  className="
-                    px-3 py-1.5 bg-[#f7edff] primary rounded-xl text-xs shadow-sm
-                    max-w-[75%] break-words whitespace-pre-wrap
-                  "
-                >
+                <div className="px-3 py-1.5 bg-[#f7edff] primary rounded-xl text-xs shadow-sm max-w-[80%]">
                   {msg.text}
                 </div>
                 <img
                   src={userImage}
-                  className="w-6 h-6 rounded-full border object-cover shrink-0"
+                  className="w-6 h-6 rounded-full border object-cover"
                 />
               </>
             )}
@@ -237,6 +235,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         <div ref={bottomRef} />
       </div>
 
+      {/* Scroll button */}
       {showScrollButton && (
         <button
           onClick={scrollToBottom}
@@ -248,15 +247,13 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 
       <div className="relative mt-2 flex items-end gap-2">
         <textarea
-          ref={textareaRef}
           disabled={aiTyping}
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
             const el = e.target;
-            el.style.height = "34px";
-            el.style.height =
-              Math.min(el.scrollHeight, 110) + "px";
+            el.style.height = "34px"; // reset to initial height
+            el.style.height = Math.min(el.scrollHeight, 110) + "px"; // expand naturally
           }}
           onKeyDown={(e) => {
             if (!aiTyping && e.key === "Enter" && !e.shiftKey) {
@@ -266,31 +263,34 @@ export const ChatBar: React.FC<ChatBarProps> = ({
           }}
           placeholder="Ask anything about your data…"
           className="
-            w-full px-3 py-2
-            border rounded-xl text-sm
-            shadow-sm leading-5
-            resize-none overflow-hidden
-            transition-colors duration-150
-            focus:border-[#AD49E1]
-            outline-none
-            placeholder-gray-400
-          "
+    w-full px-3 py-2
+    border rounded-xl text-sm
+    shadow-sm leading-5
+    resize-none overflow-hidden
+    transition-colors duration-150
+    focus:border-[#AD49E1]
+    outline-none
+    placeholder-gray-400
+  "
           style={{
             height: "34px",
             maxHeight: "110px",
           }}
         />
 
+
         <button
           disabled={aiTyping}
           onClick={sendMessage}
-          className={`p-3 rounded-full shrink-0 ${
-            aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
-          } transition`}
+          className={`p-3 rounded-full shrink-0 ${aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
+            } transition`}
         >
           <FiSend size={16} />
         </button>
       </div>
+
+
+
     </aside>
   );
 };

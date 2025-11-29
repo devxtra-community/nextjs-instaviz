@@ -70,7 +70,7 @@ export function Navbar() {
           setProfilePic(res.data.user.picture);
         }
       } catch (err) {
-        console.log("Profile fetch failed → token may be refreshing...");
+        console.log("Profile fetch failed token may be refreshing...");
         setTimeout(loadProfile, 400);
         return;
       } finally {
@@ -79,23 +79,17 @@ export function Navbar() {
     };
 
     loadProfile();
-  }, [userId, userToken]);
+  }, [userId]);
 
   const tokenCheck = async () => {
     try {
-      console.log("inside token check in frontend : ", userId);
       const token = await axiosInstance.get("/user/token");
-      console.log(token.data);
-      let userToken = token.data.token;
-      if (typeof userToken === "number") {
-        setUserToken(userToken);
-        console.log("token from the loggedin user")
+      if (typeof token.data.token === "number") {
+        setUserToken(token.data.token);
       } else {
-        setUserToken(2);
-        console.log("user doesnt loggedin so default ")
+        setUserToken(0);
       }
     } catch (err) {
-      console.log("err on tokencheck at navbar", err);
       console.log("error from the tokencheck at navbar", err);
     }
   };
@@ -115,9 +109,6 @@ export function Navbar() {
     router.push("/userprofile");
   };
 
-  console.log("userToken →", userToken);
-
-  // Small reusable token badge
   const TokenBadge = () => {
     if (userToken <= 0) return null;
 
@@ -136,7 +127,6 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/10">
       <div className="flex items-center justify-between px-6 py-3 mx-auto">
-        {/* Logo */}
         <Link
           href="/"
           className="text-2xl font-extrabold primary tracking-tight"
@@ -144,9 +134,8 @@ export function Navbar() {
           InstaviZ
         </Link>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
-          {!isLoggedIn && <TokenBadge />}
+          <TokenBadge />
 
           <Link
             href="/home"
@@ -164,7 +153,6 @@ export function Navbar() {
             <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1] scale-x-0 group-hover:scale-x-100 origin-left transition-transform"></span>
           </Link>
 
-          {/* AUTH */}
           {isLoggedIn ? (
             <div className="relative">
               {loadingProfile ? (
@@ -200,7 +188,6 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen((prev) => !prev)}
           className="md:hidden text-violet-700 hover:text-violet-800"
@@ -209,7 +196,6 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -220,7 +206,7 @@ export function Navbar() {
             className="md:hidden bg-white shadow-lg border-t"
           >
             <div className="flex flex-col p-5 space-y-4">
-              {!isLoggedIn && <TokenBadge />}
+              <TokenBadge />
 
               <Link
                 href="/home"
