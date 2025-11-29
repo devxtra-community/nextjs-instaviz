@@ -9,6 +9,7 @@ import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
 import SessionSelector from "@/components/SessionSelector";
 import axiosInstance from "@/lib/axiosInstance";
+import axios from "axios";
 
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
@@ -35,10 +36,12 @@ export default function DashboardMain({
     resetAnalysis,
   } = useAnalysis();
 
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [refreshSessions, setRefreshSessions] = useState(0);
 
+  /** SAFE SESSION LOADING (404 handled silently) */
   const loadSession = async (sessionId: string) => {
+    if (!sessionId || sessionId.length < 10) return;
+
     try {
       const res = await axiosInstance.get(`/session/${sessionId}`);
       const session = res.data;
@@ -55,21 +58,40 @@ export default function DashboardMain({
       setActiveSessionId(sessionId);
       setDataUploaded(true);
       localStorage.setItem("currentSessionId", sessionId);
-    } catch (err) {
+
+    } catch (err: any) {
+      // ❗ If session does not exist, clear it silently
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        console.warn("Invalid session cleared.");
+        resetAnalysis();
+        setDataUploaded(false);
+        localStorage.removeItem("currentSessionId");
+        return;
+      }
+
       console.error("Failed to load session:", err);
     }
   };
 
+  /** Auto-load session if saved */
   useEffect(() => {
     const saved = localStorage.getItem("currentSessionId");
-    if (saved) {
+
+    if (
+      saved &&
+      saved !== "null" &&
+      saved !== "undefined" &&
+      saved.length > 10
+    ) {
       loadSession(saved);
     }
   }, []);
 
+  /** BEFORE UPLOAD VIEW */
   if (!showData || !analysisData) {
     const isLogged =
-      typeof window !== "undefined" && !!localStorage.getItem("accessToken");
+      typeof window !== "undefined" &&
+      !!localStorage.getItem("accessToken");
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
@@ -116,6 +138,7 @@ export default function DashboardMain({
     );
   }
 
+  /** AFTER UPLOAD VIEW */
   const metrics = analysisData.data.metrics;
   const charts = analysisData.data.charts;
   const summary = analysisData.data.summary;
@@ -191,7 +214,6 @@ export default function DashboardMain({
 
       <Charts charts={charts} />
 
-      {/* Summary */}
       <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
