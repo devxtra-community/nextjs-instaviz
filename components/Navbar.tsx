@@ -87,7 +87,7 @@ export function Navbar() {
       if (typeof token.data.token === "number") {
         setUserToken(token.data.token);
       } else {
-        setUserToken(0);
+        setUserToken(2);
       }
     } catch (err) {
       console.log("error from the tokencheck at navbar", err);
