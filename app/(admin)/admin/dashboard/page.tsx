@@ -38,25 +38,25 @@ export default function AdminDashboard() {
       </h1>
 
       {/* 3 Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="text-gray-500 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
         {/* Revenue */}
         <StatsCard
-          title="Total Revenue"
+          title="TOTAL REVENUE"
           value={`₹${stats.totalRevenue}`}
           icon={<DollarSign />}
         />
 
         {/* Total Data Generated */}
         <StatsCard
-          title="Data Generated"
+          title="DATA GENERATED"
           value={String(stats.dataGenerated)}
           icon={<HardDrive />}
         />
 
         {/* Conversion Rate */}
         <StatsCard
-          title="Conversion Rate"
+          title="CONVERSION RATE"
           value={`${stats.conversionRate}%`}
           icon={<TrendingUp />}
         />

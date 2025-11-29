@@ -8,7 +8,7 @@ export default function User() {
   }, []);
   return (
     <>
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6 hidden md:block">
+      <h1 className="text-2xl font-semibold mb-6 hidden md:block">
         User Management
       </h1>
 

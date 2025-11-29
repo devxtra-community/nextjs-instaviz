@@ -7,51 +7,75 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="relative bg-gradient-to-br from-[#fad0ff] via-white to-[#e3cefa] border-t border-black/10 backdrop-blur-xl"
+      className="relative border-t backdrop-blur-xl"
+      style={{
+        background: "var(--background)",
+        borderColor: "var(--card-border)",
+      }}
     >
-      {/* Call to Action Section */}
+      {/* CTA SECTION */}
       <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
-        {/* CTA Text */}
+        {/* CTA TEXT */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center md:text-left flex-1 space-y-5"
         >
-          {/* Main Heading */}
-          <h4 className="text-3xl font-bold text-gray-900 leading-snug">
-            Ready to get <span className="primary">clarity</span> from your
-            data?
+          <h4
+            className="text-3xl font-bold leading-snug"
+            style={{ color: "var(--text-dark)" }}
+          >
+            Ready to get{" "}
+            <span style={{ color: "var(--primary-color)" }}>clarity</span> from
+            your data?
           </h4>
 
-          {/* Subheading */}
-          <p className="text-gray-600 text-base leading-relaxed max-w-md mx-auto md:mx-0">
+          <p
+            className="text-base leading-relaxed max-w-md mx-auto md:mx-0"
+            style={{ color: "var(--text-light)" }}
+          >
             Upload your files, visualize trends instantly, and get AI-powered
-            insights — all in one unified dashboard. No setup. No code. Just
-            results.
+            insights — all in one dashboard. No setup. No code.
           </p>
 
-          {/* CTA Button */}
+          {/* CTA BUTTON */}
           <div className="flex justify-center md:justify-start mt-6">
             <Link href="/home">
-              <button className="relative overflow-hidden text-white font-medium px-8 py-3 rounded-xl shadow-md transition-all duration-300  cursor-pointer  hover:brightness-110 bg-gradient-to-r from-[#AD49E1] to-[#9929d5]">
+              <button
+                className="relative overflow-hidden font-medium px-8 py-3 rounded-xl shadow-md transition-all cursor-pointer hover:brightness-110"
+                style={{
+                  background: "var(--primary-color)",
+                  color: "var(--text-on-primary)",
+                }}
+              >
                 Start Free
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+                <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
               </button>
             </Link>
           </div>
         </motion.div>
 
-        {/* Contact Section */}
+        {/* CONTACT FORM */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative w-full md:w-[50%] rounded-[28px] "
+          className="relative w-full md:w-[50%] rounded-[28px]"
         >
-          {/* Inner glass card */}
-          <div className="bg-white/70 backdrop-blur-2xl rounded-[26px] p-8 md:p-10 border border-white/40 ">
-            <h5 className="text-2xl font-semibold text-gray-900 mb-8 text-center md:text-left">
+          {/* Glass Card */}
+          <div
+            className="rounded-[26px] p-8 md:p-10"
+            style={{
+              background: "var(--card)",
+              border: `1px solid var(--card-border)`,
+              boxShadow: "0 8px 30px rgba(0,0,0,0.05)",
+            }}
+          >
+            <h5
+              className="text-2xl font-semibold mb-8 text-center md:text-left"
+              style={{ color: "var(--text-dark)" }}
+            >
               Let’s Connect
             </h5>
 
@@ -62,7 +86,7 @@ export default function Footer() {
               }}
               className="flex flex-col gap-5"
             >
-              {/* Name Field */}
+              {/* NAME */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -73,14 +97,22 @@ export default function Footer() {
                   type="text"
                   required
                   placeholder="Your Name"
-                  className="w-full px-4 py-3 rounded-xl text-sm bg-white/60 border border-slate-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#AD49E1]/50 peer"
+                  className="w-full px-4 py-3 rounded-xl text-sm border placeholder-transparent focus:outline-none peer"
+                  style={{
+                    background: "var(--card-bg)",
+                    borderColor: "var(--card-border)",
+                    color: "var(--text-dark)",
+                  }}
                 />
-                <label className="absolute left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:primary bg-white/60 px-1">
+                <label
+                  className="absolute left-4 top-3.5 text-sm transition-all peer-focus:top-[-10px] peer-focus:text-xs bg-transparent px-1"
+                  style={{ color: "var(--text-light)" }}
+                >
                   Your Name
                 </label>
               </motion.div>
 
-              {/* Email Field */}
+              {/* EMAIL */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -91,14 +123,22 @@ export default function Footer() {
                   type="email"
                   required
                   placeholder="Your Email"
-                  className="w-full px-4 py-3 rounded-xl text-sm bg-white/60 border border-slate-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#AD49E1]/50 peer"
+                  className="w-full px-4 py-3 rounded-xl text-sm border placeholder-transparent focus:outline-none peer"
+                  style={{
+                    background: "var(--card-bg)",
+                    borderColor: "var(--card-border)",
+                    color: "var(--text-dark)",
+                  }}
                 />
-                <label className="absolute left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:primary bg-white/60 px-1">
+                <label
+                  className="absolute left-4 top-3.5 text-sm transition-all peer-focus:top-[-10px] peer-focus:text-xs bg-transparent px-1"
+                  style={{ color: "var(--text-light)" }}
+                >
                   Your Email
                 </label>
               </motion.div>
 
-              {/* Message Field */}
+              {/* MESSAGE */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -109,20 +149,32 @@ export default function Footer() {
                   rows={4}
                   required
                   placeholder="Your Message"
-                  className="w-full px-4 py-3 rounded-xl text-sm bg-white/60 border border-slate-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#AD49E1]/50 peer resize-none"
+                  className="w-full px-4 py-3 rounded-xl text-sm border placeholder-transparent focus:outline-none resize-none peer"
+                  style={{
+                    background: "var(--card-bg)",
+                    borderColor: "var(--card-border)",
+                    color: "var(--text-dark)",
+                  }}
                 />
-                <label className="absolute  left-4 top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-sm peer-focus:top-[-10px] peer-focus:text-xs peer-focus:primary bg-white/60 px-1">
+                <label
+                  className="absolute left-4 top-3.5 text-sm transition-all peer-focus:top-[-10px] peer-focus:text-xs bg-transparent px-1"
+                  style={{ color: "var(--text-light)" }}
+                >
                   Your Message
                 </label>
               </motion.div>
 
-              {/* Submit Button */}
+              {/* SUBMIT BUTTON */}
               <motion.button
                 type="submit"
-                className="flex items-center hover:brightness-110  justify-center gap-2 text-white font-medium mt-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#AD49E1] to-[#9929d5] shadow-[0_6px_25px_rgba(173,73,225,0.25)] transition-all duration-300 hover:cursor-pointer"
+                className="flex items-center justify-center gap-2 font-medium mt-2 px-6 py-3 rounded-xl transition-all hover:brightness-110"
+                style={{
+                  background: "var(--primary-color)",
+                  color: "var(--text-on-primary)",
+                  boxShadow: "0 6px 25px rgba(0,0,0,0.10)",
+                }}
               >
-                Send Message
-                <Send size={18} />
+                Send Message <Send size={18} />
               </motion.button>
             </form>
           </div>
@@ -130,24 +182,43 @@ export default function Footer() {
       </div>
 
       {/* Divider */}
-      <div className="h-[1px] bg-gradient-to-r from-transparent via-[#AD49E1]/20 to-transparent"></div>
+      <div
+        className="h-[1px]"
+        style={{
+          background:
+            "linear-gradient(to right, transparent, var(--primary-color), transparent)",
+          opacity: 0.3,
+        }}
+      />
 
-      {/* Bottom Bar */}
-      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-500">
-        <p className="text-center md:text-left">
+      {/* BOTTOM BAR */}
+      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between text-sm">
+        <p style={{ color: "var(--text-light)" }}>
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold primary">InstaviZ</span> — All rights
-          reserved.
+          <span style={{ color: "var(--primary-color)" }}>InstaviZ</span> — All
+          rights reserved.
         </p>
 
         <div className="flex gap-6 mt-3 md:mt-0">
-          <Link href="#" className="hover:primary transition">
+          <Link
+            href="#"
+            className="transition"
+            style={{ color: "var(--text-light)" }}
+          >
             Terms
           </Link>
-          <Link href="#" className="hover:primary transition">
+          <Link
+            href="#"
+            className="transition"
+            style={{ color: "var(--text-light)" }}
+          >
             Privacy
           </Link>
-          <Link href="#" className="hover:primary transition">
+          <Link
+            href="#"
+            className="transition"
+            style={{ color: "var(--text-light)" }}
+          >
             Security
           </Link>
         </div>

@@ -20,9 +20,7 @@ type DayPoint = { day: string; users: number };
 const InsideLabel = (props: any) => {
   const { x, y, width, height, value } = props;
 
-  if (height < 20) {
-    return null; // too small to show text
-  }
+  if (height < 20) return null;
 
   return (
     <text
@@ -61,10 +59,10 @@ export default function UserWeeklyGrowthCard() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 rounded-2xl shadow-sm border border-gray-100">
       <CardHeader>
         <CardTitle className="text-md font-semibold">
-          Weekly User Growth(Current Week)
+          Weekly User Growth (Current Week)
         </CardTitle>
       </CardHeader>
 
@@ -82,15 +80,19 @@ export default function UserWeeklyGrowthCard() {
                 tick={{ fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
-                interval={0} // always show 7 days on mobile
+                interval={0}
               />
 
               <YAxis hide />
 
               <Tooltip cursor={{ fill: "transparent" }} />
 
-              <Bar dataKey="users" fill="#7c3aed" radius={[6, 6, 0, 0]}>
-                {/* CUSTOM LABEL = TEXT INSIDE BAR */}
+              {/* THEME BAR COLOR */}
+              <Bar
+                dataKey="users"
+                fill="var(--primary-color)"
+                radius={[6, 6, 0, 0]}
+              >
                 <LabelList content={<InsideLabel />} />
               </Bar>
             </BarChart>

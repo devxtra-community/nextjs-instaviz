@@ -16,7 +16,14 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 
-const COLORS = ["#AD49E1", "#B46FE9", "#CDA5F2", "#E5D6FA", "#D7B6FA"];
+/* Use theme variables instead of static colors */
+const COLORS = [
+  "var(--primary-color)",
+  "var(--accent)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)"
+];
 
 interface ChartConfig {
   type: "bar" | "pie" | "line";
@@ -29,12 +36,11 @@ interface ChartConfig {
 export default function Charts({ charts }: { charts: ChartConfig[] }) {
   if (!charts || charts.length === 0)
     return (
-      <p className="text-gray-400 text-sm mt-4">
+      <p className="text-[var(--text-light)] text-sm mt-4">
         No charts available for this session.
       </p>
     );
 
-  // Safe normalizer
   const normalize = (chart: any) =>
     (chart?.data ?? []).map((d: any) => {
       const xVal = d[chart.x] ?? d.xValue ?? d.period ?? "";
@@ -54,16 +60,13 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
     return num.toLocaleString();
   };
 
-
-
-  // Filter only valid charts (avoid crashing)
   const validCharts = charts.filter(
     (c) => c && Array.isArray(c.data) && c.data.length > 0
   );
 
   if (validCharts.length === 0)
     return (
-      <p className="text-gray-400 text-sm mt-4">
+      <p className="text-[var(--text-light)] text-sm mt-4">
         No valid charts found for this session.
       </p>
     );
@@ -79,9 +82,16 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-xl border border-[#ede4fa] p-4"
+            className="rounded-xl p-4"
+            style={{
+              background: "var(--card-bg)",
+              border: "1px solid var(--card-border)",
+            }}
           >
-            <h3 className="text-[15px] font-semibold text-gray-800 mb-2">
+            <h3
+              className="text-[15px] font-semibold mb-2"
+              style={{ color: "var(--text-dark)" }}
+            >
               {chart.title}
             </h3>
 
@@ -89,12 +99,31 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
               {{
                 bar: (
                   <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                    <XAxis dataKey={chart.x} />
-                    <YAxis tickFormatter={formatNumber} />
-                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
-                    <Bar dataKey={chart.y} fill="#AD49E1" radius={[4, 4, 0, 0]} />
-
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="var(--border)"
+                    />
+                    <XAxis
+                      dataKey={chart.x}
+                      tick={{ fill: "var(--text-light)" }}
+                    />
+                    <YAxis
+                      tickFormatter={formatNumber}
+                      tick={{ fill: "var(--text-light)" }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        background: "var(--card-bg)",
+                        border: "1px solid var(--card-border)",
+                        color: "var(--text-dark)",
+                      }}
+                      formatter={(value) => formatNumber(Number(value))}
+                    />
+                    <Bar
+                      dataKey={chart.y}
+                      fill="var(--primary-color)"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 ),
 
@@ -111,24 +140,46 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
                         <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
-
+                    <Tooltip
+                      contentStyle={{
+                        background: "var(--card-bg)",
+                        border: "1px solid var(--card-border)",
+                        color: "var(--text-dark)",
+                      }}
+                      formatter={(value) => formatNumber(Number(value))}
+                    />
                   </PieChart>
                 ),
 
                 line: (
                   <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                    <XAxis dataKey={chart.x} />
-                    <YAxis tickFormatter={formatNumber} />
-                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="var(--border)"
+                    />
+                    <XAxis
+                      dataKey={chart.x}
+                      tick={{ fill: "var(--text-light)" }}
+                    />
+                    <YAxis
+                      tickFormatter={formatNumber}
+                      tick={{ fill: "var(--text-light)" }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        background: "var(--card-bg)",
+                        border: "1px solid var(--card-border)",
+                        color: "var(--text-dark)",
+                      }}
+                      formatter={(value) => formatNumber(Number(value))}
+                    />
                     <Line
                       type="monotone"
                       dataKey={chart.y}
-                      stroke="#AD49E1"
+                      stroke="var(--primary-color)"
                       strokeWidth={2}
+                      dot={{ r: 4, fill: "var(--primary-color)" }}
                     />
-
                   </LineChart>
                 ),
               }[chart.type]}

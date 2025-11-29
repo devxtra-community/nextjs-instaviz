@@ -12,13 +12,12 @@ export default function UploadSuccessRate() {
   useEffect(() => {
     const fetchSuccessRate = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/activities/uploadsuccess");  
+        const res = await axiosAdmin.get("/admin/activities/uploadsuccess");
         setSuccessRate(res.data.successRate);
       } catch (err) {
         console.log("Error fetching rate:", err);
       }
     };
-
     fetchSuccessRate();
   }, []);
 
@@ -30,14 +29,34 @@ export default function UploadSuccessRate() {
         </CardHeader>
 
         <CardContent>
+          {/* SUCCESS RATE NUMBER */}
           <div className="text-center mb-4">
-            <h2 className="text-4xl font-bold text-[#AD49E1]">
+            <h2
+              className="text-4xl font-bold"
+              style={{ color: "var(--primary-color)" }}
+            >
               {successRate}%
             </h2>
             <p className="text-gray-500 text-sm">overall success rate</p>
           </div>
 
-          <Progress value={successRate} className="h-3" />
+          {/* PROGRESS BAR */}
+          <Progress
+            value={successRate}
+            className="h-3"
+            style={{
+              // Tailwind wrapper needs inline CSS for theme variables
+              "--tw-bg-opacity": "1",
+              backgroundColor: "var(--primary-light)",
+            } as React.CSSProperties}
+          />
+
+          <style jsx>{`
+            /* Override the progress indicator to use theme color */
+            .h-3 > div {
+              background-color: var(--primary-color) !important;
+            }
+          `}</style>
         </CardContent>
       </Card>
     </motion.div>

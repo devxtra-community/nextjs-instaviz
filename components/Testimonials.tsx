@@ -63,57 +63,82 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-20 ">
-          <div className="max-w-6xl mx-auto px-6 text-center">
-            <h3 className="text-3xl font-semibold text-gray-900 mb-12">
-              What our <span className="primary">users</span> say
-            </h3>
+    <section className="py-20">
+      <div className="max-w-6xl mx-auto px-6 text-center">
 
-            <Slider {...settings}>
-              {testimonials.map((t, idx) => {
-                const isCenter = idx === centerIndex;
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0.7, scale: 0.9 }}
-                    animate={{
-                      opacity: isCenter ? 1 : 0.7,
-                      scale: isCenter ? 1.05 : 0.9,
-                    }}
-                    transition={{ duration: 0.6 }}
-                    className="cursor-pointer"
+        {/* TITLE */}
+        <h3
+          className="text-3xl font-semibold mb-12"
+          style={{ color: "var(--text-dark)" }}
+        >
+          What our <span style={{ color: "var(--primary-color)" }}>users</span> say
+        </h3>
+
+        <Slider {...settings}>
+          {testimonials.map((t, idx) => {
+            const isCenter = idx === centerIndex;
+
+            return (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0.7, scale: 0.9 }}
+                animate={{
+                  opacity: isCenter ? 1 : 0.7,
+                  scale: isCenter ? 1.05 : 0.9,
+                }}
+                transition={{ duration: 0.6 }}
+                className="cursor-pointer"
+              >
+                <div
+                  className="px-10 py-10 rounded-2xl shadow-md transition-all duration-500"
+                  style={{
+                    background: "var(--card)",
+                    color: "var(--card-foreground)",
+                    border: `1px solid var(--border)`,
+                  }}
+                >
+                  {/* STARS */}
+                  <div className="flex justify-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={18}
+                        className="stroke-current"
+                        style={{ color: "var(--primary-color)", fill: "var(--primary-color)" }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* QUOTE */}
+                  <p
+                    className="text-base leading-relaxed italic mb-6"
+                    style={{ color: "var(--text-light)" }}
                   >
-                    <div
-                      className={` bg-white px-10 py-10  transition-all duration-500 
-                        }`}
+                    “{t.quote}”
+                  </p>
+
+                  {/* NAME + ROLE */}
+                  <div>
+                    <h4
+                      className="font-semibold"
+                      style={{ color: "var(--text-dark)" }}
                     >
-                      {/* Stars */}
-                      <div className="flex justify-center mb-4">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={18}
-                            className="primary fill-[#AD49E1]"
-                          />
-                        ))}
-                      </div>
+                      {t.name}
+                    </h4>
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--text-light)" }}
+                    >
+                      {t.role}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </Slider>
 
-                      {/* Quote */}
-                      <p className="text-gray-700 text-base leading-relaxed italic mb-6">
-                        “{t.quote}”
-                      </p>
-
-                      {/* Name + Role */}
-                      <div className="text-center">
-                        <h4 className="font-semibold text-gray-900">{t.name}</h4>
-                        <p className="text-sm text-gray-500">{t.role}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </Slider>
-          </div>
-        </section>
+      </div>
+    </section>
   );
 }

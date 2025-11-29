@@ -24,17 +24,19 @@ export default function Navbar() {
           rounded-full border border-white/40 shadow-md  
           bg-white/30 backdrop-blur-lg"
         >
+          {/* LOGO */}
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="logo" className="w-8 h-8" />
             <span className="font-semibold primary text-lg">InstaviZ</span>
           </div>
 
+          {/* DESKTOP MENU */}
           <ul className="hidden md:flex items-center gap-7 font-medium text-[15px] text-gray-700">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="relative group transition-colors duration-300 hover:text-[#AD49E1]"
+                  className="relative group transition-colors duration-300 hover:text-[var(--primary-color)]"
                 >
                   {link.label}
                   <span className="absolute left-0 -bottom-1 w-0 h-0.5 primarybg transition-all duration-300 group-hover:w-full"></span>
@@ -43,7 +45,9 @@ export default function Navbar() {
             ))}
           </ul>
 
+          {/* RIGHT BUTTONS */}
           <div className="flex items-center gap-4">
+            {/* LOGIN */}
             <Link
               href="/login"
               className="hidden md:block text-[15px] font-medium text-gray-800 hover:primary transition"
@@ -51,17 +55,19 @@ export default function Navbar() {
               Log in
             </Link>
 
+            {/* SIGNUP BUTTON */}
             <Link href="/signup" className="hidden md:block">
               <button
                 className="text-white px-5 py-2 font-medium rounded-full shadow-sm hover:brightness-95 transition cursor-pointer"
                 style={{
-                  background: "linear-gradient(90deg, #AD49E1, #9929d5)",
+                  background: "var(--primary-color)",
                 }}
               >
                 Sign up
               </button>
             </Link>
 
+            {/* MOBILE MENU TOGGLE */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="md:hidden p-2 rounded-md hover:bg-white/40 transition"
@@ -72,6 +78,7 @@ export default function Navbar() {
         </nav>
       </header>
 
+      {/* MOBILE DROPDOWN */}
       {menuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -90,8 +97,11 @@ export default function Navbar() {
               </Link>
             ))}
 
+            {/* GET STARTED BUTTON */}
             <Link href="/signup" onClick={() => setMenuOpen(false)}>
-              <button className="w-full py-3 rounded-xl primarybg text-white font-medium shadow-sm">
+              <button className="w-full py-3 rounded-xl text-white font-medium shadow-sm"
+                style={{ background: "var(--primary-color)" }}
+              >
                 Get Started
               </button>
             </Link>

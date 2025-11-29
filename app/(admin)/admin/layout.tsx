@@ -12,7 +12,7 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#f8f9fc] relative">
+    <div className="flex min-h-screen bg-[var(--background)] relative">
       
       {/* Top Navbar for Mobile */}
       <div className="md:hidden w-full fixed top-0 left-0 bg-white px-4 py-3 shadow-md flex justify-between items-center z-50">

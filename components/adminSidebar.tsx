@@ -8,7 +8,6 @@ import {
   Coins,
   TrendingUp,
   Calendar,
-  CreditCard,
   LogOut,
   X,
   LayoutDashboard
@@ -22,13 +21,12 @@ type SidebarProps = {
 
 function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const menuItems = [
-    {icon : LayoutDashboard , label : 'Dashboard' , href : '/admin/dashboard'},
+    { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
     { icon: Users, label: "Users", href: "/admin/user" },
     { icon: Activity, label: "Activities", href: "/admin/activities" },
     { icon: Coins, label: "Tokens", href: "/admin/token" },
     { icon: TrendingUp, label: "Insights", href: "/admin/insights" },
     { icon: Calendar, label: "Plans", href: "/admin/plans" },
-    // { icon: CreditCard, label: "Payments", href: "/admin/payments" },
   ];
 
   return (
@@ -37,16 +35,23 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
         className={`
-          h-screen bg-white text-[#AD49E1] shadow-xl flex flex-col justify-between
+          h-screen bg-white shadow-xl flex flex-col justify-between
           fixed top-0 left-0 z-50
           transition-all duration-300 transform-gpu will-change-transform
           ${isOpen ? "w-64" : "w-16"}
         `}
-        style={{ boxShadow: "4px 0 20px rgba(173, 73, 225, 0.15)" }}
+        style={{
+          boxShadow: "4px 0 20px rgba(0,0,0,0.08)",
+          color: "var(--primary-color)"
+        }}
       >
-
         {/* Header */}
-        <div className="p-4 flex items-center justify-between border-b border-[#AD49E1]/10">
+        <div
+          className="p-4 flex items-center justify-between border-b"
+          style={{
+            borderColor: "var(--primary-color)",
+          }}
+        >
           <div className="flex items-center">
             <Image
               src="/logo.png"
@@ -60,13 +65,18 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 font-bold text-base ml-2 transition-all duration-300 transform-gpu origin-left
                 ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-50"}
               `}
+              style={{ color: "var(--primary-color)" }}
             >
               Admin Panel
             </span>
           </div>
 
           {/* Close (Mobile) */}
-          <button onClick={() => setIsOpen(false)} className="md:hidden text-[#AD49E1]">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="md:hidden"
+            style={{ color: "var(--primary-color)" }}
+          >
             <X size={20} />
           </button>
         </div>
@@ -77,9 +87,19 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <Link
               key={label}
               href={href}
-              className="group w-full flex items-center px-3 py-2 rounded-lg hover:bg-[#AD49E1] hover:text-white transition cursor-pointer"
+              className="group w-full flex items-center px-3 py-2 rounded-lg transition cursor-pointer"
+              style={{
+                color: "var(--primary-color)",
+              }}
             >
-              <Icon size={20} className="group-hover:text-white" />
+              <Icon
+                size={20}
+                className="transition"
+                style={{
+                  color: "var(--primary-color)",
+                }}
+              />
+
               <span
                 className={`
                   font-medium ml-2 transition-all duration-300 transform-gpu origin-left
@@ -88,15 +108,38 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               >
                 {label}
               </span>
+
+              {/* Hover Styles */}
+              <style jsx>{`
+                a:hover {
+                  background: var(--primary-color);
+                  color: var(--text-on-primary);
+                }
+                a:hover svg {
+                  color: var(--text-on-primary);
+                }
+              `}</style>
             </Link>
           ))}
         </nav>
 
         {/* Logout */}
-        <div className="border-t border-[#AD49E1]/10 bg-[#AD49E1]/5 p-3">
-          <button onClick={adminLogout}
-          className="group w-full flex items-center px-4 py-2 rounded-lg hover:bg-[#AD49E1] hover:text-white transition">
-            <LogOut size={20} className="group-hover:text-white" />
+        <div
+          className="border-t p-3"
+          style={{
+            borderColor: "var(--primary-color)",
+            background: "var(--secondary-color)",
+          }}
+        >
+          <button
+            onClick={adminLogout}
+            className="group w-full flex items-center px-4 py-2 rounded-lg transition"
+            style={{
+              color: "var(--primary-color)",
+            }}
+          >
+            <LogOut size={20} className="transition" />
+
             <span
               className={`
                 font-medium ml-2 transition-all duration-300 transform-gpu origin-left
@@ -105,6 +148,17 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             >
               Logout
             </span>
+
+            {/* Hover */}
+            <style jsx>{`
+              button:hover {
+                background: var(--primary-color);
+                color: var(--text-on-primary) !important;
+              }
+              button:hover svg {
+                color: var(--text-on-primary) !important;
+              }
+            `}</style>
           </button>
         </div>
       </aside>

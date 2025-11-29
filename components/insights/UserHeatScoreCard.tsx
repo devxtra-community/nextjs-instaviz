@@ -28,23 +28,27 @@ export default function UserHeatScoreCard() {
 
   if (!data) return <p>Loading...</p>;
 
-  const score = data.heatScore;   // <----- FIXED
+  const score = data.heatScore;
   const barWidth = `${score}%`;
 
   const barColor =
     score > 75 ? "#16a34a" : score > 50 ? "#f59e0b" : "#ef4444";
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 rounded-2xl shadow-sm border border-gray-100">
       <CardHeader>
         <CardTitle className="text-md font-semibold">
-         Heat Pulse (Last 30 Days)
+          Heat Pulse (Last 30 Days)
         </CardTitle>
       </CardHeader>
 
       <CardContent>
 
-        <div className="text-3xl font-bold text-purple-600">
+        {/* MAIN SCORE USING THEME PRIMARY */}
+        <div
+          className="text-3xl font-bold"
+          style={{ color: "var(--primary-color)" }}
+        >
           {score} / 100
         </div>
 
@@ -52,6 +56,7 @@ export default function UserHeatScoreCard() {
           Overall engagement based on logins + uploads
         </p>
 
+        {/* PROGRESS BAR */}
         <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
           <div
             className="h-full transition-all duration-500"
@@ -61,6 +66,7 @@ export default function UserHeatScoreCard() {
             }}
           ></div>
         </div>
+        
       </CardContent>
     </Card>
   );

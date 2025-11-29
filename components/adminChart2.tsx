@@ -1,11 +1,22 @@
 "use client"
 import { useEffect, useState } from "react"
 import { Pie, PieChart, Cell } from "recharts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
 import axiosAdmin from "@/lib/axiosAdmin"
 
-const COLORS = ["#AD49E1", "#4B2E83"]
+// Color palette based on global theme variables
+const COLORS = [
+  "var(--primary-color)",
+  "var(--primary-light)"
+]
 
+// Label function updated to use theme (no fixed white)
 const renderLabel = (props: any) => {
   const { cx, cy, midAngle, innerRadius, outerRadius, value } = props
   const RADIAN = Math.PI / 180
@@ -17,7 +28,7 @@ const renderLabel = (props: any) => {
     <text
       x={x}
       y={y}
-      fill="#fff"
+      fill="var(--text-on-primary)"
       textAnchor="middle"
       dominantBaseline="central"
       fontSize={14}
@@ -74,15 +85,21 @@ export function ChartPieStacked() {
           </Pie>
         </PieChart>
 
-        {/* LEGEND */}
+        {/* Legend */}
         <div className="flex gap-6 mt-2">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full" style={{ background: COLORS[0] }}></div>
+            <div
+              className="h-3 w-3 rounded-full"
+              style={{ background: COLORS[0] }}
+            ></div>
             <span className="text-sm font-medium">Desktop</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full" style={{ background: COLORS[1] }}></div>
+            <div
+              className="h-3 w-3 rounded-full"
+              style={{ background: COLORS[1] }}
+            ></div>
             <span className="text-sm font-medium">Mobile</span>
           </div>
         </div>

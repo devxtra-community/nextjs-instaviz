@@ -6,11 +6,12 @@ import axiosAdmin from "@/lib/axiosAdmin";
 import { Upload, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 
+/* ICONS auto-adapt to theme */
 const icons: any = {
-  total: <Upload size={26} strokeWidth={2} className="text-white" />,
-  success: <CheckCircle2 size={26} strokeWidth={2} className="text-white" />,
-  failed: <XCircle size={26} strokeWidth={2} className="text-white" />,
-  hour: <Clock size={26} strokeWidth={2} className="text-white" />
+  total: <Upload size={26} strokeWidth={2} className="stroke-current text-[var(--text-on-primary)]" />,
+  success: <CheckCircle2 size={26} strokeWidth={2} className="stroke-current text-[var(--text-on-primary)]" />,
+  failed: <XCircle size={26} strokeWidth={2} className="stroke-current text-[var(--text-on-primary)]" />,
+  hour: <Clock size={26} strokeWidth={2} className="stroke-current text-[var(--text-on-primary)]" />
 };
 
 export default function ActivityStatsCards() {
@@ -50,7 +51,7 @@ export default function ActivityStatsCards() {
           <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
             <CardContent className="p-5 flex justify-between items-center">
 
-              {/* LEFT SIDE */}
+              {/* LEFT TEXT */}
               <div>
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
                   {s.title}
@@ -60,8 +61,14 @@ export default function ActivityStatsCards() {
                 </h2>
               </div>
 
-              {/* PURPLE ICON BOX — EXACT DASHBOARD STYLE */}
-              <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
+              {/* THEME ICON BOX */}
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
+                style={{
+                  background: "var(--primary-color)",
+                  color: "var(--text-on-primary)"
+                }}
+              >
                 {s.icon}
               </div>
 

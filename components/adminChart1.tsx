@@ -18,19 +18,22 @@ import {
 } from "@/components/ui/card";
 import axiosAdmin from "@/lib/axiosAdmin";
 
-const COLORS = ["#AD49E1", "#4B2E83"];
+// Colors now controlled by global CSS variables
+const COLORS = [
+  "var(--primary-color)",
+  "var(--primary-light)"
+];
 
 export function ChartBarMultiple() {
-  const [isMounted, setIsMounted] = useState(false); // <— FIX 1
+  const [isMounted, setIsMounted] = useState(false);
   const [chartData, setChartData] = useState([
     { device: "Desktop", value: 0, color: COLORS[0] },
     { device: "Mobile", value: 0, color: COLORS[1] },
   ]);
 
-  // Ensure chart renders ONLY on client
   useEffect(() => {
     setIsMounted(true);
-  }, []); // <— FIX 2
+  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -48,8 +51,7 @@ export function ChartBarMultiple() {
     fetchStats();
   }, []);
 
-  // Prevent SSR hydration mismatch
-  if (!isMounted) return null; // <— FIX 3
+  if (!isMounted) return null;
 
   return (
     <Card className="w-full">
@@ -72,14 +74,14 @@ export function ChartBarMultiple() {
 
           <Bar dataKey="value" radius={8} barSize={70}>
             {chartData.map((entry, i) => (
-              <Cell key={`cell-${i}`} fill={entry.color} />
+              <Cell key={i} fill={entry.color} />
             ))}
 
             <LabelList
               dataKey="value"
               position="insideTop"
               style={{
-                fill: "#fff",
+                fill: "var(--text-on-primary)",
                 fontSize: 16,
                 fontWeight: 700,
               }}

@@ -52,18 +52,8 @@ export default function UserManagementDashboard() {
         const usersPerMonth = res.data.usersPerMonth || [];
 
         const months = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
+          "Jan","Feb","Mar","Apr","May","Jun",
+          "Jul","Aug","Sep","Oct","Nov","Dec"
         ];
 
         const formatted = months.map((monthName, index) => {
@@ -84,30 +74,6 @@ export default function UserManagementDashboard() {
 
     fetchMonthlyNewUsers();
   }, []);
-
-  const cards = [
-    {
-      title: "ALL USERS",
-      value: counts.totalCount,
-      icon: <Users size={26} className="text-white" />,
-      href: "/admin/user/allusers",
-    },
-    {
-      title: "GUEST USERS",
-      value: counts.guestCount,
-      icon: <UserCog size={26} className="text-white" />,
-    },
-    {
-      title: "LOGGED USERS",
-      value: counts.loggedCount,
-      icon: <UserCheck size={26} className="text-white" />,
-    },
-    {
-      title: "PREMIUM USERS",
-      value: counts.premiumCount,
-      icon: <Star size={26} className="text-white" />,
-    },
-  ];
 
   const [activeHours, setActiveHours] = useState<any[]>([]);
   const [averageActive, setAverageActive] = useState("0h 0m");
@@ -147,29 +113,63 @@ export default function UserManagementDashboard() {
     getActivetimedetails();
   }, []);
 
+  const cards = [
+    {
+      title: "ALL USERS",
+      value: counts.totalCount,
+      icon: <Users size={26} />,
+      href: "/admin/user/allusers",
+    },
+    {
+      title: "GUEST USERS",
+      value: counts.guestCount,
+      icon: <UserCog size={26} />,
+    },
+    {
+      title: "LOGGED USERS",
+      value: counts.loggedCount,
+      icon: <UserCheck size={26} />,
+    },
+    {
+      title: "PREMIUM USERS",
+      value: counts.premiumCount,
+      icon: <Star size={26} />,
+    },
+  ];
+
   return (
-    <div className="bg-[#f8f9fc] min-h-screen">
-      
-      {/* DASHBOARD CARDS */}
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--background)", color: "var(--foreground)" }}
+    >
+      {/* CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {cards.map((card, index) => {
-          const CardWrapper = (
+          const Box = (
             <Card
               key={index}
-              className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100"
+              className="rounded-2xl shadow-sm hover:shadow-md transition"
+              style={{
+                background: "var(--card)",
+                borderColor: "var(--border)",
+                color: "var(--card-foreground)",
+              }}
             >
               <CardContent className="p-6 flex justify-between items-center">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium mb-2">
+                  <p style={{ color: "var(--muted-foreground)" }} className="text-xs font-medium mb-2">
                     {card.title}
                   </p>
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    {card.value.toLocaleString()}
-                  </h2>
+                  <h2 className="text-2xl font-bold">{card.value.toLocaleString()}</h2>
                 </div>
 
-                {/* Purple Icon Box */}
-                <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
+                  style={{
+                    background: "var(--primary)",
+                    color: "var(--primary-foreground)",
+                  }}
+                >
                   {card.icon}
                 </div>
               </CardContent>
@@ -177,56 +177,52 @@ export default function UserManagementDashboard() {
           );
 
           return card.href ? (
-            <Link key={index} href={card.href}>
-              {CardWrapper}
-            </Link>
+            <Link key={index} href={card.href}>{Box}</Link>
           ) : (
-            CardWrapper
+            <>{Box}</>
           );
         })}
       </div>
 
       {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* New Users Per Month */}
-        <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
+
+        {/* MONTHLY USERS */}
+        <Card
+          className="rounded-2xl shadow-md"
+          style={{
+            background: "var(--card)",
+            borderColor: "var(--border)",
+            color: "var(--card-foreground)",
+          }}
+        >
           <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  New Users per Month
-                </h3>
-                <p className="text-xs text-gray-500">
-                  Monthly registration overview
-                </p>
-              </div>
-            </div>
+            <h3 className="text-lg font-semibold">New Users per Month</h3>
+            <p style={{ color: "var(--muted-foreground)" }} className="text-xs mb-4">
+              Monthly registration overview
+            </p>
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={monthlyUsers}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6b7280" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} />
+                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
+                <XAxis tick={{ fill: "var(--muted-foreground)" }} dataKey="name" />
+                <YAxis tick={{ fill: "var(--muted-foreground)" }} />
 
                 <Tooltip
                   content={({ active, payload, label }) => {
-                    if (active && payload && payload.length > 0) {
-                      const userCount = payload?.[0]?.value ?? 0;
+                    if (active && payload?.length) {
+                      const users = payload[0]?.value ?? 0;
                       return (
                         <div
                           style={{
-                            backgroundColor: "#A855F7",
-                            borderRadius: "10px",
-                            padding: "8px 12px",
-                            color: "#fff",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                            background: "var(--primary)",
+                            color: "var(--primary-foreground)",
+                            padding: 10,
+                            borderRadius: 8,
                           }}
                         >
-                          <p style={{ margin: 0, fontWeight: "600" }}>{label}</p>
-                          <p style={{ margin: 0, fontSize: "12px" }}>
-                            {userCount.toLocaleString()} users
-                          </p>
+                          <p className="font-semibold">{label}</p>
+                          <p className="text-sm">{users} users</p>
                         </div>
                       );
                     }
@@ -237,50 +233,48 @@ export default function UserManagementDashboard() {
                 <Line
                   type="monotone"
                   dataKey="users"
-                  stroke="#A855F7"
+                  stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "#A855F7" }}
+                  dot={{ r: 4, fill: "var(--primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Average Active Time */}
-        <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
+        {/* ACTIVE TIME */}
+        <Card
+          className="rounded-2xl shadow-md"
+          style={{
+            background: "var(--card)",
+            borderColor: "var(--border)",
+            color: "var(--card-foreground)",
+          }}
+        >
           <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Average Active Time
-              </h3>
-            </div>
+            <h3 className="text-lg font-semibold mb-4">Average Active Time</h3>
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={activeHours}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#6b7280" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} />
+                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
+                <XAxis tick={{ fill: "var(--muted-foreground)" }} dataKey="name" />
+                <YAxis tick={{ fill: "var(--muted-foreground)" }} />
 
                 <Tooltip
                   content={({ active, payload, label }) => {
-                    if (active && payload && payload.length > 0) {
-                      const timeValue = payload?.[0]?.value ?? 0;
+                    if (active && payload?.length) {
+                      const val = payload[0]?.value ?? 0;
                       return (
                         <div
                           style={{
-                            backgroundColor: "#A855F7",
-                            borderRadius: "10px",
-                            padding: "8px 12px",
-                            color: "#fff",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                            background: "var(--primary)",
+                            color: "var(--primary-foreground)",
+                            padding: 10,
+                            borderRadius: 8,
                           }}
                         >
-                          <p style={{ margin: 0, fontWeight: "600" }}>
-                            {label}
-                          </p>
-                          <p style={{ margin: 0, fontSize: "12px" }}>
-                            {timeValue.toLocaleString()} active
-                          </p>
+                          <p className="font-semibold">{label}</p>
+                          <p className="text-sm">{val} active</p>
                         </div>
                       );
                     }
@@ -291,23 +285,22 @@ export default function UserManagementDashboard() {
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke="#A855F7"
+                  stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "#A855F7" }}
+                  dot={{ r: 4, fill: "var(--primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
 
             <div className="text-center mt-4">
-              <h2 className="text-3xl font-bold text-gray-900">
-                {averageActive}
-              </h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-3xl font-bold">{averageActive}</h2>
+              <p style={{ color: "var(--muted-foreground)" }} className="text-sm">
                 Avg. user active time per day
               </p>
             </div>
           </CardContent>
         </Card>
+
       </div>
     </div>
   );

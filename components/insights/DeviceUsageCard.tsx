@@ -26,25 +26,39 @@ export default function DeviceUsageCard() {
   }, []);
 
   return (
-    <Card className="rounded-2xl shadow-sm">
+    <Card className="rounded-2xl shadow-sm border border-gray-100">
       <CardHeader>
-        <CardTitle className="text-md font-semibold">Users Device Split</CardTitle>
+        <CardTitle className="text-md font-semibold">
+          Users Device Split
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
+
+        {/* MOBILE */}
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
-            <Smartphone className="h-5 w-5 text-purple-600" /> Mobile
+            <Smartphone
+              className="h-5 w-5"
+              style={{ color: "var(--primary-color)" }}
+            />
+            Mobile
           </div>
           <span className="font-bold">{mobilePercent}%</span>
         </div>
 
+        {/* DESKTOP */}
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
-            <Monitor className="h-5 w-5 text-purple-600" /> Desktop
+            <Monitor
+              className="h-5 w-5"
+              style={{ color: "var(--primary-color)" }}
+            />
+            Desktop
           </div>
           <span className="font-bold">{desktopPercent}%</span>
         </div>
+
       </CardContent>
     </Card>
   );

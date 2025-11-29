@@ -22,13 +22,10 @@ export default function TokenAccessDashboard() {
   const fetchAlltokens = async () => {
     try {
       const res = await axiosAdmin.get("/admin/token/alltokens");
-
       const total =
         res.data?.alltokencount?.[0]?.totalTokens !== undefined
           ? res.data.alltokencount[0].totalTokens
           : 0;
-
-      console.log("Fetched total tokens:", total);
       setAllTokenCount(total);
     } catch (err) {
       console.log("Failed to fetch token count:", err);
@@ -38,24 +35,18 @@ export default function TokenAccessDashboard() {
   const fetchMontlytokenusage = async () => {
     try {
       const res = await axiosAdmin.get("/admin/token/alltokenusage");
-      console.log("token usage fetched successfully", res.data);
-
       const totalTokenusage = res.data.totaltokeusagepermonth || [];
 
       const months = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec",
       ];
 
       const formattedMonths = months.map((monthName, index) => {
         const found = totalTokenusage.find(
           (item: any) => item._id?.month === index + 1
         );
-
-        return {
-          name: monthName,
-          value: found ? found.totalTokens : 0,
-        };
+        return { name: monthName, value: found ? found.totalTokens : 0 };
       });
 
       setAlltokenusage(formattedMonths);
@@ -70,194 +61,250 @@ export default function TokenAccessDashboard() {
   }, []);
 
   return (
-    <div className="bg-[#F9FAFB] min-h-screen">
-
-      {/* DESKTOP TITLE */}
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--background)", color: "var(--foreground)" }}
+    >
+      {/* TITLE */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="hidden md:block text-3xl font-semibold text-gray-800 tracking-tight">
+        <h1
+          className="hidden md:block text-3xl font-semibold tracking-tight"
+          style={{ color: "var(--foreground)" }}
+        >
           Token Access Overview
         </h1>
       </div>
 
-      {/* MOBILE TITLE */}
-      <h1 id="mobile-page-title" className="md:hidden text-xl font-bold mb-4"></h1>
+      {/* MOBILE */}
+      <h1
+        id="mobile-page-title"
+        className="md:hidden text-xl font-bold mb-4"
+        style={{ color: "var(--foreground)" }}
+      ></h1>
 
-      {/* STATS CARDS */}
+      {/* ===================== STATS CARDS ===================== */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
-                Total Tokens Issued
-              </p>
-              <h2 className="text-2xl font-bold text-gray-900">
-                {alltokenCount}
-              </h2>
-              <p className="text-xs font-semibold mt-1 text-green-500">
-                +12.3%
-              </p>
-            </div>
+        {/* CARD TEMPLATE */}
+        {[
+          { label: "Total Tokens Issued", value: alltokenCount, icon: <Coins size={26} /> },
+          { label: "Free Tokens Used", value: "9.8K", icon: <DollarSign size={26} /> },
+          { label: "Paid Tokens Used", value: "6.4K", icon: <DollarSign size={26} /> },
+          { label: "Premium Users", value: "2.3K", icon: <Star size={26} /> },
+        ].map((item, index) => (
+          <Card
+            key={index}
+            className="rounded-2xl shadow-sm"
+            style={{
+              background: "var(--card)",
+              borderColor: "var(--border)",
+              color: "var(--card-foreground)",
+            }}
+          >
+            <CardContent className="p-6 flex justify-between items-center">
+              <div>
+                <p
+                  className="text-xs font-medium uppercase mb-2"
+                  style={{ color: "var(--muted-foreground)" }}
+                >
+                  {item.label}
+                </p>
+                <h2 className="text-2xl font-bold">{item.value}</h2>
+              </div>
 
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <Coins size={26} className="text-white" />
-            </div>
-          </CardContent>
-        </Card>
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "var(--primary-foreground)",
+                }}
+              >
+                {item.icon}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
 
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
-                Free Tokens Used
-              </p>
-              <h2 className="text-2xl font-bold text-gray-900">9.8K</h2>
-            </div>
-
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <DollarSign size={26} className="text-white" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
-                Paid Tokens Used
-              </p>
-              <h2 className="text-2xl font-bold text-gray-900">6.4K</h2>
-            </div>
-
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <DollarSign size={26} className="text-white" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm bg-white border border-gray-100">
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase mb-2">
-                Premium Users
-              </p>
-              <h2 className="text-2xl font-bold text-gray-900">2.3K</h2>
-            </div>
-
-            <div className="w-12 h-12 rounded-xl bg-[#A855F7] flex items-center justify-center">
-              <Star size={26} className="text-white" />
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      {/* CHARTS */}
+      {/* ===================== CHARTS ===================== */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
-        <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
+        {/* FREE TOKEN USAGE */}
+        <Card
+          className="rounded-2xl shadow-md"
+          style={{
+            background: "var(--card)",
+            borderColor: "var(--border)",
+            color: "var(--card-foreground)",
+          }}
+        >
           <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Free Token Usage
-                </h3>
-                <p className="text-xs text-gray-500">
-                  Overview of free token usage growth
-                </p>
-              </div>
-              <span className="text-green-500 text-sm font-semibold">
-                +5.6% this month
-              </span>
-            </div>
+            <h3 className="text-lg font-semibold">Free Token Usage</h3>
+            <p className="text-xs mb-3" style={{ color: "var(--muted-foreground)" }}>
+              Overview of free token usage growth
+            </p>
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={alltokenusage}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)" }} />
+                <YAxis tick={{ fill: "var(--muted-foreground)" }} />
+
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload?.length) {
+                      const val = payload[0]?.value ?? 0;
+                      return (
+                        <div
+                          style={{
+                            background: "var(--primary)",
+                            color: "var(--primary-foreground)",
+                            padding: "10px",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          <p className="font-semibold">{label}</p>
+                          <p className="text-sm">{val}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke="#A855F7"
+                  stroke="var(--primary)"
                   strokeWidth={3}
+                  dot={{ r: 4, fill: "var(--primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
+        {/* PAID TOKEN USAGE */}
+        <Card
+          className="rounded-2xl shadow-md"
+          style={{
+            background: "var(--card)",
+            borderColor: "var(--border)",
+            color: "var(--card-foreground)",
+          }}
+        >
           <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Paid Token Usage
-              </h3>
-              <span className="text-green-500 text-sm font-semibold">
-                +8.1% this month
-              </span>
-            </div>
+            <h3 className="text-lg font-semibold">Paid Token Usage</h3>
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={alltokenusage}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)" }} />
+                <YAxis tick={{ fill: "var(--muted-foreground)" }} />
+
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload?.length) {
+                      const val = payload[0]?.value ?? 0;
+                      return (
+                        <div
+                          style={{
+                            background: "var(--primary)",
+                            color: "var(--primary-foreground)",
+                            padding: "10px",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          <p className="font-semibold">{label}</p>
+                          <p className="text-sm">{val}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke="#A855F7"
+                  stroke="var(--primary)"
                   strokeWidth={3}
+                  dot={{ r: 4, fill: "var(--primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
 
             <div className="text-center mt-5">
-              <h2 className="text-3xl font-bold text-gray-900">6.4K</h2>
-              <p className="text-sm text-gray-500">Total paid tokens used</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* PREMIUM USERS */}
-      <div className="grid grid-cols-1">
-        <Card className="rounded-2xl shadow-md bg-white border border-gray-100">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Premium Users Growth
-              </h3>
-              <span className="text-green-500 text-sm font-semibold">
-                +11.4% increase
-              </span>
-            </div>
-
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={alltokenusage}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#A855F7"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-
-            <div className="text-center mt-5">
-              <h2 className="text-3xl font-bold text-gray-900">2.3K</h2>
-              <p className="text-sm text-gray-500">
-                Total premium active users
+              <h2 className="text-3xl font-bold">6.4K</h2>
+              <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+                Total paid tokens used
               </p>
             </div>
           </CardContent>
         </Card>
+
       </div>
+
+      {/* ===================== PREMIUM USERS CHART ===================== */}
+      <Card
+        className="rounded-2xl shadow-md"
+        style={{
+          background: "var(--card)",
+          borderColor: "var(--border)",
+          color: "var(--card-foreground)",
+        }}
+      >
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold mb-3">Premium Users Growth</h3>
+
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={alltokenusage}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)" }} />
+              <YAxis tick={{ fill: "var(--muted-foreground)" }} />
+
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload?.length) {
+                    const val = payload[0]?.value ?? 0;
+                    return (
+                      <div
+                        style={{
+                          background: "var(--primary)",
+                          color: "var(--primary-foreground)",
+                          padding: "10px",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <p className="font-semibold">{label}</p>
+                        <p className="text-sm">{val}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="var(--primary)"
+                strokeWidth={3}
+                dot={{ r: 4, fill: "var(--primary)" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+
+          <div className="text-center mt-5">
+            <h2 className="text-3xl font-bold">2.3K</h2>
+            <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+              Total premium active users
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
     </div>
   );
 }

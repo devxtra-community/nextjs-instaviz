@@ -9,23 +9,47 @@ export default function Stats() {
   ];
 
   return (
-    <section className="relative py-16 overflow-hidden">
-      <div className="absolute inset-0 blur-3xl"></div>
+    <section className="relative py-20 overflow-hidden">
+
+      {/* Soft background glow */}
+      <div
+        className="absolute inset-0 blur-[120px]"
+        style={{
+          background: `linear-gradient(
+            135deg,
+            var(--primary-color) 0%,
+            var(--accent) 70%
+          )`,
+          opacity: 0.10,
+        }}
+      ></div>
+
       <div className="relative max-w-6xl mx-auto px-6 text-center flex flex-col gap-16">
+
+        {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h4 className="text-3xl md:text-4xl font-semibold text-gray-900">
-            Trusted by teams <span className="primary">worldwide</span>
+          <h4
+            className="text-3xl md:text-4xl font-semibold"
+            style={{ color: "var(--text-dark)" }}
+          >
+            Trusted by teams{" "}
+            <span style={{ color: "var(--primary-color)" }}>worldwide</span>
           </h4>
-          <p className="mt-3 text-gray-600 text-base max-w-2xl mx-auto">
+
+          <p
+            className="mt-3 text-base max-w-2xl mx-auto"
+            style={{ color: "var(--text-light)" }}
+          >
             From startups to enterprises — delivering fast, secure, and reliable
             performance globally.
           </p>
         </motion.div>
 
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 md:gap-16 justify-items-center">
           {stats.map((stat, idx) => (
             <motion.div
@@ -33,20 +57,27 @@ export default function Stats() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: idx * 0.2 }}
-              className="flex flex-col items-center text-center space-y-2"
+              className="flex flex-col items-center text-center space-y-3"
             >
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#AD49E1]/20 to-[#9929d5]/20 blur-xl"></div>
-                <div className="relative text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-[#AD49E1] to-[#9929d5]">
-                  {stat.value}
-                </div>
+              {/* LARGE NUMBER (VISIBLE ALWAYS) */}
+              <div
+                className="relative text-5xl font-extrabold"
+                style={{ color: "var(--primary-color)" }}
+              >
+                {stat.value}
               </div>
-              <p className="text-sm md:text-base text-gray-600 font-medium tracking-wide">
+
+              {/* Label */}
+              <p
+                className="text-sm md:text-base font-medium tracking-wide"
+                style={{ color: "var(--text-light)" }}
+              >
                 {stat.label}
               </p>
             </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );

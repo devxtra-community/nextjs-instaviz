@@ -12,6 +12,7 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import { motion } from "framer-motion";
 
@@ -22,7 +23,7 @@ export default function PeakHoursChart() {
   useEffect(() => {
     const fetchPeakHours = async () => {
       try {
-        const res = await axiosAdmin.get("/admin/activities/peakhours");  
+        const res = await axiosAdmin.get("/admin/activities/peakhours");
         setHours(res.data);
       } catch (err) {
         console.log("Peak Hours Fetch Error:", err);
@@ -46,11 +47,45 @@ export default function PeakHoursChart() {
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={hours}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#EAEAEA" />
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#8A2BE2" radius={[6, 6, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+
+                <XAxis
+                  dataKey="time"
+                  tick={{ fontSize: 12, fill: "#6B7280" }}
+                />
+
+                <YAxis tick={{ fontSize: 12, fill: "#6B7280" }} />
+
+                {/* THEME TOOLTIP */}
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload?.length) {
+                      const value = payload[0].value;
+                      return (
+                        <div
+                          style={{
+                            backgroundColor: "var(--primary-color)",
+                            padding: "8px 12px",
+                            borderRadius: "8px",
+                            color: "var(--text-on-primary)",
+                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                          }}
+                        >
+                          <p className="font-semibold m-0">{label}</p>
+                          <p className="text-sm m-0">{value} uploads</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+
+                {/* THEME BAR COLOR */}
+                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                  {hours.map((_, i) => (
+                    <Cell key={i} fill="var(--primary-color)" />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           )}
