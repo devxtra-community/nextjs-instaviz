@@ -83,7 +83,6 @@ axiosInstance.interceptors.response.use(
 
         const newToken = refreshRes.data.newAccessToken;
         console.log("New access token got", newToken);
-
         localStorage.setItem("accessToken", newToken);
 
         runQueue(newToken);
