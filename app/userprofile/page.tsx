@@ -230,13 +230,8 @@ export default function ProfilePage() {
               <p className="text-gray-500 text-sm subtitle tracking-widest ">
                 {email}
               </p>
-              <p className=" md:hidden border border-gray-300 mt-1 text-gray-600 handwriting text-sm w-18 p-1 text-center rounded-2xl bg-gray-200">
-                Premium
-              </p>
             </div>
-            <p className="hidden md:block ml-15 border border-gray-300  text-gray-600 handwriting text-sm p-2 rounded-2xl bg-gray-200">
-              Premium
-            </p>
+          
           </div>
           <div className="flex justify-between items-center">
             <button
@@ -245,7 +240,6 @@ export default function ProfilePage() {
             >
               Update Profile Picture
             </button>
-            <Settings size={26} className="cursor-pointer" color="gray" />
           </div>
 
           <div className="mt-8">
