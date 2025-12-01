@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 
 export default function SuccessPage() {
+  const router = useRouter();
+  useEffect(() => {
+    window.dispatchEvent(new Event("token-updated"));
+    const timer = setTimeout(() => {
+      router.push("/home");
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-[#f8f4ff] to-white px-6 text-center">
       <CheckCircle className="primary w-16 h-16 mb-4" />

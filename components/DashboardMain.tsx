@@ -39,7 +39,6 @@ export default function DashboardMain({
 
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-  /** SAFE SESSION LOADING (404 handled silently) */
   const loadSession = async (sessionId: string) => {
     if (!sessionId || sessionId.length < 10) return;
 
