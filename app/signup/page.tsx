@@ -71,6 +71,7 @@ export default function SignUpPage() {
         }, 2000);
       }
     } catch (err: any) {
+      toast.warning(err.response?.data || err.message);
       console.error("Registration error:", err.response?.data || err.message);
 
       const data = err.response?.data;

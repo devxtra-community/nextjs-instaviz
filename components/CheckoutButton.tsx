@@ -38,11 +38,11 @@ export default function CheckoutButton({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Failed to start checkout. Please try again.");
+        toast.error("Failed to start checkout. Please try again.");
       }
     } catch (error: any) {
       console.error("Checkout Error:", error.message || error);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

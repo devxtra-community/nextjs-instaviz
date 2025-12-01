@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot,} from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axiosInstance";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -46,13 +41,12 @@ export default function VerifyOtpPage() {
       toast.error(errorMessage);
     }
   }
+
   async function resend() {
-    console.log("inside resend otp");
-    
-    const resendOtp =  await axiosInstance.post(`/auth/resendOtp?email=${email}`)
+    const resendOtp = await axiosInstance.post(
+      `/auth/resendOtp?email=${email}`
+    );
     console.log(resendOtp);
-    
-    
   }
 
   return (
@@ -66,13 +60,13 @@ export default function VerifyOtpPage() {
         <div className="flex justify-center mb-8">
           <Toaster richColors position="top-center" />
           <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-            <InputOTPGroup  className="primary ">
-              <InputOTPSlot index={0}/>
+            <InputOTPGroup className="primary ">
+              <InputOTPSlot index={0} />
               <InputOTPSlot index={1} />
               <InputOTPSlot index={2} />
             </InputOTPGroup>
             <InputOTPSeparator />
-            <InputOTPGroup  className="primary">
+            <InputOTPGroup className="primary">
               <InputOTPSlot index={3} />
               <InputOTPSlot index={4} />
               <InputOTPSlot index={5} />
@@ -90,7 +84,12 @@ export default function VerifyOtpPage() {
 
       <p className="primary mt-6 text-xs">
         Didn’t receive a code?{" "}
-        <span onClick={()=>{resend()}} className="hover:underline cursor-pointer primary ">
+        <span
+          onClick={() => {
+            resend();
+          }}
+          className="hover:underline cursor-pointer primary "
+        >
           Resend
         </span>
       </p>

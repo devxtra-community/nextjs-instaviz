@@ -16,7 +16,9 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 
-const COLORS = ["#AD49E1", "#B46FE9", "#CDA5F2", "#E5D6FA", "#D7B6FA"];
+const COLORS = Array(5)
+  .fill("")
+  .map((e, i, a) => `var(--chart-${a.length - i - 1})`);
 
 interface ChartConfig {
   type: "bar" | "pie" | "line";
@@ -54,8 +56,6 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
     return num.toLocaleString();
   };
 
-
-
   // Filter only valid charts (avoid crashing)
   const validCharts = charts.filter(
     (c) => c && Array.isArray(c.data) && c.data.length > 0
@@ -86,52 +86,61 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
             </h3>
 
             <ResponsiveContainer width="100%" height={260}>
-              {{
-                bar: (
-                  <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                    <XAxis dataKey={chart.x} />
-                    <YAxis tickFormatter={formatNumber} />
-                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
-                    <Bar dataKey={chart.y} fill="#AD49E1" radius={[4, 4, 0, 0]} />
+              {
+                {
+                  bar: (
+                    <BarChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                      <XAxis dataKey={chart.x} />
+                      <YAxis tickFormatter={formatNumber} />
+                      <Tooltip
+                        formatter={(value) => formatNumber(Number(value))}
+                      />
+                      <Bar
+                        dataKey={chart.y}
+                        fill={COLORS[0]}
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  ),
 
-                  </BarChart>
-                ),
+                  pie: (
+                    <PieChart>
+                      <Pie
+                        data={data}
+                        dataKey="value"
+                        nameKey={chart.x}
+                        outerRadius={90}
+                        label
+                      >
+                        {data.map((_: any, idx: any) => (
+                          <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value) => formatNumber(Number(value))}
+                      />
+                    </PieChart>
+                  ),
 
-                pie: (
-                  <PieChart>
-                    <Pie
-                      data={data}
-                      dataKey="value"
-                      nameKey={chart.x}
-                      outerRadius={90}
-                      label
-                    >
-                      {data.map((_: any, idx: any) => (
-                        <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
-
-                  </PieChart>
-                ),
-
-                line: (
-                  <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                    <XAxis dataKey={chart.x} />
-                    <YAxis tickFormatter={formatNumber} />
-                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
-                    <Line
-                      type="monotone"
-                      dataKey={chart.y}
-                      stroke="#AD49E1"
-                      strokeWidth={2}
-                    />
-
-                  </LineChart>
-                ),
-              }[chart.type]}
+                  line: (
+                    <LineChart data={data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                      <XAxis dataKey={chart.x} />
+                      <YAxis tickFormatter={formatNumber} />
+                      <Tooltip
+                        formatter={(value) => formatNumber(Number(value))}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey={chart.y}
+                        stroke={COLORS[0]}
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  ),
+                }[chart.type]
+              }
             </ResponsiveContainer>
           </motion.div>
         );
