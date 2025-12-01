@@ -1,10 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner";
+import { Settings } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
 
 export default function ProfilePage() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -191,40 +193,60 @@ export default function ProfilePage() {
       toast.error("Logout failed");
     }
   };
-
+  const switchPassword = () => {
+    if (isChangingPassword == true) {
+      setIsChangingPassword(false);
+    } else {
+      setIsChangingPassword(true);
+    }
+  };
   return (
-    <div className="min-h-screen p-6 flex justify-center dotted-bg">
-      <Toaster richColors position="top-center" />
-      <div className="w-full max-w-6xl flex gap-8 flex-col md:flex-row">
+    <div className="min-h-screen p-6 flex justify-center bg-dot-fade ">
+      
+      <Navbar />
+      <div className="w-full max-w-6xl pt-15 flex gap-8 flex-col md:flex-row">
         <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
-          <h2 className="text-xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900">
             Profile & Account Settings
           </h2>
 
-          <div className="flex items-center gap-4 border p-4 rounded-xl mb-6">
-            <Image
-              src={profilePic}
-              alt="Profile"
-              width={70}
-              height={70}
-              className="rounded-full border"
-            />
-            <div>
-              <p className="text-lg font-semibold">{name}</p>
-              <p className="text-gray-500 text-sm">{email}</p>
+          <div className="flex items-center  gap-4 border p-4 rounded-xl mb-6">
+            <div className="w-[70px] h-[70px] rounded-full overflow-hidden">
+              <Image
+                src={profilePic}
+                alt="Profile"
+                width={70}
+                height={70}
+                className="rounded-full border"
+              />
             </div>
+            <div className=" flex flex-col gap-1">
+              <p className="logo font-semibold text-lg">{name}</p>
+              <p className="text-gray-500 text-sm subtitle tracking-widest ">
+                {email}
+              </p>
+              <p className=" md:hidden border border-gray-300 mt-1 text-gray-600 handwriting text-sm w-18 p-1 text-center rounded-2xl bg-gray-200">
+                Premium
+              </p>
+            </div>
+            <p className="hidden md:block ml-15 border border-gray-300  text-gray-600 handwriting text-sm p-2 rounded-2xl bg-gray-200">
+              Premium
+            </p>
           </div>
-          <button
-            onClick={handleProfileUpdate}
-            className="px-4 py-2 rounded-full bg-violet-600 text-white text-sm hover:bg-violet-700 transition"
-          >
-            Update Profile Picture
-          </button>
+          <div className="flex justify-between items-center">
+            <button
+              onClick={handleProfileUpdate}
+              className="px-4 py-2 rounded-full primarybg tracking-wider text-white text-sm hoverBg transition cursor-pointer"
+            >
+              Update Profile Picture
+            </button>
+            <Settings size={26} className="cursor-pointer" color="gray" />
+          </div>
 
           <div className="mt-8">
             <button
-              className="text-sm text-red-500 underline"
-              onClick={() => setIsChangingPassword(true)}
+              className="text-md text-red-500 cursor-pointer handwriting tracking-wider hover:underline"
+              onClick={() => switchPassword()}
             >
               Change password
             </button>
@@ -235,25 +257,25 @@ export default function ProfilePage() {
                   type="password"
                   placeholder="Old password"
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full p-2 border rounded-lg"
+                  className="w-full p-2 border rounded-lg focus:ring-1 focus:ring-purple-400  outline-none"
                 />
                 <input
                   type="password"
                   placeholder="New password"
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full p-2 border rounded-lg"
+                  className="w-full p-2 border rounded-lg focus:ring-1 focus:ring-purple-400  outline-none"
                 />
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-2">
                   <button
                     onClick={() => setIsChangingPassword(false)}
-                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 text-sm"
+                    className="px-4 py-2 rounded-lg bg-gray-200 cursor-pointer text-gray-700 text-sm"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={updatePassword}
-                    className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm"
+                    className="px-4 py-2 rounded-lg primarybg hoverBg cursor-pointer text-white text-sm"
                   >
                     Save
                   </button>
@@ -264,18 +286,20 @@ export default function ProfilePage() {
 
           <button
             onClick={handleLogout}
-            className="mt-10 w-full py-2 rounded-lg bg-red-100 text-red-600 font-semibold hover:bg-red-200 transition"
+            className="mt-10 w-full py-2 rounded-lg text-white primarybg hoverBg font-semibold hover:bg-red-200 transition cursor-pointer"
           >
             Logout
           </button>
         </div>
 
-        <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
-          <h3 className="text-lg font-semibold mb-4">Logged in devices</h3>
+        <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm ">
+          <h3 className="text-lg font-bold mb-4 tracking-wider logo">
+            Logged in Devices
+          </h3>
 
           <button
             onClick={logoutAllDevices}
-            className="px-3 py-1.5 rounded-full text-xs bg-red-50 text-red-600 border border-red-200 mb-4 hover:bg-red-100 transition"
+            className="px-4 py-1.5 rounded-xl text-sm  text-white primarybg border mb-6 hoverBg cursor-pointer transition"
           >
             Logout from all other devices
           </button>
@@ -286,21 +310,24 @@ export default function ProfilePage() {
               const isCurrent = d._id === currentSessionId;
 
               return (
-                <div key={d._id} className="border p-4 rounded-xl">
-                  <p className="font-semibold">{device}</p>
+                <div
+                  key={d._id}
+                  className="border p-4 rounded-xl flex flex-col gap-2"
+                >
+                  <p className="font-bold text-lg">{device}</p>
 
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-500 subtitle tracking-wider">
                     {browser} • {os}
                   </p>
 
                   <p className="text-xs text-gray-500">IP: {d.ip}</p>
 
-                  <p className="text-xs text-gray-400">
+                  <p className="text-sm text-red-400 handwriting tracking-wide ">
                     Last active: {new Date(d.lastActiveAt).toLocaleString()}
                   </p>
 
                   {isCurrent ? (
-                    <p className="mt-2 text-xs font-medium text-green-600">
+                    <p className="mt-1 text-xs font-medium text-green-600">
                       ✓ Current device
                     </p>
                   ) : (

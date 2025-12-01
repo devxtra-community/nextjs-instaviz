@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useRef, ChangeEvent } from "react";
-import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAnalysis } from "@/context/AnalysisContext";
+import { toast } from "sonner";
 
 interface UploadButtonProps {
     onFileSelected?: (file: File, responseOrError?: any) => void;
-    onUploadSuccess?: () => void;
+    onUploadSuccess?: (sessionId: string) => void;
     accept?: string;
     uploadUrl?: string;
 }
@@ -20,70 +20,91 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 }) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { setAnalysisData, setLoading } = useAnalysis(); // GLOBAL LOADING
+    const { setAnalysisData, setLoading, setActiveSessionId } = useAnalysis();
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
     };
 
-    const isCsvFile = (file: File) => {
-        const name = file.name.toLowerCase();
-        return name.endsWith(".csv");
-    };
+    const isCsvFile = (file: File) => file.name.toLowerCase().endsWith(".csv");
 
-    const uploadSingleFile = async (file: File) => {
+    const uploadFileAndCreateSession = async (file: File) => {
+
+        const userToken = Number(localStorage.getItem("usertoken"));
+
+        if (userToken <= 0) {
+            toast.error("You have no tokens left. Please recharge.");
+            
+            setTimeout(()=>{
+                window.location.href = "/ourplans";
+            },1000);
+
+            return;
+        }
         const formData = new FormData();
         formData.append("file", file);
 
         try {
-            setLoading(true); // ⬅ SHOW FULL-SCREEN LOADER
+            setLoading(true);
 
-            const response = await axiosInstance.post(uploadUrl, formData, {
+            const uploadRes = await axiosInstance.post(uploadUrl, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            // Save the full API+AI response globally
-            setAnalysisData(response.data);
+            const uploaded = uploadRes.data;
 
-            onFileSelected?.(file, response);
-            onUploadSuccess?.();
+            const dataId = uploaded.datasetId;
+            const sessionId = uploaded.sessionId;
+            const metrics = uploaded.data.metrics;
+            const charts = uploaded.data.charts;
+            const summary = uploaded.data.summary;
+            const messages = uploaded.data.messages;
+
+            localStorage.setItem("currentSessionId", sessionId);
+            setActiveSessionId(sessionId);
+
+            if (uploaded.session_token) {
+                localStorage.setItem("session_token", uploaded.session_token);
+            }
+
+            setAnalysisData({
+                data: { charts, metrics, summary, messages },
+            });
+
+            onFileSelected?.(file, uploaded);
+            onUploadSuccess?.(sessionId);
         } catch (err) {
-            console.error("Upload failed", err);
+            console.error("UPLOAD FAILED:", err);
             onFileSelected?.(file, err);
         } finally {
-            setLoading(false); // ⬅ HIDE LOADER
+            setLoading(false);
         }
     };
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (!files?.length) return;
-
-        const file = files[0];
+        const file = e.target.files?.[0];
+        if (!file) return;
 
         if (!isCsvFile(file)) {
             alert("Only CSV files allowed");
-            e.target.value = "";
             return;
         }
 
-        try {
-            await uploadSingleFile(file);
-        } finally {
-            e.target.value = ""; // reset input
-        }
+        await uploadFileAndCreateSession(file);
+        window.dispatchEvent(new Event("token-updated"));
+
+        e.target.value = "";
     };
 
     return (
         <div className="w-full">
-            <motion.button
+            <button
                 onClick={handleButtonClick}
-                className="px-7 py-3 primarybg text-white rounded-xl font-semibold hover:brightness-105"
+                className="px-7 py-2 bg-primary text-white rounded-lg font-semibold hover:brightness-105 hover:cursor-pointer"
             >
                 Upload File
-            </motion.button>
+            </button>
 
-            {/* Hidden Input */}
             <input
                 type="file"
                 ref={fileInputRef}

@@ -1,11 +1,12 @@
 "use client";
 import { useEffect } from "react";
-
-import UserGrowthCard from "@/components/insights/UserGrowthCard";
-import ActiveIdleCard from "@/components/insights/ActiveIdleCard";
-import MostUsedFeaturesCard from "@/components/insights/MostUsedFeaturesCard";
+import UserGrowthCard from "@/components/insights/UploadFrequency";
+import ActiveIdleCard from "@/components/insights/UserHeatScoreCard";
 import DeviceUsageCard from "@/components/insights/DeviceUsageCard";
-import WeeklyActivityHeatCard from "@/components/insights/WeeklyActivityHeatCard";
+import UserWeeklyGrowthCard from "@/components/insights/UserWeeklyCard";
+import UserHeatScoreCard from "@/components/insights/UserHeatScoreCard";
+import UploadFrequencyCard from "@/components/insights/UploadFrequency";
+
 
 export default function InsightsPage() {
   useEffect(() => {
@@ -17,16 +18,16 @@ export default function InsightsPage() {
       <h1 className="text-2xl font-semibold mb-6 hidden md:block">Insights</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <UserGrowthCard />
-        <ActiveIdleCard />
+        <UploadFrequencyCard />
+        <UserHeatScoreCard/>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <MostUsedFeaturesCard />
+     <UserWeeklyGrowthCard/>
         <DeviceUsageCard />
       </div>
 
-      <WeeklyActivityHeatCard />
+     
     </>
   );
 }
