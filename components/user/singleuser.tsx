@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import axiosAdmin from "@/lib/axiosAdmin";
 import CustomSelect from "../CustomSelect";
 import Image from "next/image";
-import {Mail,MapPin,Phone,Bell,PlusCircle,RefreshCcw,Send,Clock,UserX,UserCheck,} from "lucide-react";
+import {Mail,MapPin,Phone,Bell,PlusCircle,RefreshCcw,Send,Clock,UserX,UserCheck,X,CheckCircle,AlertCircle} from "lucide-react";
 import {LineChart,Line,BarChart,Bar,XAxis,Tooltip,ResponsiveContainer,} from "recharts";
 
 interface UserType {
@@ -21,8 +21,10 @@ interface UserType {
 }
 
 interface DailyActiveTime {
-  date: string;dayName: string;
-  totalSeconds: number;formatted: string;
+  date: string;
+  dayName: string;
+  totalSeconds: number;
+  formatted: string;
 }
 
 interface AverageTimeData {
@@ -36,6 +38,59 @@ interface AverageTimeData {
   totalDaysTracked?: number;
 }
 
+interface ToastType {
+  id: number;
+  type: "success" | "error" | "warning";
+  message: string;
+}
+
+// Toast Component
+const Toast = ({ toast, onClose }: { toast: ToastType; onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const bgColor = toast.type === "success" 
+    ? "bg-green-50 border-green-200" 
+    : toast.type === "error" 
+    ? "bg-red-50 border-red-200" 
+    : "bg-yellow-50 border-yellow-200";
+  
+  const textColor = toast.type === "success" 
+    ? "text-green-800" 
+    : toast.type === "error" 
+    ? "text-red-800" 
+    : "text-yellow-800";
+  
+  const Icon = toast.type === "success" 
+    ? CheckCircle 
+    : AlertCircle;
+
+  return (
+    <div className={`flex items-center gap-3 p-4 rounded-lg border shadow-lg ${bgColor} ${textColor} animate-slide-in`}>
+      <Icon size={20} />
+      <p className="flex-1 text-sm font-medium">{toast.message}</p>
+      <button onClick={onClose} className="hover:opacity-70">
+        <X size={18} />
+      </button>
+    </div>
+  );
+};
+
+// Toast Container
+const ToastContainer = ({ toasts, removeToast }: { toasts: ToastType[]; removeToast: (id: number) => void }) => {
+  return (
+    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md">
+      {toasts.map((toast) => (
+        <Toast key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
+      ))}
+    </div>
+  );
+};
+
 export default function UserProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState<UserType | null>(null);
@@ -43,13 +98,23 @@ export default function UserProfilePage() {
   const [status, setStatus] = useState<"active" | "disabled">("active");
   const [singleToken, setSingleToken] = useState<number | null>(null);
   const [activityData, setActivityData] = useState<DailyActiveTime[]>([]);
-  const [averageTimeData, setAverageTimeData] =
-    useState<AverageTimeData | null>(null);
+  const [averageTimeData, setAverageTimeData] = useState<AverageTimeData | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingAverage, setLoadingAverage] = useState(true);
   const [suspendDays, setSuspendDays] = useState("");
   const [suspending, setSuspending] = useState(false);
   const [unsuspending, setUnsuspending] = useState(false);
+  const [toasts, setToasts] = useState<ToastType[]>([]);
+
+  // Toast helper
+  const showToast = (type: "success" | "error" | "warning", message: string) => {
+    const newToast = { id: Date.now(), type, message };
+    setToasts((prev) => [...prev, newToast]);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   // Helpers
   const secondsToHms = (seconds: number) => {
@@ -68,6 +133,7 @@ export default function UserProfilePage() {
       setStatus(userData?.status || "active");
     } catch (err) {
       console.error("Error fetching single user:", err);
+      showToast("error", "Failed to fetch user data");
     } finally {
       setLoading(false);
     }
@@ -79,10 +145,10 @@ export default function UserProfilePage() {
         status: newStatus,
       });
       setStatus(newStatus as "active" | "disabled");
-      alert("Status updated successfully!");
+      showToast("success", "Status updated successfully!");
     } catch (err) {
       console.error("Error updating status:", err);
-      alert("Failed to update status. Please try again.");
+      showToast("error", "Failed to update status. Please try again.");
     }
   };
 
@@ -162,7 +228,7 @@ export default function UserProfilePage() {
   // Suspend user handler
   const handleUserSuspend = async () => {
     if (!suspendDays || isNaN(Number(suspendDays)) || Number(suspendDays) <= 0) {
-      alert("Please enter a valid number of days (greater than 0)");
+      showToast("warning", "Please enter a valid number of days (greater than 0)");
       return;
     }
 
@@ -173,16 +239,13 @@ export default function UserProfilePage() {
         `/admin/user/suspend/${id}?days=${suspendDays}`
       );
 
-      alert(`User suspended successfully for ${suspendDays} days`);
+      showToast("success", `User suspended successfully for ${suspendDays} days`);
 
       await fetchUserSinglePage();
       setSuspendDays("");
     } catch (err: any) {
       console.error("Error suspending user:", err);
-      alert(
-        err.response?.data?.message ||
-          "Failed to suspend user. Please try again."
-      );
+      showToast("error", err.response?.data?.message || "Failed to suspend user. Please try again.");
     } finally {
       setSuspending(false);
     }
@@ -199,15 +262,12 @@ export default function UserProfilePage() {
 
       const res = await axiosAdmin.put(`/admin/user/unsuspend/${id}`);
 
-      alert("User unsuspended successfully!");
+      showToast("success", "User unsuspended successfully!");
 
       await fetchUserSinglePage();
     } catch (err: any) {
       console.error("Error unsuspending user:", err);
-      alert(
-        err.response?.data?.message ||
-          "Failed to unsuspend user. Please try again."
-      );
+      showToast("error", err.response?.data?.message || "Failed to unsuspend user. Please try again.");
     } finally {
       setUnsuspending(false);
     }
@@ -266,6 +326,8 @@ export default function UserProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] px-3 py-4 sm:px-4 md:px-6">
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-5 tracking-tight">
         User Profile
       </h1>
@@ -528,6 +590,22 @@ export default function UserProfilePage() {
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes slide-in {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in {
+          animation: slide-in 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
