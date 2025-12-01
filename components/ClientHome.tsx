@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { ChatBar } from "@/components/ChatBar";
 import DashboardMain from "@/components/DashboardMain";

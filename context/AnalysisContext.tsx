@@ -39,7 +39,6 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
   );
 
   const addNewChart = async (chart: any) => {
-    // instantly update UI
     setAnalysisData((prev) => {
       if (!prev) return prev;
       return {
@@ -51,7 +50,6 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
       };
     });
 
-    // persist chart to backend session
     try {
       if (!activeSessionId) return;
     } catch (err) {

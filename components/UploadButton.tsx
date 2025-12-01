@@ -6,107 +6,106 @@ import axiosInstance from "@/lib/axiosInstance";
 import { useAnalysis } from "@/context/AnalysisContext";
 
 interface UploadButtonProps {
-    onFileSelected?: (file: File, responseOrError?: any) => void;
-    onUploadSuccess?: (sessionId: string) => void;
-    accept?: string;
-    uploadUrl?: string;
+  onFileSelected?: (file: File, responseOrError?: any) => void;
+  onUploadSuccess?: (sessionId: string) => void;
+  accept?: string;
+  uploadUrl?: string;
 }
 
 const UploadButton: React.FC<UploadButtonProps> = ({
-    onFileSelected,
-    onUploadSuccess,
-    accept = ".csv,text/csv",
-    uploadUrl = "/upload/fileupload",
+  onFileSelected,
+  onUploadSuccess,
+  accept = ".csv,text/csv",
+  uploadUrl = "/upload/fileupload",
 }) => {
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const { setAnalysisData, setLoading, setActiveSessionId } = useAnalysis();
+  const { setAnalysisData, setLoading, setActiveSessionId } = useAnalysis();
 
-    const handleButtonClick = () => {
-        fileInputRef.current?.click();
-    };
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
 
-    const isCsvFile = (file: File) => file.name.toLowerCase().endsWith(".csv");
+  const isCsvFile = (file: File) => file.name.toLowerCase().endsWith(".csv");
 
-    /** MAIN UPLOAD LOGIC */
-    const uploadFileAndCreateSession = async (file: File) => {
-        const formData = new FormData();
-        formData.append("file", file);
+  /** MAIN UPLOAD LOGIC */
+  const uploadFileAndCreateSession = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-        try {
-            setLoading(true);
+    try {
+      setLoading(true);
 
-            const uploadRes = await axiosInstance.post(uploadUrl, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+      const uploadRes = await axiosInstance.post(uploadUrl, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-            const uploaded = uploadRes.data;
+      const uploaded = uploadRes.data;
 
-            const dataId = uploaded.datasetId;
-            const sessionId = uploaded.sessionId;
-            const metrics = uploaded.data.metrics;
-            const charts = uploaded.data.charts;
-            const summary = uploaded.data.summary;
-            const messages = uploaded.data.messages;
+      const dataId = uploaded.datasetId;
+      const sessionId = uploaded.sessionId;
+      const metrics = uploaded.data.metrics;
+      const charts = uploaded.data.charts;
+      const summary = uploaded.data.summary;
+      const messages = uploaded.data.messages;
 
-            /** Save session ID */
-            localStorage.setItem("currentSessionId", sessionId);
-            setActiveSessionId(sessionId);
+      /** Save session ID */
+      localStorage.setItem("currentSessionId", sessionId);
+      setActiveSessionId(sessionId);
 
-            /** Save token only if backend sends it */
-            if (uploaded.session_token) {
-                localStorage.setItem("session_token", uploaded.session_token);
-            }
+      /** Save token only if backend sends it */
+      if (uploaded.session_token) {
+        localStorage.setItem("session_token", uploaded.session_token);
+      }
 
-            /** Update UI */
-            setAnalysisData({
-                data: { charts, metrics, summary , messages },
-            });
+      /** Update UI */
+      setAnalysisData({
+        data: { charts, metrics, summary, messages },
+      });
 
-            onFileSelected?.(file, uploaded);
-            onUploadSuccess?.(sessionId);
+      onFileSelected?.(file, uploaded);
+      onUploadSuccess?.(sessionId);
+    } catch (err) {
+      console.error("UPLOAD FAILED:", err);
+      onFileSelected?.(file, err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        } catch (err) {
-            console.error("UPLOAD FAILED:", err);
-            onFileSelected?.(file, err);
-        } finally {
-            setLoading(false);
-        }
-    };
+  /** When a file is chosen */
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    /** When a file is chosen */
-    const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    if (!isCsvFile(file)) {
+      alert("Only CSV files allowed");
+      return;
+    }
 
-        if (!isCsvFile(file)) {
-            alert("Only CSV files allowed");
-            return;
-        }
+    await uploadFileAndCreateSession(file);
 
-        await uploadFileAndCreateSession(file);
+    e.target.value = "";
+  };
 
-        e.target.value = "";
-    };
+  return (
+    <div className="w-full">
+      <button
+        onClick={handleButtonClick}
+        className="px-7 py-2 bg-primary text-white rounded-lg font-semibold hover:brightness-105 hover:cursor-pointer"
+      >
+        Upload File
+      </button>
 
-    return (
-        <div className="w-full">
-            <button
-                onClick={handleButtonClick}
-                className="px-7 py-2 primarybg text-white rounded-lg font-semibold hover:brightness-105 hover:cursor-pointer"
-            >
-                Upload File
-            </button>
-
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept={accept}
-                style={{ display: "none" }}
-            />
-        </div>
-    );
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept={accept}
+        style={{ display: "none" }}
+      />
+    </div>
+  );
 };
 
 export default UploadButton;

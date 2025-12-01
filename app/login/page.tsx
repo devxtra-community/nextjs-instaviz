@@ -32,12 +32,11 @@ export default function LoginPage() {
 
     try {
       setIsLoading(true);
-      
       const loginData = {
         email,
         password,
       };
-      
+
       const LoginResponse = await axiosInstance.post("/auth/login", loginData);
       console.log(LoginResponse.data);
       localStorage.setItem("sessionId", LoginResponse.data.sessionId);
@@ -53,14 +52,13 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error("login failed:", err);
-      
       const errorMessage = err?.response?.data?.message || "Login failed";
-      
       // If account is suspended (403 status)
       if (err?.response?.status === 403) {
         toast.error(errorMessage, {
           duration: 6000,
-          description: "Your account is suspended. Please contact support if you believe this is an error."
+          description:
+            "Your account is suspended. Please contact support if you believe this is an error.",
         });
       } else {
         toast.error(errorMessage);
@@ -130,7 +128,7 @@ export default function LoginPage() {
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
-            
+
             <p className="text-right text-sm mt-1">
               <Link href="/forgot-password" className="primary hover:underline">
                 Forgot Password?

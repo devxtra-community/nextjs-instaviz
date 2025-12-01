@@ -1,17 +1,19 @@
 "use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { FiSend, FiArrowDownCircle } from "react-icons/fi";
 import VioletAIAvatar from "./VioletAIAvatar";
 import { useAnalysis } from "@/context/AnalysisContext";
 import axiosInstance from "@/lib/axiosInstance";
 import { appendMessage, getSession } from "@/lib/sessionApi";
+import { Toaster, toast } from "sonner";
 
-type ChatBarProps = { 
+type ChatBarProps = {
   dataUploaded: boolean;
   setDataUploaded: (val: boolean) => void;
   messages: { role: "user" | "ai"; text: string }[];
-  setMessages: React.Dispatch<React.SetStateAction<{ role: "user" | "ai"; text: string }[]>>;
+  setMessages: React.Dispatch<
+    React.SetStateAction<{ role: "user" | "ai"; text: string }[]>
+  >;
 
   mobile?: boolean;
   onClose?: () => void;
@@ -25,7 +27,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   onClose,
 }) => {
   const [input, setInput] = useState("");
-  const { addNewChart, setLoading } = useAnalysis();
+  const { addNewChart } = useAnalysis();
 
   const [userImage, setUserImage] = useState("/user.jpg");
   const [aiTyping, setAiTyping] = useState(false);
@@ -34,9 +36,10 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
-  const sessionId = typeof window !== "undefined"
-    ? localStorage.getItem("currentSessionId")
-    : null;
+  const sessionId =
+    typeof window !== "undefined"
+      ? localStorage.getItem("currentSessionId")
+      : null;
 
   useEffect(() => {
     if (!sessionId) return;
@@ -59,10 +62,9 @@ export const ChatBar: React.FC<ChatBarProps> = ({
           return arr;
         });
 
-
         setMessages(restored);
-
-      } catch (err) {
+      } catch (err: any) {
+        toast.warning(err.response?.data || err.message);
         console.log("Failed to load past messages:", err);
       }
     })();
@@ -92,7 +94,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       try {
         const res = await axiosInstance.get(`/user/${id}`);
         if (res.data.user?.picture) setUserImage(res.data.user.picture);
-      } catch { }
+      } catch {}
     })();
   }, []);
 
@@ -101,8 +103,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     if (!messagesRef.current) return;
     const el = messagesRef.current;
 
-    const isAtBottom =
-      el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+    const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
 
     setShowScrollButton(!isAtBottom);
   };
@@ -112,17 +113,15 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 
   const sendMessage = async () => {
     if (!input.trim() || aiTyping) return;
-    if (!sessionId) return alert("No active session found!");
+    if (!sessionId) return toast.error("No active session found!");
 
     const text = input.trim();
     setInput("");
 
-    setMessages(prev => [...prev, { role: "user", text }]);
+    setMessages((prev) => [...prev, { role: "user", text }]);
     setAiTyping(true);
 
     try {
-      setLoading(true);
-
       const res = await axiosInstance.post(`/session/${sessionId}/message`, {
         user: text,
       });
@@ -130,33 +129,30 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       const reply = res.data.reply || "";
       const chart = res.data.chart?.chart || null;
 
-      setMessages(prev => [...prev, { role: "ai", text: reply }]);
+      setMessages((prev) => [...prev, { role: "ai", text: reply }]);
 
       if (chart) {
         addNewChart(chart);
       }
-
     } catch (err) {
       console.log(err);
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
-        { role: "ai", text: "Error communicating with server." }
+        { role: "ai", text: "Error communicating with server." },
       ]);
     } finally {
       setAiTyping(false);
-      setLoading(false);
     }
   };
-
-
 
   if (!dataUploaded) {
     return (
       <aside
-        className={`${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"
-          } w-full fixed ${mobile ? "bottom-0" : "top-12 right-0"
-          } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
+        className={`${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"} w-full fixed ${
+          mobile ? "bottom-0" : "top-12 right-0"
+        } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
       >
+        <Toaster richColors position="top-center" />
         <div className="text-center mt-40">
           <h2 className="text-lg font-semibold primary mb-2">
             Upload a file to chat with InstaviZ AI
@@ -173,10 +169,11 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     <aside
       className={`
       flex flex-col bg-white
-      ${mobile
+      ${
+        mobile
           ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl"
           : "h-[93vh] fixed right-0 top-12 md:w-96"
-        }
+      }
       p-4 border-t md:border-l border-gray-200`}
     >
       {/* HEADER */}
@@ -194,8 +191,9 @@ export const ChatBar: React.FC<ChatBarProps> = ({
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
-              } gap-2`}
+            className={`flex ${
+              msg.role === "user" ? "justify-end" : "justify-start"
+            } gap-2`}
           >
             {/* AI */}
             {msg.role === "ai" && (
@@ -279,19 +277,16 @@ export const ChatBar: React.FC<ChatBarProps> = ({
           }}
         />
 
-
         <button
           disabled={aiTyping}
           onClick={sendMessage}
-          className={`p-3 rounded-full shrink-0 ${aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
-            } transition`}
+          className={`p-3 rounded-full shrink-0 ${
+            aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
+          } transition`}
         >
           <FiSend size={16} />
         </button>
       </div>
-
-
-
     </aside>
   );
 };
