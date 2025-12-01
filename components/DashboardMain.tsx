@@ -9,6 +9,7 @@ import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
 import SessionSelector from "@/components/SessionSelector";
 import axiosInstance from "@/lib/axiosInstance";
+import axios from "axios";
 import { toast, Toaster } from "sonner";
 
 const Charts = dynamic(() => import("@/components/chart"), {
@@ -38,7 +39,7 @@ export default function DashboardMain({
 
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-  /** Load a session */
+  /** SAFE SESSION LOADING (404 handled silently) */
   const loadSession = async (sessionId: string) => {
     if (!sessionId || sessionId.length < 10) return;
 
@@ -58,7 +59,16 @@ export default function DashboardMain({
       setActiveSessionId(sessionId);
       setDataUploaded(true);
       localStorage.setItem("currentSessionId", sessionId);
+
     } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        console.warn("Invalid session cleared.");
+        resetAnalysis();
+        setDataUploaded(false);
+        localStorage.removeItem("currentSessionId");
+        return;
+      }
+
       console.error("Failed to load session:", err);
       toast.warning(`${err.response.data.message}`);
     }
@@ -182,16 +192,21 @@ export default function DashboardMain({
           value={metrics.total_rows}
           description="Records processed"
         />
+
         <MetricCard
           title="Total Columns"
           value={metrics.total_columns}
           description="Attributes detected"
         />
+
         <MetricCard
           title="Missing Values"
           value={metrics.missing_values}
-          description="Incomplete entries"
+          total_rows={metrics.total_rows}
+          total_columns={metrics.total_columns}
+          description="Missing values / total cells"
         />
+
         <MetricCard
           title="Charts Generated"
           value={charts.length}
