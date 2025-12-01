@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { Toaster, toast } from "sonner";
 import { CircleArrowOutUpRight, LogOutIcon } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { jwtDecode } from "jwt-decode";
@@ -47,7 +48,8 @@ export function Navbar() {
 
       if (extracted) setUserId(extracted.toString());
     } catch (err) {
-      console.log("Token decode failed", err);
+      toast.error("Token decode failed");
+      console.log(err);
       setIsLoggedIn(false);
     }
   }, [pathname]);
@@ -70,7 +72,8 @@ export function Navbar() {
           setProfilePic(res.data.user.picture);
         }
       } catch (err) {
-        console.log("Profile fetch failed token may be refreshing...");
+        toast.error("Profile fetch failed token may be refreshing...");
+        console.log(err);
         setTimeout(loadProfile, 400);
         return;
       } finally {
@@ -90,7 +93,8 @@ export function Navbar() {
         setUserToken(2);
       }
     } catch (err) {
-      console.log("error from the tokencheck at navbar", err);
+      toast.error("error from the tokencheck at navbar");
+      console.log(err);
     }
   };
 
@@ -101,7 +105,8 @@ export function Navbar() {
       setIsLoggedIn(false);
       router.push("/home");
     } catch (error) {
-      console.log("Logout failed:", error);
+      toast.error("Logout failed");
+      console.log(error);
     }
   };
 
@@ -115,6 +120,7 @@ export function Navbar() {
     return (
       <div className="flex items-center">
         <div className="relative inline-flex items-center">
+          <Toaster richColors position="top-center" />
           <span className="relative flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-[11px] font-semibold text-orange-700 shadow-sm">
             <span className="text-[14px] animate-pulse">🔥</span>
             <span>{userToken} Tokens</span>

@@ -1,7 +1,7 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
+import { Toaster, toast } from "sonner";
 import CheckoutButton from "@/components/CheckoutButton";
 import axiosInstance from "@/lib/axiosInstance";
 
@@ -14,7 +14,8 @@ export default function PlansPage() {
       try {
         const res = await axiosInstance.get("/admin/plans");
         setPlans(res.data.plans || []);
-      } catch (err) {
+      } catch (err: any) {
+        toast.error(err.response?.data?.message);
         console.log("Error fetching plans:", err);
       } finally {
         setLoading(false);
