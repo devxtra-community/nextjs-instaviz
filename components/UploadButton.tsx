@@ -85,6 +85,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
         }
 
         await uploadFileAndCreateSession(file);
+        window.dispatchEvent(new Event("token-updated"));
 
         e.target.value = "";
     };
