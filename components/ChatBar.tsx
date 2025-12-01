@@ -6,6 +6,8 @@ import { useAnalysis } from "@/context/AnalysisContext";
 import axiosInstance from "@/lib/axiosInstance";
 import { appendMessage, getSession } from "@/lib/sessionApi";
 import { Toaster, toast } from "sonner";
+import ConfirmSpendTokenModal from "./ConfirmSpendTokenModal";
+
 
 type ChatBarProps = {
   dataUploaded: boolean;
@@ -35,6 +37,8 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [tokenModalOpen, setTokenModalOpen] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
 
   const sessionId =
     typeof window !== "undefined"
@@ -48,7 +52,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       try {
         const session = await getSession(sessionId);
 
-        const restored = session.messages.flatMap((m) => {
+        const restored = (session.messages || []).flatMap((m) => {
           const arr: { role: "user" | "ai"; text: string }[] = [];
 
           if (m.user && m.user.trim() !== "") {
@@ -66,6 +70,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       } catch (err: any) {
         toast.warning(err.response?.data || err.message);
         console.log("Failed to load past messages:", err);
+        return;
       }
     })();
   }, [sessionId]);
@@ -94,7 +99,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       try {
         const res = await axiosInstance.get(`/user/${id}`);
         if (res.data.user?.picture) setUserImage(res.data.user.picture);
-      } catch {}
+      } catch { }
     })();
   }, []);
 
@@ -111,23 +116,36 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   const scrollToBottom = () =>
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  const sendMessage = async () => {
+  const sendMessage = async (confirmToken = false) => {
     if (!input.trim() || aiTyping) return;
     if (!sessionId) return toast.error("No active session found!");
 
     const text = input.trim();
     setInput("");
+    setAiTyping(true);
 
     setMessages((prev) => [...prev, { role: "user", text }]);
-    setAiTyping(true);
 
     try {
       const res = await axiosInstance.post(`/session/${sessionId}/message`, {
         user: text,
+        confirmToken,
       });
 
-      const reply = res.data.reply || "";
-      const chart = res.data.chart?.chart || null;
+      const data = res.data;
+
+      if (data.needTokenConfirmation) {
+        setPendingMessage(text);
+        setTokenModalOpen(true);
+        setMessages((prev) => [
+          ...prev,
+          { role: "ai", text: data.message || "Please confirm spending token." },
+        ]);
+        return;
+      }
+
+      const reply = data.reply || "";
+      const chart = data.chart || null;
 
       setMessages((prev) => [...prev, { role: "ai", text: reply }]);
 
@@ -145,14 +163,47 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     }
   };
 
+  // confirmation handlers:
+  const handleConfirmSpend = async () => {
+    if (!pendingMessage) return;
+    setTokenModalOpen(false);
+    setAiTyping(true);
+
+    try {
+      const res = await axiosInstance.post(`/session/${sessionId}/message`, {
+        user: pendingMessage,
+        confirmToken: true,
+      });
+
+      const data = res.data;
+      const reply = data.reply || "";
+      const chart = data.chart || null;
+
+      // append AI reply
+      setMessages((prev) => [...prev, { role: "ai", text: reply }]);
+      if (chart) addNewChart(chart);
+    } catch (err) {
+      toast.error("Failed to generate chart.");
+      console.log(err);
+    } finally {
+      setPendingMessage(null);
+      setAiTyping(false);
+    }
+  };
+
+  const handleCancelSpend = () => {
+    setTokenModalOpen(false);
+    setPendingMessage(null);
+    toast.error("Chart generation cancelled.");
+  };
+
   if (!dataUploaded) {
     return (
       <aside
-        className={`${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"} w-full fixed ${
-          mobile ? "bottom-0" : "top-12 right-0"
-        } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
+        className={`${mobile ? "h-[55vh]" : "h-[93vh] md:w-96"} w-full fixed ${mobile ? "bottom-0" : "top-12 right-0"
+          } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
       >
-        
+
         <div className="text-center mt-40">
           <h2 className="text-lg font-semibold primary mb-2">
             Upload a file to chat with InstaviZ AI
@@ -166,102 +217,108 @@ export const ChatBar: React.FC<ChatBarProps> = ({
   }
 
   return (
-    <aside
-      className={`
+    <>
+      <ConfirmSpendTokenModal
+        open={tokenModalOpen}
+        message="Spend 1 token to unlock 2 more charts?"
+        onConfirm={handleConfirmSpend}
+        onCancel={handleCancelSpend}
+      />
+
+      <aside
+        className={`
       flex flex-col bg-white
-      ${
-        mobile
-          ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl"
-          : "h-[93vh] fixed right-0 top-12 md:w-96"
-      }
+      ${mobile
+            ? "h-[55vh] fixed bottom-0 left-0 right-0 rounded-t-2xl"
+            : "h-[93vh] fixed right-0 top-12 md:w-96"
+          }
       p-4 border-t md:border-l border-gray-200`}
-    >
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-2">
-        <h1 className="text-lg font-semibold primary mt-4">Ask InstaviZ AI</h1>
-      </div>
-
-      {/* CHAT MESSAGES */}
-      <div
-        ref={messagesRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto space-y-3 pr-1"
-        style={{ scrollbarWidth: "none" }}
       >
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            } gap-2`}
-          >
-            {/* AI */}
-            {msg.role === "ai" && (
-              <>
-                <VioletAIAvatar />
-                <div className="px-3 py-1.5 bg-gray-50 text-gray-800 rounded-xl text-xs shadow-sm max-w-[80%]">
-                  {msg.text}
-                </div>
-              </>
-            )}
+        {/* HEADER */}
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-lg font-semibold primary mt-4">Ask InstaviZ AI</h1>
+        </div>
 
-            {/* USER */}
-            {msg.role === "user" && (
-              <>
-                <div className="px-3 py-1.5 bg-[#f7edff] primary rounded-xl text-xs shadow-sm max-w-[80%]">
-                  {msg.text}
-                </div>
-                <img
-                  src={userImage}
-                  className="w-6 h-6 rounded-full border object-cover"
-                />
-              </>
-            )}
-          </div>
-        ))}
+        {/* CHAT MESSAGES */}
+        <div
+          ref={messagesRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto space-y-3 pr-1"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
+                } gap-2`}
+            >
+              {/* AI */}
+              {msg.role === "ai" && (
+                <>
+                  <VioletAIAvatar />
+                  <div className="px-3 py-1.5 bg-gray-50 text-gray-800 rounded-xl text-xs shadow-sm max-w-[80%]">
+                    {msg.text}
+                  </div>
+                </>
+              )}
 
-        {aiTyping && (
-          <div className="flex items-center gap-2">
-            <VioletAIAvatar />
-            <div className="flex gap-1">
-              <span className="dot" />
-              <span className="dot delay-150" />
-              <span className="dot delay-300" />
+              {/* USER */}
+              {msg.role === "user" && (
+                <>
+                  <div className="px-3 py-1.5 bg-[#f7edff] primary rounded-xl text-xs shadow-sm max-w-[80%]">
+                    {msg.text}
+                  </div>
+                  <img
+                    src={userImage}
+                    className="w-6 h-6 rounded-full border object-cover"
+                  />
+                </>
+              )}
             </div>
-          </div>
+          ))}
+
+          {aiTyping && (
+            <div className="flex items-center gap-2">
+              <VioletAIAvatar />
+              <div className="flex gap-1">
+                <span className="dot" />
+                <span className="dot delay-150" />
+                <span className="dot delay-300" />
+              </div>
+            </div>
+          )}
+
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Scroll button */}
+        {showScrollButton && (
+          <button
+            onClick={scrollToBottom}
+            className="absolute right-4 bottom-20 bg-white shadow px-2 py-1 rounded-full border"
+          >
+            <FiArrowDownCircle size={20} className="primary" />
+          </button>
         )}
 
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Scroll button */}
-      {showScrollButton && (
-        <button
-          onClick={scrollToBottom}
-          className="absolute right-4 bottom-20 bg-white shadow px-2 py-1 rounded-full border"
-        >
-          <FiArrowDownCircle size={20} className="primary" />
-        </button>
-      )}
-
-      <div className="relative mt-2 flex items-end gap-2">
-        <textarea
-          disabled={aiTyping}
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            const el = e.target;
-            el.style.height = "34px"; // reset to initial height
-            el.style.height = Math.min(el.scrollHeight, 110) + "px"; // expand naturally
-          }}
-          onKeyDown={(e) => {
-            if (!aiTyping && e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage();
-            }
-          }}
-          placeholder="Ask anything about your data…"
-          className="
+        <div className="relative mt-2 flex items-end gap-2">
+          <textarea
+            disabled={aiTyping}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              const el = e.target;
+              el.style.height = "34px"; // reset to initial height
+              el.style.height = Math.min(el.scrollHeight, 110) + "px"; // expand naturally
+            }}
+            onKeyDown={(e) => {
+              if (!aiTyping && e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(false);
+              }
+            }}
+            placeholder="Ask anything about your data…"
+            className="
     w-full px-3 py-2
     border rounded-xl text-sm
     shadow-sm leading-5
@@ -271,22 +328,23 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     outline-none
     placeholder-gray-400
   "
-          style={{
-            height: "34px",
-            maxHeight: "110px",
-          }}
-        />
+            style={{
+              height: "34px",
+              maxHeight: "110px",
+            }}
+          />
 
-        <button
-          disabled={aiTyping}
-          onClick={sendMessage}
-          className={`p-3 rounded-full shrink-0 ${
-            aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
-          } transition`}
-        >
-          <FiSend size={16} />
-        </button>
-      </div>
-    </aside>
+          <button
+            disabled={aiTyping}
+            onClick={() => sendMessage(false)}
+            className={`p-3 rounded-full shrink-0 ${aiTyping ? "bg-gray-200" : "primary hover:bg-[#f4e9ff]"
+              } transition`}
+          >
+            <FiSend size={16} />
+          </button>
+        </div>
+      </aside>
+    </>
+
   );
 };

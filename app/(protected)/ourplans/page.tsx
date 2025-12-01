@@ -13,6 +13,7 @@ export default function PlansPage() {
     const fetchPlans = async () => {
       try {
         const res = await axiosInstance.get("/admin/plans");
+        
         setPlans(res.data.plans || []);
       } catch (err: any) {
         toast.error(err.response?.data?.message);

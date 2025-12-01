@@ -17,7 +17,6 @@ const ClientHome: React.FC = () => {
 
   const [chatOpen, setChatOpen] = useState<boolean>(false);
 
-  // Shared Chat State
   const [messages, setMessages] = useState<
     { role: "user" | "ai"; text: string }[]
   >([]);
@@ -47,7 +46,6 @@ const ClientHome: React.FC = () => {
           setDataUploaded={setDataUploaded}
         />
 
-        {/* Desktop ChatBar */}
         <div className="hidden md:block">
           <ChatBar
             dataUploaded={dataUploaded}
@@ -59,7 +57,6 @@ const ClientHome: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Floating Button */}
       <button
         onClick={() => setChatOpen(!chatOpen)}
         className="fixed bottom-5 right-5 md:hidden primarybg text-white p-3 rounded-full shadow-lg z-40"
@@ -67,7 +64,6 @@ const ClientHome: React.FC = () => {
         <FiMessageSquare size={22} />
       </button>
 
-      {/* Mobile Chat Sheet */}
       <AnimatePresence>
         {chatOpen && (
           <motion.div

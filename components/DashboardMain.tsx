@@ -60,17 +60,23 @@ export default function DashboardMain({
       localStorage.setItem("currentSessionId", sessionId);
 
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        console.warn("Invalid session cleared.");
-        resetAnalysis();
-        setDataUploaded(false);
-        localStorage.removeItem("currentSessionId");
-        return;
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 404) {
+          resetAnalysis();
+          setDataUploaded(false);
+          localStorage.removeItem("currentSessionId");
+          return;
+        }
+
+        if (err.response?.status === 401) {
+          toast.error("Your tokens have finished. Please recharge.");
+          return;
+        }
       }
 
       console.error("Failed to load session:", err);
-      toast.warning(`${err.response.data.message}`);
     }
+
   };
 
   /** Auto-load session if saved */
@@ -87,15 +93,14 @@ export default function DashboardMain({
     }
   }, []);
 
-  /** BEFORE UPLOAD */
-  if (!showData || !analysisData) {
-    const isLogged = 
+  if (!showData || !analysisData?.data) {
+
+    const isLogged =
       typeof window !== "undefined" && !!localStorage.getItem("accessToken");
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
-        
-        {/* Show session selector ONLY when logged in */}
+
         {isLogged && (
           <div className="absolute top-20 right-6">
             <SessionSelector
@@ -139,7 +144,6 @@ export default function DashboardMain({
     );
   }
 
-  /** AFTER UPLOAD VIEW */
   const metrics = analysisData.data.metrics;
   const charts = analysisData.data.charts;
   const summary = analysisData.data.summary;
@@ -151,7 +155,6 @@ export default function DashboardMain({
     <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-16 px-5 md:px-8 top-8">
       {loading && <FullLoader />}
 
-      {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-[1.6rem] md:text-[1.9rem] font-semibold text-gray-800 leading-tight">
@@ -185,7 +188,6 @@ export default function DashboardMain({
         </div>
       </div>
 
-      {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <MetricCard
           title="Total Rows"
@@ -216,7 +218,6 @@ export default function DashboardMain({
 
       <Charts charts={charts} />
 
-      {/* Summary */}
       <div className="mt-6 bg-linear-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">

@@ -2,14 +2,13 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getSession } from "@/lib/sessionApi";
-import { log } from "console";
 
 type AnalysisDataType = {
   data: {
     charts: any[];
     metrics: any;
     summary: string[];
-    messages:any[];
+    messages: any[];
   };
 };
 
@@ -23,7 +22,7 @@ type AnalysisContextType = {
   activeSessionId: string | null;
   setActiveSessionId: (id: string | null) => void;
 
-  addNewChart: (chart: any) => Promise<void>;
+  addNewChart: (chart: any) => void;
 
   resetAnalysis: () => void;
 };
@@ -38,25 +37,24 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
     typeof window !== "undefined" ? localStorage.getItem("currentSessionId") : null
   );
 
-  const addNewChart = async (chart: any) => {
+  /** FIXED — React-safe chart updater */
+  const addNewChart = (chart: any) => {
     setAnalysisData((prev) => {
-      if (!prev) return prev;
+      if (!prev || !prev.data) return prev;
+
       return {
         ...prev,
         data: {
-          ...prev.data,
           charts: [...prev.data.charts, chart],
+          metrics: prev.data.metrics,
+          summary: prev.data.summary,
+          messages: prev.data.messages,
         },
       };
     });
-
-    try {
-      if (!activeSessionId) return;
-    } catch (err) {
-      console.error("Failed to persist chart:", err);
-    }
   };
 
+  /** Reset everything */
   const resetAnalysis = () => {
     setAnalysisData(null);
     setActiveSessionId(null);
@@ -66,20 +64,20 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
 
+  /** Auto-load session on mount or sessionId change */
   useEffect(() => {
     const init = async () => {
       if (
         !activeSessionId ||
         activeSessionId === "null" ||
         activeSessionId === "undefined" ||
-        activeSessionId.length < 10 
+        activeSessionId.length < 10
       ) {
-        console.log("No valid session found, skipping getSession()");
+        console.log("No valid session found — skipping getSession()");
         return;
       }
 
       try {
-        console.log(activeSessionId);
         const session = await getSession(activeSessionId);
 
         setAnalysisData({
@@ -91,13 +89,12 @@ export const AnalysisProvider = ({ children }: { children: React.ReactNode }) =>
           },
         });
       } catch (err) {
-        console.error("Failed to load session → OK if first time visit", err);
+        console.error("Failed to load session", err);
       }
     };
 
     init();
   }, [activeSessionId]);
-
 
   return (
     <AnalysisContext.Provider
