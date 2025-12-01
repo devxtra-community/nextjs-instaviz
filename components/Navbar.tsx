@@ -100,6 +100,7 @@ export function Navbar() {
       const token = await axiosInstance.get("/user/token");
       if (typeof token.data.token === "number") {
         setUserToken(token.data.token);
+        localStorage.setItem("usertoken", token.data.token.toString());
       } else {
         setUserToken(2);
       }
@@ -126,7 +127,7 @@ export function Navbar() {
   };
 
   const TokenBadge = () => {
-    if (userToken <= 0) return null;
+    if (userToken < 0) return null;
 
     return (
       <div className="flex items-center">

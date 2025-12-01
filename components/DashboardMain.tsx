@@ -60,17 +60,23 @@ export default function DashboardMain({
       localStorage.setItem("currentSessionId", sessionId);
 
     } catch (err: any) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        console.warn("Invalid session cleared.");
-        resetAnalysis();
-        setDataUploaded(false);
-        localStorage.removeItem("currentSessionId");
-        return;
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 404) {
+          resetAnalysis();
+          setDataUploaded(false);
+          localStorage.removeItem("currentSessionId");
+          return;
+        }
+
+        if (err.response?.status === 401) {
+          toast.error("Your tokens have finished. Please recharge.");
+          return;
+        }
       }
 
       console.error("Failed to load session:", err);
-      toast.warning(`${err.response.data.message}`);
     }
+
   };
 
   /** Auto-load session if saved */
@@ -87,13 +93,14 @@ export default function DashboardMain({
     }
   }, []);
 
-  if (!showData || !analysisData) {
-    const isLogged = 
+  if (!showData || !analysisData?.data) {
+
+    const isLogged =
       typeof window !== "undefined" && !!localStorage.getItem("accessToken");
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
-        
+
         {isLogged && (
           <div className="absolute top-20 right-6">
             <SessionSelector
