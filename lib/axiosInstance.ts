@@ -58,9 +58,6 @@ axiosInstance.interceptors.response.use(
 
       const accessToken = localStorage.getItem("accessToken");
 
-      if (!accessToken) {
-        return Promise.reject(error);
-      }
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -85,10 +82,11 @@ axiosInstance.interceptors.response.use(
         );
 
         const newToken = refreshRes.data.newAccessToken;
-
+        console.log("New access token got", newToken);
         localStorage.setItem("accessToken", newToken);
 
         runQueue(newToken);
+        console.log("Retrying original request with new token:");
         isRefreshing = false;
 
         // Retry failed request

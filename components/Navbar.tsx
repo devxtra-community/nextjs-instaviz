@@ -10,6 +10,7 @@ import { CircleArrowOutUpRight, LogOutIcon } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
+
 interface DecodedToken {
   id?: string;
   userId?: string;
@@ -28,6 +29,7 @@ export function Navbar() {
   const [userToken, setUserToken] = useState(0);
 
   const [loadingProfile, setLoadingProfile] = useState(true);
+  
 
   const router = useRouter();
   const pathname = usePathname();
@@ -64,9 +66,11 @@ export function Navbar() {
     const loadProfile = async () => {
       try {
         const res = await axiosInstance.get(`/user/${userId}`);
+        console.log(res.data);
 
         setName(res.data.user.name);
         setEmail(res.data.user.email);
+        ;
 
         if (res.data.user?.picture) {
           setProfilePic(res.data.user.picture);
