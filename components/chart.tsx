@@ -18,8 +18,8 @@ import { motion } from "framer-motion";
 
 /* Use theme variables instead of static colors */
 const COLORS = [
-  "var(--primary-color)",
-  "var(--accent)",
+  "var(--chart-1)",
+  "var(--chart-2)",
   "var(--chart-3)",
   "var(--chart-4)",
   "var(--chart-5)"
@@ -113,15 +113,15 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "var(--card-bg)",
+                        background: "var(--card)",
                         border: "1px solid var(--card-border)",
-                        color: "var(--text-dark)",
+                        color: "var(--primary)",
                       }}
                       formatter={(value) => formatNumber(Number(value))}
                     />
                     <Bar
                       dataKey={chart.y}
-                      fill="var(--primary-color)"
+                      fill="var(--primary)"
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
@@ -144,7 +144,7 @@ export default function Charts({ charts }: { charts: ChartConfig[] }) {
                       contentStyle={{
                         background: "var(--card-bg)",
                         border: "1px solid var(--card-border)",
-                        color: "var(--text-dark)",
+                        color: "var(--primary)",
                       }}
                       formatter={(value) => formatNumber(Number(value))}
                     />

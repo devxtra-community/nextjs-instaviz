@@ -36,7 +36,7 @@ export default function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="relative group transition-colors duration-300 hover:text-[var(--primary-color)]"
+                  className="relative group transition-colors duration-300 hover:text-[var(--primary)]"
                 >
                   {link.label}
                   <span className="absolute left-0 -bottom-1 w-0 h-0.5 primarybg transition-all duration-300 group-hover:w-full"></span>
@@ -50,7 +50,7 @@ export default function Navbar() {
             {/* LOGIN */}
             <Link
               href="/login"
-              className="hidden md:block text-[15px] font-medium text-gray-800 hover:primary transition"
+              className="hidden md:block text-[15px] font-medium text-[var(--text-on-primary)]"
             >
               Log in
             </Link>
@@ -58,9 +58,9 @@ export default function Navbar() {
             {/* SIGNUP BUTTON */}
             <Link href="/signup" className="hidden md:block">
               <button
-                className="text-white px-5 py-2 font-medium rounded-full shadow-sm hover:brightness-95 transition cursor-pointer"
+                className=" px-5 py-2 font-medium rounded-full shadow-sm hover:brightness-95 transition cursor-pointer"
                 style={{
-                  background: "var(--primary-color)",
+                  background: "var(--primary)",
                 }}
               >
                 Sign up

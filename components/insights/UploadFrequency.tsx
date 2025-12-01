@@ -28,7 +28,7 @@ export default function UploadFrequencyCard() {
   if (!data) return <p>Loading...</p>;
 
   return (
-    <Card className="rounded-2xl shadow-sm border border-gray-100">
+    <Card className="rounded-2xl shadow-sm bg-[var(--card)] border-[var(--card)]">
       <CardHeader>
         <CardTitle className="text-md font-semibold">
           Average Upload Frequency
@@ -39,7 +39,7 @@ export default function UploadFrequencyCard() {
         {/* MAIN VALUE */}
         <p
           className="text-4xl font-bold"
-          style={{ color: "var(--primary-color)" }}
+          style={{ color: "var(--primary)" }}
         >
           {data.frequency}
         </p>
@@ -52,7 +52,7 @@ export default function UploadFrequencyCard() {
             className="h-full rounded-full transition-all"
             style={{
               width: `${Math.min(data.frequency * 20, 100)}%`,
-              backgroundColor: "var(--primary-color)",
+              backgroundColor: "var(--primary)",
             }}
           ></div>
         </div>

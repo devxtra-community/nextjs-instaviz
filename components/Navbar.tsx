@@ -106,18 +106,18 @@ export function Navbar() {
 
           <Link
             href="/home"
-            className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
+            className="relative text-base font-medium text-gray-700 group hover:text-[var(--primary)]"
           >
             Dashboard
-            <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1] scale-x-0 group-hover:scale-x-100 origin-left transition-transform"></span>
+            <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 origin-left transition-transform"></span>
           </Link>
 
           <Link
             href="/ourplans"
-            className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
+            className="relative text-base font-medium text-gray-700 group hover:text-[var(--primary)]"
           >
             Pricing
-            <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1] scale-x-0 group-hover:scale-x-100 origin-left transition-transform"></span>
+            <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[var(--primary)] scale-x-0 group-hover:scale-x-100 origin-left transition-transform"></span>
           </Link>
 
           {/* AUTH */}
@@ -141,15 +141,15 @@ export function Navbar() {
             <div className="flex gap-4 items-center">
               <Link
                 href="/login"
-                className="relative text-base font-medium text-gray-700 group hover:text-[#ad49e1]"
+                className="relative text-base font-medium text-gray-700 group hover:text-[var(--primary)]"
               >
                 Login
-                <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[#ad49e1] scale-x-0 group-hover:scale-x-100"></span>
+                <span className="absolute left-0 -bottom-1 h-0.5 w-full bg-[var(--primary)] scale-x-0 group-hover:scale-x-100"></span>
               </Link>
 
               <Link
                 href="/signup"
-                className="text-base font-medium text-white rounded px-3 py-1.5 primarybg transition"
+                className="text-base font-medium bg-[var(--card)] rounded px-3 py-1.5 primarybg transition"
               >
                 Signup
               </Link>
@@ -160,7 +160,7 @@ export function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen((prev) => !prev)}
-          className="md:hidden text-violet-700 hover:text-violet-800"
+          className="md:hidden"
         >
           {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
         </button>
@@ -230,7 +230,7 @@ export function Navbar() {
                   </Link>
                   <Link
                     href="/signup"
-                    className="text-lg w-28 text-center rounded-xl py-2 primarybg text-white"
+                    className="text-lg w-28 text-center rounded-xl py-2 bg-[var(--primary)]"
                   >
                     Signup
                   </Link>

@@ -105,7 +105,7 @@ export default function TokenAccessDashboard() {
               <div>
                 <p
                   className="text-xs font-medium uppercase mb-2"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{ color: "var(--text-on-primary)" }}
                 >
                   {item.label}
                 </p>
@@ -115,8 +115,8 @@ export default function TokenAccessDashboard() {
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
                 style={{
-                  backgroundColor: "var(--primary)",
-                  color: "var(--primary-foreground)",
+                  backgroundColor: "var(--icon-bg)",
+                  color: "var(--icon)",
                 }}
               >
                 {item.icon}
@@ -159,7 +159,7 @@ export default function TokenAccessDashboard() {
                         <div
                           style={{
                             background: "var(--primary)",
-                            color: "var(--primary-foreground)",
+                            color: "var(--text-on-primary)",
                             padding: "10px",
                             borderRadius: "8px",
                           }}
@@ -178,7 +178,7 @@ export default function TokenAccessDashboard() {
                   dataKey="value"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--primary)" }}
+                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -211,7 +211,7 @@ export default function TokenAccessDashboard() {
                         <div
                           style={{
                             background: "var(--primary)",
-                            color: "var(--primary-foreground)",
+                            color: "var(--text-on-primary)",
                             padding: "10px",
                             borderRadius: "8px",
                           }}
@@ -230,7 +230,7 @@ export default function TokenAccessDashboard() {
                   dataKey="value"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--primary)" }}
+                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -272,7 +272,7 @@ export default function TokenAccessDashboard() {
                       <div
                         style={{
                           background: "var(--primary)",
-                          color: "var(--primary-foreground)",
+                          color: "var(--text-on-primary)",
                           padding: "10px",
                           borderRadius: "8px",
                         }}
@@ -291,7 +291,7 @@ export default function TokenAccessDashboard() {
                 dataKey="value"
                 stroke="var(--primary)"
                 strokeWidth={3}
-                dot={{ r: 4, fill: "var(--primary)" }}
+                dot={{ r: 4, fill: "var(--text-on-primary)" }}
               />
             </LineChart>
           </ResponsiveContainer>

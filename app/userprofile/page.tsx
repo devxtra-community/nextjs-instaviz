@@ -205,7 +205,7 @@ export default function ProfilePage() {
       <Toaster richColors position="top-center" />
       <Navbar />
       <div className="w-full max-w-6xl pt-15 flex gap-8 flex-col md:flex-row">
-        <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
+        <div className="flex-1 bg-[var(--card)] rounded-2xl p-6  backdrop-blur-sm">
           <h2 className="text-2xl font-bold mb-6 text-gray-900">
             Profile & Account Settings
           </h2>
@@ -229,9 +229,7 @@ export default function ProfilePage() {
                 Premium
               </p>
             </div>
-            <p className="hidden md:block ml-15 border border-gray-300  text-gray-600 handwriting text-sm p-2 rounded-2xl bg-gray-200">
-              Premium
-            </p>
+           
           </div>
           <div className="flex justify-between items-center">
             <button
@@ -286,20 +284,20 @@ export default function ProfilePage() {
 
           <button
             onClick={handleLogout}
-            className="mt-10 w-full py-2 rounded-lg text-white primarybg hoverBg font-semibold hover:bg-red-200 transition cursor-pointer"
+            className="mt-10 w-full py-2 rounded-lg text-white  font-semibold bg-[var(--primary)] transition cursor-pointer"
           >
             Logout
           </button>
         </div>
 
-        <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm ">
-          <h3 className="text-lg font-bold mb-4 tracking-wider logo">
+        <div className="flex-1  rounded-2xl p-6 bg-[var(--card)] backdrop-blur-sm ">
+          <h3 className="text-lg font-bold tracking-wider logo">
             Logged in Devices
           </h3>
 
           <button
             onClick={logoutAllDevices}
-            className="px-4 py-1.5 rounded-xl text-sm  text-white primarybg border mb-6 hoverBg cursor-pointer transition"
+            className="px-4 py-1 my-5  rounded-xl text-sm  text-white bg-[var(--destructive)] cursor-pointer transition"
           >
             Logout from all other devices
           </button>

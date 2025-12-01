@@ -201,11 +201,11 @@ export default function UserProfilePage() {
 
   const CustomTooltip = ({ active, payload }: any) =>
     active && payload?.length ? (
-      <div className="rounded border border-[var(--card-border)] bg-[var(--card-bg)] p-2 shadow-sm">
-        <p className="text-sm font-medium text-[var(--text-dark)]">
+      <div className="rounded border border-[var(--card-border)] bg-[var(--card)] p-2 shadow-sm">
+        <p className="text-sm font-medium text-[var(--text-on-primary)]">
           {payload[0].payload.name}
         </p>
-        <p className="text-sm text-[var(--primary-color)]">
+        <p className="text-sm text-[var(--primary)]">
           {payload[0].payload.formatted}
         </p>
       </div>
@@ -241,9 +241,9 @@ export default function UserProfilePage() {
           rounded-2xl shadow-sm overflow-hidden mb-5 
           text-[var(--text-on-primary)]
           bg-gradient-to-r
-          from-[color-mix(in_srgb,var(--primary-color)_80%,white_20%)]
-          via-[color-mix(in_srgb,var(--primary-color)_60%,white_40%)]
-          to-[color-mix(in_srgb,var(--primary-color)_40%,white_60%)]
+          from-[color-mix(in_srgb,var(--primary)_90%,white_0%)]
+          via-[color-mix(in_srgb,var(--primary)_70%,white_0%)]
+          to-[color-mix(in_srgb,var(--primary-color)_50%,white_0%)]
         "
       >
         <div className="flex flex-col md:flex-row items-center gap-4 p-6">
@@ -256,14 +256,14 @@ export default function UserProfilePage() {
                 alt={user.name}
                 width={120}
                 height={120}
-                className="rounded-full object-cover border-4 border-[var(--secondary-color)] shadow-lg w-full h-full"
+                className="rounded-full object-cover border-4 border-[var(--card)] shadow-lg w-full h-full"
               />
             ) : (
               <div
                 className="
                   w-full h-full flex items-center justify-center rounded-full
-                  bg-[var(--primary-light)] text-[var(--primary-color)]
-                  border-4 border-[var(--secondary-color)] shadow-lg
+                  bg-[var(--card)] text-[var(--primary)]
+                  border-4 border-[var(--primary)] shadow-lg
                   text-3xl font-semibold
                 "
               >
@@ -302,7 +302,7 @@ export default function UserProfilePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mb-6">
 
         {/* TOKENS CARD */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)]">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm  border-[var(--card)]">
           <h3 className="text-[var(--primary-color)] font-semibold text-xs uppercase mb-2">
             Available Tokens
           </h3>
@@ -311,7 +311,7 @@ export default function UserProfilePage() {
             <div className="w-24 h-14">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={tokenData}>
-                  <Bar dataKey="value" fill="var(--primary-color)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -319,7 +319,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* STATUS CARD */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)]">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm border-[var(--card)]">
           <h3 className="text-[var(--primary-color)] font-semibold text-xs uppercase mb-2">
             Account Status
           </h3>
@@ -354,7 +354,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* WEEKLY ACTIVITY */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)]">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm border border-[var(--card)]">
           <h3 className="text-[var(--primary-color)] font-semibold mb-3 text-xs uppercase flex items-center gap-2">
             <Clock size={16} /> Weekly Active Time
           </h3>
@@ -363,7 +363,7 @@ export default function UserProfilePage() {
             <p className="text-xs text-[var(--text-light)]">Loading...</p>
           ) : averageTimeData ? (
             <>
-              <p className="text-2xl font-bold text-[var(--text-dark)]">
+              <p className="text-2xl font-bold text-[var(--primary)]">
                 {averageTimeData.averagePerDay.formatted}
               </p>
               <p className="text-[11px] text-[var(--text-light)] mb-2">Avg per day</p>
@@ -374,7 +374,7 @@ export default function UserProfilePage() {
                     <Line
                       type="monotone"
                       dataKey="hours"
-                      stroke="var(--primary-color)"
+                      stroke="var(--primary)"
                       strokeWidth={2}
                       dot={{ fill: "var(--primary-color)", r: 3 }}
                     />
@@ -394,7 +394,7 @@ export default function UserProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
 
         {/* Add Tokens */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)]">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm border border-[var(--card)]">
           <h3 className="text-[var(--primary-color)] text-xs font-semibold uppercase mb-2">
             Add Tokens
           </h3>
@@ -410,7 +410,7 @@ export default function UserProfilePage() {
             <button
               className="
                 flex items-center justify-center gap-1.5 
-                bg-[var(--primary-color)] hover:bg-[var(--primary-hover)]
+                bg-[var(--primary)] hover:bg-[var(--primary-hover)]
                 text-[var(--text-on-primary)] px-4 py-2 rounded-md
                 text-xs sm:text-sm
               "
@@ -421,7 +421,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* Update Tokens */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)]">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm border border-[var(--card)]">
           <h3 className="text-[var(--primary-color)] text-xs font-semibold uppercase mb-2">
             Update Tokens
           </h3>
@@ -437,7 +437,7 @@ export default function UserProfilePage() {
             <button
               className="
                 flex items-center justify-center gap-1.5 
-                bg-[var(--primary-color)] hover:bg-[var(--primary-hover)]
+                bg-[var(--primary)] hover:bg-[var(--primary)]
                 text-[var(--text-on-primary)] px-4 py-2 rounded-md
                 text-xs sm:text-sm
               "
@@ -452,7 +452,7 @@ export default function UserProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {/* Suspend / Unsuspend */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)]">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm border border-[var(--card)]">
           <h3 className="text-[var(--primary-color)] font-semibold text-xs uppercase mb-2">
             {user.isSuspended ? "Unsuspend User" : "Suspend User"}
           </h3>
@@ -499,7 +499,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* Actions */}
-        <div className="bg-[var(--card-bg)] rounded-xl p-5 shadow-sm border border-[var(--card-border)] flex flex-col gap-2">
+        <div className="bg-[var(--card)] rounded-xl p-5 shadow-sm border border-[var(--card)] flex flex-col gap-2">
           <h3 className="text-[var(--primary-color)] text-xs font-semibold uppercase">
             Actions
           </h3>
@@ -507,7 +507,7 @@ export default function UserProfilePage() {
           <button
             className="
               w-full flex justify-center items-center gap-2 
-              bg-[var(--primary-color)] hover:bg-[var(--primary-hover)]
+              bg-[var(--primary)] hover:bg-[var(--primary-hover)]
               text-[var(--text-on-primary)] px-4 py-2 rounded-md text-xs sm:text-sm
             "
           >
@@ -517,7 +517,7 @@ export default function UserProfilePage() {
           <button
             className="
               w-full flex justify-center items-center gap-2 
-              bg-[var(--primary-color)] hover:bg-[var(--primary-hover)]
+              bg-[var(--primary)] hover:bg-[var(--primary-hover)]
               text-[var(--text-on-primary)] px-4 py-2 rounded-md text-xs sm:text-sm
             "
           >

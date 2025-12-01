@@ -186,7 +186,7 @@ export default function AdminPlansPage() {
         className="px-4 py-2 rounded-lg flex items-center gap-2 mb-6"
         style={{
           backgroundColor: "var(--primary)",
-          color: "var(--primary-foreground)",
+          color: "var(--text-on-primary)",
         }}
       >
         <Plus size={16} className="stroke-current" /> Add New Plan
@@ -223,7 +223,7 @@ export default function AdminPlansPage() {
                       className="inline-block mt-2 text-xs px-2 py-1 rounded"
                       style={{
                         backgroundColor: "var(--primary)",
-                        color: "var(--primary-foreground)",
+                        color: "var(--text-on-primary)",
                       }}
                     >
                       {plan.offerlabel}
@@ -236,7 +236,7 @@ export default function AdminPlansPage() {
                     onClick={() => startEdit(plan)}
                     className="p-2 rounded-lg"
                     style={{
-                      backgroundColor: "var(--muted)",
+                      backgroundColor: "var(--card)",
                       color: "var(--muted-foreground)",
                     }}
                   >
@@ -250,7 +250,7 @@ export default function AdminPlansPage() {
                     }}
                     className="p-2 rounded-lg"
                     style={{
-                      backgroundColor: "var(--destructive)",
+                      backgroundColor: "var(--card)",
                       color: "var(--primary-foreground)",
                     }}
                   >

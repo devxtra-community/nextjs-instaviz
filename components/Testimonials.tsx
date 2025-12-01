@@ -104,7 +104,7 @@ export default function Testimonials() {
                         key={i}
                         size={18}
                         className="stroke-current"
-                        style={{ color: "var(--primary-color)", fill: "var(--primary-color)" }}
+                        style={{ color: "var(--card)", fill: "var(--star)" }}
                       />
                     ))}
                   </div>

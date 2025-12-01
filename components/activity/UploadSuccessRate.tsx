@@ -23,7 +23,7 @@ export default function UploadSuccessRate() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-      <Card className="rounded-2xl shadow-md border border-gray-100 flex flex-col h-full">
+      <Card className="rounded-2xl shadow-md  bg-[var(--card)] border-[var(--card)]  flex flex-col h-full">
         <CardHeader>
           <CardTitle>Upload Success Rate</CardTitle>
         </CardHeader>
@@ -47,7 +47,7 @@ export default function UploadSuccessRate() {
             style={{
               // Tailwind wrapper needs inline CSS for theme variables
               "--tw-bg-opacity": "1",
-              backgroundColor: "var(--primary-light)",
+              backgroundColor: "var(--primary)",
             } as React.CSSProperties}
           />
 

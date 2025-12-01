@@ -82,8 +82,8 @@ export default function CheckoutButton({
         className={`mt-auto px-6 py-2 text-xs sm:text-base rounded-xl font-semibold shadow cursor-pointer w-full transition
         ${
           highlight
-            ? "primarybg text-white hover:brightness-110 disabled:opacity-70"
-            : "bg-[#f3e8ff] primary hover:bg-[#ead6ff] disabled:opacity-60"
+             ? "bg-[var(--primary)] text-[var(--text-on-primary)]" 
+          : "bg-white text-[var(--text-color)] border border-[var(--border)]"
         }`}
       >
         {loading ? "Redirecting..." : butto}

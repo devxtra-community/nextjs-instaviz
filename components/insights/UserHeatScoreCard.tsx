@@ -32,10 +32,10 @@ export default function UserHeatScoreCard() {
   const barWidth = `${score}%`;
 
   const barColor =
-    score > 75 ? "#16a34a" : score > 50 ? "#f59e0b" : "#ef4444";
+   "var(--primary)"
 
   return (
-    <Card className="p-4 rounded-2xl shadow-sm border border-gray-100">
+    <Card className="p-4 rounded-2xl shadow-sm bg-[var(--card)] border-[var(--card)]">
       <CardHeader>
         <CardTitle className="text-md font-semibold">
           Heat Pulse (Last 30 Days)
@@ -47,7 +47,7 @@ export default function UserHeatScoreCard() {
         {/* MAIN SCORE USING THEME PRIMARY */}
         <div
           className="text-3xl font-bold"
-          style={{ color: "var(--primary-color)" }}
+          style={{ color: "var(--primary)" }}
         >
           {score} / 100
         </div>

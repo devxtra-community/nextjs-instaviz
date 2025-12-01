@@ -52,7 +52,7 @@ export default function PlansPage() {
                   hover:shadow-md cursor-pointer
                   ${
                     plan.highlight || plan.offerlabel
-                      ? "bg-white border-2 border-[#AD49E1] relative"
+                      ? "bg-white border-2 border-[var(--primary)] relative"
                       : "bg-white border border-[#e8d7fa]"
                   }
                   ${idx === 0 ? "opacity-95" : ""}
@@ -63,19 +63,19 @@ export default function PlansPage() {
                 {(plan.label || plan.offerlabel) && (
                   <span
                     className={`absolute top-6 right-6 px-3 py-1 text-xs rounded-full font-semibold
-                    ${
-                      plan.highlight || plan.offerlabel
-                        ? "bg-[#f5e8ff] primary"
-                        : idx === 2
-                        ? "primarybg text-white"
-                        : "bg-[#f5e8ff] primary"
-                    }`}
+    ${
+      plan.highlight || plan.offerlabel
+        ? "bg-[var(--primary)] text-[var(--text-on-primary)]"
+        : idx === 2
+        ? "primarybg text-white"
+        : "bg-[#f5e8ff] primary"
+    }`}
                   >
                     {plan.label || plan.offerlabel}
                   </span>
                 )}
 
-                <div className="text-xl sm:text-2xl font-bold mb-2 primary">
+                <div className="text-xl sm:text-2xl font-bold mb-2 ">
                   {plan.title}
                 </div>
 
@@ -85,10 +85,7 @@ export default function PlansPage() {
                       ${plan.oldPrice}
                     </span>
                   )}
-                  <span>${plan.price}</span>
-                  <span className="text-xs sm:text-base font-normal text-gray-500">
-                    /mo
-                  </span>
+                  <span className="text-[var(--primary)]">${plan.price}</span>
                 </div>
 
                 <div className="text-xs sm:text-sm primary mb-4">

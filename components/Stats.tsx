@@ -62,7 +62,7 @@ export default function Stats() {
               {/* LARGE NUMBER (VISIBLE ALWAYS) */}
               <div
                 className="relative text-5xl font-extrabold"
-                style={{ color: "var(--primary-color)" }}
+                style={{ color: "var(--primary)" }}
               >
                 {stat.value}
               </div>

@@ -59,7 +59,7 @@ export default function UserWeeklyGrowthCard() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <Card className="p-4 rounded-2xl shadow-sm border border-gray-100">
+    <Card className="p-4 rounded-2xl shadow-sm bg-[var(--card)] border-[var(--card)]">
       <CardHeader>
         <CardTitle className="text-md font-semibold">
           Weekly User Growth (Current Week)
@@ -90,7 +90,7 @@ export default function UserWeeklyGrowthCard() {
               {/* THEME BAR COLOR */}
               <Bar
                 dataKey="users"
-                fill="var(--primary-color)"
+                fill="var(--primary)"
                 radius={[6, 6, 0, 0]}
               >
                 <LabelList content={<InsideLabel />} />

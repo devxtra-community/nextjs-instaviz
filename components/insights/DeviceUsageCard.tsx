@@ -26,7 +26,7 @@ export default function DeviceUsageCard() {
   }, []);
 
   return (
-    <Card className="rounded-2xl shadow-sm border border-gray-100">
+    <Card className="rounded-2xl shadow-sm  bg-[var(--card)] border-[var(--card)]">
       <CardHeader>
         <CardTitle className="text-md font-semibold">
           Users Device Split

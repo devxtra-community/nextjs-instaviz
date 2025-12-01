@@ -67,8 +67,8 @@ export default function UserManagementDashboard() {
         });
 
         setMonthlyUsers(formatted);
-      } catch (error) {
-        console.error("Couldn't fetch monthly users:", error);
+      } catch {
+        console.error("Couldn't fetch monthly users");
       }
     }
 
@@ -148,27 +148,28 @@ export default function UserManagementDashboard() {
           const Box = (
             <Card
               key={index}
-              className="rounded-2xl shadow-sm hover:shadow-md transition"
-              style={{
-                background: "var(--card)",
-                borderColor: "var(--border)",
-                color: "var(--card-foreground)",
-              }}
+              className="
+                rounded-[var(--radius)]
+                shadow-sm hover:shadow-md transition
+                bg-[var(--card)]
+                text-[var(--card-text)]
+                border-[var(--card)]
+              "
             >
               <CardContent className="p-6 flex justify-between items-center">
                 <div>
-                  <p style={{ color: "var(--muted-foreground)" }} className="text-xs font-medium mb-2">
+                  <p className="text-xs font-medium mb-2 text-[var(--text-light)]">
                     {card.title}
                   </p>
                   <h2 className="text-2xl font-bold">{card.value.toLocaleString()}</h2>
                 </div>
 
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
-                  style={{
-                    background: "var(--primary)",
-                    color: "var(--primary-foreground)",
-                  }}
+                  className="
+                    w-12 h-12 rounded-xl flex items-center justify-center shadow-sm
+                    bg-[var(--icon-bg)] 
+                    text-[var(--icon)]
+                  "
                 >
                   {card.icon}
                 </div>
@@ -189,45 +190,40 @@ export default function UserManagementDashboard() {
 
         {/* MONTHLY USERS */}
         <Card
-          className="rounded-2xl shadow-md"
-          style={{
-            background: "var(--card)",
-            borderColor: "var(--border)",
-            color: "var(--card-foreground)",
-          }}
+          className="
+            rounded-[var(--radius)]
+            shadow-md
+            bg-[var(--card)]
+            text-[var(--card-text)]
+            border-[var(--card)]
+          "
         >
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold">New Users per Month</h3>
-            <p style={{ color: "var(--muted-foreground)" }} className="text-xs mb-4">
+            <p className="text-xs mb-4 text-[var(--text-light)]">
               Monthly registration overview
             </p>
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={monthlyUsers}>
-                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-                <XAxis tick={{ fill: "var(--muted-foreground)" }} dataKey="name" />
-                <YAxis tick={{ fill: "var(--muted-foreground)" }} />
+                <CartesianGrid stroke="#EAEAEA" strokeDasharray="3 3" />
+                <XAxis tick={{ fill: "#6b7280" }} dataKey="name" />
+                <YAxis tick={{ fill: "#6b7280" }} />
 
                 <Tooltip
-                  content={({ active, payload, label }) => {
-                    if (active && payload?.length) {
-                      const users = payload[0]?.value ?? 0;
-                      return (
-                        <div
-                          style={{
-                            background: "var(--primary)",
-                            color: "var(--primary-foreground)",
-                            padding: 10,
-                            borderRadius: 8,
-                          }}
-                        >
-                          <p className="font-semibold">{label}</p>
-                          <p className="text-sm">{users} users</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
+                  content={({ active, payload, label }) =>
+                    active && payload?.length ? (
+                      <div className="p-2 rounded-lg"
+                        style={{
+                          background: "var(--primary)",
+                          color: "var(--text-on-primary)",
+                        }}
+                      >
+                        <p className="font-semibold">{label}</p>
+                        <p className="text-sm">{payload[0].value} users</p>
+                      </div>
+                    ) : null
+                  }
                 />
 
                 <Line
@@ -235,7 +231,7 @@ export default function UserManagementDashboard() {
                   dataKey="users"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--primary)" }}
+                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -244,42 +240,38 @@ export default function UserManagementDashboard() {
 
         {/* ACTIVE TIME */}
         <Card
-          className="rounded-2xl shadow-md"
-          style={{
-            background: "var(--card)",
-            borderColor: "var(--border)",
-            color: "var(--card-foreground)",
-          }}
+          className="
+            rounded-[var(--radius)]
+            shadow-md
+            bg-[var(--card)]
+            text-[var(--card-text)]
+             border-[var(--card)]
+          "
         >
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-4">Average Active Time</h3>
 
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={activeHours}>
-                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-                <XAxis tick={{ fill: "var(--muted-foreground)" }} dataKey="name" />
-                <YAxis tick={{ fill: "var(--muted-foreground)" }} />
+                <CartesianGrid stroke="#EAEAEA" strokeDasharray="3 3" />
+                <XAxis tick={{ fill: "#6b7280" }} dataKey="name" />
+                <YAxis tick={{ fill: "#6b7280" }} />
 
                 <Tooltip
-                  content={({ active, payload, label }) => {
-                    if (active && payload?.length) {
-                      const val = payload[0]?.value ?? 0;
-                      return (
-                        <div
-                          style={{
-                            background: "var(--primary)",
-                            color: "var(--primary-foreground)",
-                            padding: 10,
-                            borderRadius: 8,
-                          }}
-                        >
-                          <p className="font-semibold">{label}</p>
-                          <p className="text-sm">{val} active</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
+                  content={({ active, payload, label }) =>
+                    active && payload?.length ? (
+                      <div
+                        className="p-2 rounded-lg"
+                        style={{
+                          background: "var(--primary)",
+                          color: "var(--text-on-primary)",
+                        }}
+                      >
+                        <p className="font-semibold">{label}</p>
+                        <p className="text-sm">{payload[0].value} active</p>
+                      </div>
+                    ) : null
+                  }
                 />
 
                 <Line
@@ -287,20 +279,19 @@ export default function UserManagementDashboard() {
                   dataKey="value"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--primary)" }}
+                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
 
             <div className="text-center mt-4">
               <h2 className="text-3xl font-bold">{averageActive}</h2>
-              <p style={{ color: "var(--muted-foreground)" }} className="text-sm">
+              <p className="text-sm text-[var(--text-light)]">
                 Avg. user active time per day
               </p>
             </div>
           </CardContent>
         </Card>
-
       </div>
     </div>
   );

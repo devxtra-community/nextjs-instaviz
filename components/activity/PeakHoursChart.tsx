@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import axiosAdmin from "@/lib/axiosAdmin";  
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Bar,
@@ -13,6 +12,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
 import { motion } from "framer-motion";
 
@@ -36,7 +36,7 @@ export default function PeakHoursChart() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-      <Card className="rounded-2xl shadow-md border border-gray-100">
+      <Card className="rounded-2xl shadow-md bg-[var(--card)] border-[var(--card)]">
         <CardHeader>
           <CardTitle>Peak Upload Hours</CardTitle>
         </CardHeader>
@@ -56,7 +56,6 @@ export default function PeakHoursChart() {
 
                 <YAxis tick={{ fontSize: 12, fill: "#6B7280" }} />
 
-                {/* THEME TOOLTIP */}
                 <Tooltip
                   content={({ active, payload, label }) => {
                     if (active && payload?.length) {
@@ -64,7 +63,7 @@ export default function PeakHoursChart() {
                       return (
                         <div
                           style={{
-                            backgroundColor: "var(--primary-color)",
+                            backgroundColor: "var(--primary)",
                             padding: "8px 12px",
                             borderRadius: "8px",
                             color: "var(--text-on-primary)",
@@ -80,11 +79,21 @@ export default function PeakHoursChart() {
                   }}
                 />
 
-                {/* THEME BAR COLOR */}
+                {/* UPDATED BAR WITH ALWAYS-VISIBLE LABELS */}
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                   {hours.map((_, i) => (
-                    <Cell key={i} fill="var(--primary-color)" />
+                    <Cell key={i} fill="var(--primary)" />
                   ))}
+
+                  <LabelList
+                    dataKey="value"
+                    position="insideTop"
+                    style={{
+                      fill: "var(--text-on-primary)",
+                      fontSize: 12,
+                      fontWeight: 700,
+                    }}
+                  />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

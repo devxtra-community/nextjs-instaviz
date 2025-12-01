@@ -88,26 +88,53 @@ export default function SignUpPage() {
   return (
     <div className="h-screen w-full flex overflow-hidden bg-white text-gray-900">
       {/* ---------- LEFT PANEL ---------- */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-linear-to-br from-[#AD49E1] via-purple-500 to-[#AD49E1] text-white">
+      {/* ---------- LEFT PANEL ---------- */}
+      <div
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden text-white"
+        style={{
+          background:
+            "linear-gradient(to bottom right, var(--primary), color-mix(in oklch, var(--primary) 70%, black), var(--primary))",
+        }}
+      >
         {/* Glow Blurs */}
-        <div className="absolute top-16 left-24 w-72 h-72 bg-white/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute top-16 left-24 w-72 h-72 rounded-full blur-3xl animate-pulse"
+          style={{
+            background: "color-mix(in oklch, var(--primary) 40%, white)",
+          }}
+        ></div>
+
+        <div
+          className="absolute bottom-20 right-20 w-96 h-96 rounded-full blur-3xl animate-pulse"
+          style={{
+            background: "color-mix(in oklch, var(--primary) 25%, white)",
+          }}
+        ></div>
 
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center items-start p-14">
           <h1 className="text-5xl font-extrabold mb-3 tracking-tight drop-shadow-lg">
             InstaviZ
           </h1>
+
           <h2 className="text-3xl font-semibold mb-4 leading-tight">
             Transform Your Data Into Powerful Insights
           </h2>
+
           <p className="text-white/80 text-lg mb-8 max-w-md leading-relaxed">
             Turn your raw data into beautiful visual stories powered by AI
             analytics.
           </p>
 
           {/* Glass Card */}
-          <div className="relative bg-linear-to-r from-[#9B5DE0] to-[#b188fc] backdrop-blur-md border border-gray-400 rounded-2xl p-6 w-[430px]  transition">
+          <div
+            className="relative backdrop-blur-md border rounded-2xl p-6 w-[430px] transition shadow-lg"
+            style={{
+              background:
+                "linear-gradient(to right, var(--primary), color-mix(in oklch, var(--primary) 60%, white))",
+              borderColor: "color-mix(in oklch, var(--primary) 40%, white)",
+            }}
+          >
             <div className="p-4 flex justify-center">
               <img
                 src="/violet.gif"
@@ -131,7 +158,7 @@ export default function SignUpPage() {
           {/* Header */}
           <div className="mb-8 text-center lg:text-left">
             <h2 className="text-3xl font-bold mb-2">Create your account</h2>
-            <p className="text-[#9B5DE0] text-base">
+            <p className="text-[var(--primary)] text-base">
               Let's get started with your 30-day free trial.
             </p>
           </div>
@@ -265,11 +292,11 @@ export default function SignUpPage() {
                 className="text-sm text-gray-600 cursor-pointer"
               >
                 I agree to the{" "}
-                <a href="#" className="text-[#AD49E1] hover:underline">
+                <a href="#" className="text-[var(--primary)] hover:underline">
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-[#AD49E1] hover:underline">
+                <a href="#" className="text-[var(--primary)] hover:underline">
                   Privacy Policy
                 </a>
               </label>
@@ -280,7 +307,7 @@ export default function SignUpPage() {
               onClick={handleSubmit}
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-[#AD49E1] text-white font-semibold rounded-md hover:bg-purple-500 cursor-pointer  transition flex items-center justify-center gap-2"
+              className="w-full h-11 bg-[var(--primary)] text-white font-semibold rounded-md hover:bg-purple-500 cursor-pointer  transition flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>

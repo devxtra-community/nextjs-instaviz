@@ -93,7 +93,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
         <div className="w-full">
             <button
                 onClick={handleButtonClick}
-                className="px-7 py-2 primarybg text-white rounded-lg font-semibold hover:brightness-105 hover:cursor-pointer"
+                className="px-7 py-2 bg-[var(--primary)] text-white rounded-lg font-semibold hover:brightness-105 hover:cursor-pointer"
             >
                 Upload File
             </button>

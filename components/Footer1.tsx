@@ -45,7 +45,7 @@ export default function Footer() {
               <button
                 className="relative overflow-hidden font-medium px-8 py-3 rounded-xl shadow-md transition-all cursor-pointer hover:brightness-110"
                 style={{
-                  background: "var(--primary-color)",
+                  background: "var(--primary)",
                   color: "var(--text-on-primary)",
                 }}
               >
@@ -169,7 +169,7 @@ export default function Footer() {
                 type="submit"
                 className="flex items-center justify-center gap-2 font-medium mt-2 px-6 py-3 rounded-xl transition-all hover:brightness-110"
                 style={{
-                  background: "var(--primary-color)",
+                  background: "var(--primary)",
                   color: "var(--text-on-primary)",
                   boxShadow: "0 6px 25px rgba(0,0,0,0.10)",
                 }}

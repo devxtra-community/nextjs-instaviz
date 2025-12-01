@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
               onClick={handleLogin}
               className="
                 w-full rounded-md py-2.5 text-white font-medium
-                bg-[var(--primary-color)] hover:bg-[var(--primary-hover)]
+                bg-[var(--primary)] hover:bg-[var(--primary)]
                 transition cursor-pointer
               "
             >
@@ -120,9 +120,9 @@ export default function AdminLoginPage() {
           hidden md:flex flex-1 items-center justify-center relative
           text-white overflow-hidden
           bg-gradient-to-br
-          from-[color-mix(in_srgb,var(--primary-color)_80%,white_20%)]
-          via-[color-mix(in_srgb,var(--primary-color)_60%,white_40%)]
-          to-[color-mix(in_srgb,var(--primary-color)_40%,white_60%)]
+          from-[color-mix(in_srgb,var(--primary)_100%,white_10%)]
+          via-[color-mix(in_srgb,var(--primary)_80%,white_20%)]
+          to-[color-mix(in_srgb,var(--primary)_60%,white_30%)]
         "
       >
         {/* DOT GRID OVERLAY */}

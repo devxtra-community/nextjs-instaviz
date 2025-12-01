@@ -12,8 +12,8 @@ import axiosAdmin from "@/lib/axiosAdmin"
 
 // Color palette based on global theme variables
 const COLORS = [
-  "var(--primary-color)",
-  "var(--primary-light)"
+  "var(--chart-1)",
+  "var(--chart-2)"
 ]
 
 // Label function updated to use theme (no fixed white)
@@ -62,10 +62,21 @@ export function ChartPieStacked() {
   }, [])
 
   return (
-    <Card className="flex flex-col">
+    <Card
+      className="
+        flex flex-col 
+        bg-[var(--card)]
+        text-[var(--card-text)]
+        border border-[var(--card)]
+        rounded-[var(--radius)]
+        shadow
+      "
+    >
       <CardHeader className="pb-0 text-center">
         <CardTitle>Upload Device Split</CardTitle>
-        <CardDescription>Uploads this month — Desktop vs Mobile</CardDescription>
+        <CardDescription>
+          Uploads this month — Desktop vs Mobile
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col items-center gap-4 pt-4">

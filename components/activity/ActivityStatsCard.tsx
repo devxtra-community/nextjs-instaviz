@@ -48,15 +48,23 @@ export default function ActivityStatsCards() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.1 }}
         >
-          <Card className="rounded-2xl shadow-sm hover:shadow-md transition bg-white border border-gray-100">
+          <Card
+            className="
+              rounded-[var(--radius)]
+              shadow-sm hover:shadow-md transition
+              bg-[var(--card)]
+              text-[var(--card-text)]
+               border-[var(--card)]
+            "
+          >
             <CardContent className="p-5 flex justify-between items-center">
 
               {/* LEFT TEXT */}
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-light)]">
                   {s.title}
                 </p>
-                <h2 className="text-2xl font-bold text-gray-900 mt-1">
+                <h2 className="text-2xl font-bold mt-1 text-[var(--card-text)]">
                   {s.value}
                 </h2>
               </div>
@@ -65,8 +73,8 @@ export default function ActivityStatsCards() {
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
                 style={{
-                  background: "var(--primary-color)",
-                  color: "var(--text-on-primary)"
+                  background: "var(--icon-bg)",
+                  color: "var(--icon)"
                 }}
               >
                 {s.icon}

@@ -8,13 +8,13 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, icon }: StatsCardProps) {
   return (
-    <Card className="rounded-xl bg-[var(--card-bg)] shadow-sm hover:shadow-md transition-all duration-200">
+    <Card className="rounded-xl bg-[var(--card)] border-[var(--card)] shadow-sm hover:shadow-md transition-all duration-200">
       <CardContent className="flex items-center justify-between p-4">
 
         {/* Left Text Block */}
         <div className="flex flex-col gap-1">
-          <p className="text-xs font-medium text-[var(--text-light)]">{title}</p>
-          <h2 className="text-2xl font-bold text-[var(--text-dark)] leading-tight">
+          <p className="text-xs font-medium text-[var(--text-color)]">{title}</p>
+          <h2 className="text-2xl font-bold text-[var(--text-color)] leading-tight">
             {value}
           </h2>
         </div>
@@ -23,12 +23,12 @@ export default function StatsCard({ title, value, icon }: StatsCardProps) {
         <div
           className="w-12 h-12 flex items-center justify-center rounded-xl shadow-sm"
           style={{
-            backgroundColor: "var(--primary-color)",
-            color: "var(--text-on-primary)",
+            backgroundColor:"var(--icon-bg)",
+           
           }}
         >
           {/* force lucide icon to inherit stroke color */}
-          <div className="[&>*]:stroke-current text-[var(--text-on-primary)]">
+          <div className="[&>*]:stroke-current text-[var(--icon)]">
             {icon}
           </div>
         </div>

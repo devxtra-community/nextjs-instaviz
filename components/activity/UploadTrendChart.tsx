@@ -44,7 +44,7 @@ export default function UploadTrendChart() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-      <Card className="rounded-2xl shadow-md border border-gray-100">
+      <Card className="rounded-2xl shadow-md bg-[var(--card)] border-[var(--card)]">
         <CardHeader>
           <CardTitle>Weekly Upload Trend (Current Week)</CardTitle>
         </CardHeader>
@@ -63,12 +63,12 @@ export default function UploadTrendChart() {
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload?.length) {
-                    const val = payload[0]?.value ?? 0; // ✅ FIXED
+                    const val = payload[0]?.value ?? 0; 
 
                     return (
                       <div
                         style={{
-                          backgroundColor: "var(--primary-color)",
+                          backgroundColor: "var(--primary)",
                           color: "var(--text-on-primary)",
                           padding: "8px 12px",
                           borderRadius: "8px",
@@ -90,7 +90,7 @@ export default function UploadTrendChart() {
               <Line
                 type="monotone"
                 dataKey="uploads"
-                stroke="var(--primary-color)"
+                stroke="var(--primary)"
                 strokeWidth={3}
                 dot={{ r: 4, fill: "var(--primary-color)" }}
               />
