@@ -94,6 +94,7 @@ export default function AllUsers() {
               <p className="text-gray-500 text-lg">No users found.</p>
             </div>
           ) : (
+            
             <>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {filteredUsers.map((u) => (
