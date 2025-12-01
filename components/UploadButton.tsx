@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, ChangeEvent } from "react";
-import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAnalysis } from "@/context/AnalysisContext";
 
@@ -28,7 +27,6 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 
   const isCsvFile = (file: File) => file.name.toLowerCase().endsWith(".csv");
 
-  /** MAIN UPLOAD LOGIC */
   const uploadFileAndCreateSession = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -49,16 +47,13 @@ const UploadButton: React.FC<UploadButtonProps> = ({
       const summary = uploaded.data.summary;
       const messages = uploaded.data.messages;
 
-      /** Save session ID */
       localStorage.setItem("currentSessionId", sessionId);
       setActiveSessionId(sessionId);
 
-      /** Save token only if backend sends it */
       if (uploaded.session_token) {
         localStorage.setItem("session_token", uploaded.session_token);
       }
 
-      /** Update UI */
       setAnalysisData({
         data: { charts, metrics, summary, messages },
       });
@@ -73,7 +68,6 @@ const UploadButton: React.FC<UploadButtonProps> = ({
     }
   };
 
-  /** When a file is chosen */
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
