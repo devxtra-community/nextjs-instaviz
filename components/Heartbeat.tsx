@@ -10,7 +10,7 @@ export default function Heartbeat() {
     const init = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.log("No access token, stopping heartbeat.");
+        console.log("🔴 No access token, stopping heartbeat.");
         return;
       }
 
@@ -19,12 +19,20 @@ export default function Heartbeat() {
           screenWidth: window.innerWidth,
           screenHeight: window.innerHeight,
         });
-        console.log("Session started:", res.data);
+        console.log("🟢 Session started:", res.data);
       } catch (err) {
         console.error("Session start failed:", err);
       }
 
+      // ✅ HEARTBEAT LOOP (only runs when token exists)
       interval = setInterval(() => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          console.log("⛔ Token removed — stopping heartbeat.");
+          if (interval) clearInterval(interval);
+          return;
+        }
+
         axiosInstance.post("/admin/heartbeat").catch((err) => {
           console.error("Heartbeat error:", err);
         });
@@ -33,15 +41,30 @@ export default function Heartbeat() {
 
     init();
 
+    // END SESSION (called on logout, unmount, before unload)
     const endSession = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+
+      const token = localStorage.getItem("accessToken");
+      if (!token) return; // Don't call /end after logout
+
       axiosInstance.post("/admin/end").catch(() => {});
     };
 
+    // 🔥 Listen for custom logout event
+    const onLogout = () => {
+      console.log("⚠ Logout detected, stopping heartbeat");
+      endSession();
+    };
+
+    window.addEventListener("logout", onLogout);
     window.addEventListener("beforeunload", endSession);
 
     return () => {
-      if (interval) clearInterval(interval);
+      console.log("Component unmounted, cleaning heartbeat...");
       endSession();
+      window.removeEventListener("logout", onLogout);
       window.removeEventListener("beforeunload", endSession);
     };
   }, []);
