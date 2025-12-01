@@ -58,7 +58,7 @@ export default function VerifyOtpPage() {
         </p>
 
         <div className="flex justify-center mb-8">
-          <Toaster richColors position="top-center" />
+          
           <InputOTP maxLength={6} value={otp} onChange={setOtp}>
             <InputOTPGroup className="primary ">
               <InputOTPSlot index={0} />

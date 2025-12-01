@@ -202,7 +202,7 @@ export default function ProfilePage() {
   };
   return (
     <div className="min-h-screen p-6 flex justify-center bg-dot-fade ">
-      <Toaster richColors position="top-center" />
+      
       <Navbar />
       <div className="w-full max-w-6xl pt-15 flex gap-8 flex-col md:flex-row">
         <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">

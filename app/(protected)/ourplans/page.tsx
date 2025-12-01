@@ -64,13 +64,16 @@ export default function PlansPage() {
                 {(plan.label || plan.offerlabel) && (
                   <span
                     className={`absolute top-6 right-6 px-3 py-1 text-xs rounded-full font-semibold
-                    ${
-                      plan.highlight || plan.offerlabel
+
+                      ${plan.highlight || plan.offerlabel
                         ? "bg-[#f5e8ff] primary"
                         : idx === 2
                         ? "primarybg text-white"
-                        : "bg-[#f5e8ff] primary"
-                    }`}
+                        : "bg-[#f5e8ff] primary"}
+                    `}
+
+                 
+
                   >
                     {plan.label || plan.offerlabel}
                   </span>
@@ -103,14 +106,16 @@ export default function PlansPage() {
                     </li>
                   ))}
 
-                  {plan.unavailable &&
-                    plan.unavailable.length > 0 &&
-                    plan.unavailable.map((f: string) => (
-                      <li key={f} className="flex items-center opacity-60">
-                        <span className="mr-2 text-gray-400">✘</span>{" "}
-                        <span>{f}</span>
-                      </li>
-                    ))}
+
+                  {plan.unavailable?.map((f: string) => (
+                    <li key={f} className="flex items-center opacity-60">
+                      <span className="mr-2 text-gray-400">✘</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+
+                  
+
                 </ul>
 
                 <CheckoutButton
