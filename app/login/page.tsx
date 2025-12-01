@@ -77,7 +77,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <Toaster richColors position="top-center" />
+      
 
       <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-24">
         <div className="lg:hidden mb-6 flex items-center">

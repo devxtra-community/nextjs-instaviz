@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
         <div className="mx-auto w-full max-w-md">
           <h2 className="text-4xl font-semibold text-gray-900">Admin Login</h2>
 
-          <Toaster richColors position="top-center" />
+          
 
           <p className="mt-1 text-base text-gray-600">
             Sign in to access system controls.

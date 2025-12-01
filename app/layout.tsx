@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { AnalysisProvider } from "@/context/AnalysisContext";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: any) {
       <body>
         <AnalysisProvider>
           {children}
+          <Toaster richColors position="top-center" />
         </AnalysisProvider>
 
       </body>
