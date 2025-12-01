@@ -128,7 +128,7 @@ export default function SignUpPage() {
       {/* ---------- RIGHT PANEL ---------- */}
       <div className="w-full lg:w-1/2 flex flex-col justify-start items-center px-6 sm:px-12 py-6 bg-white overflow-y-auto">
         <div className="max-w-md w-full mt-8 sm:mt-6 mb-6">
-          <Toaster richColors position="top-center" />
+          
           {/* Header */}
           <div className="mb-8 text-center lg:text-left">
             <h2 className="text-3xl font-bold mb-2">Create your account</h2>
