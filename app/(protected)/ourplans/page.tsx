@@ -1,43 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-"use client";
-
-import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
-import CheckoutButton from "@/components/CheckoutButton";
-import axiosInstance from "@/lib/axiosInstance";
-
-export default function PlansPage() {
-  const [plans, setPlans] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const res = await axiosInstance.get("/admin/plans");
-        setPlans(res.data.plans || []);
-      } catch (err) {
-        console.log("Error fetching plans:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlans();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-dot-fade py-8 px-2 sm:px-4 pt-24">
-        <Navbar />
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#AD49E1]"></div>
-        </div>
-      </div>
-    );
-  }
-
 import CheckoutButton from "@/components/CheckoutButton";
 import axiosInstance from "@/lib/axiosInstance";
 
@@ -82,7 +46,6 @@ export default function PlansPage() {
             {plans.map((plan, idx) => (
               <div
                 key={plan._id || plan.title}
-                key={plan._id || plan.title}
                 className={`
                   flex flex-col items-center rounded-3xl card-custom-top-right p-6 sm:p-8 transition
                   w-full min-w-[85vw] sm:min-w-[20rem] sm:w-80
@@ -96,16 +59,15 @@ export default function PlansPage() {
                 style={idx === 1 ? { zIndex: 2 } : { zIndex: 1 }}
               >
                 {(plan.label || plan.offerlabel) && (
-                {(plan.label || plan.offerlabel) && (
                   <span
                     className={`absolute top-6 right-6 px-3 py-1 text-xs rounded-full font-semibold
-                    ${plan.highlight || plan.offerlabel
-                      ? "bg-[#f5e8ff] primary"
-                      : idx === 2
-                      ? "primarybg text-white"
-                      : "bg-[#f5e8ff] primary"}`}
+                      ${plan.highlight || plan.offerlabel
+                        ? "bg-[#f5e8ff] primary"
+                        : idx === 2
+                        ? "primarybg text-white"
+                        : "bg-[#f5e8ff] primary"}
+                    `}
                   >
-                    {plan.label || plan.offerlabel}
                     {plan.label || plan.offerlabel}
                   </span>
                 )}
@@ -132,25 +94,21 @@ export default function PlansPage() {
 
                 <ul className="text-gray-800 text-xs sm:text-sm space-y-2 mb-4 w-full">
                   {plan.features?.map((f: string) => (
-                  {plan.features?.map((f: string) => (
                     <li key={f} className="flex items-center">
                       <span className="mr-2 primary">✔</span> <span>{f}</span>
                     </li>
                   ))}
 
-                  {plan.unavailable && plan.unavailable.length > 0 &&
-                    plan.unavailable.map((f: string) => (
-                      <li key={f} className="flex items-center opacity-60">
-                        <span className="mr-2 text-gray-400">✘</span>{" "}
-                        <span>{f}</span>
-                      </li>
-                    ))}
+                  {plan.unavailable?.map((f: string) => (
+                    <li key={f} className="flex items-center opacity-60">
+                      <span className="mr-2 text-gray-400">✘</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
                 </ul>
 
                 <CheckoutButton
                   plan={plan.title}
-                  highlight={plan.highlight || !!plan.offerlabel}
-                  butto={plan.button || `Get ${plan.title}`}
                   highlight={plan.highlight || !!plan.offerlabel}
                   butto={plan.button || `Get ${plan.title}`}
                 />
@@ -158,7 +116,9 @@ export default function PlansPage() {
             ))}
 
             {plans.length === 0 && (
-              <p className="text-center text-gray-500 w-full">No plans available.</p>
+              <p className="text-center text-gray-500 w-full">
+                No plans available.
+              </p>
             )}
           </div>
         </div>
