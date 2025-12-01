@@ -33,13 +33,6 @@ export function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handler = () => tokenCheck();
-    window.addEventListener("token-updated", handler);
-    return () => window.removeEventListener("token-updated", handler);
-  }, []);
-
-
-  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setIsLoggedIn(false);
@@ -113,7 +106,7 @@ export function Navbar() {
       }
       localStorage.clear();
       toast.success("Logged out");
-      setIsLoggedIn(false)
+      setIsLoggedIn(false);
       setMenuOpen(false);
       router.push("/home");
     } catch (err) {
@@ -130,7 +123,6 @@ export function Navbar() {
     return (
       <div className="flex items-center">
         <div className="relative inline-flex items-center">
-          <Toaster richColors position="top-center" />
           <span className="relative flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-[11px] font-semibold text-orange-700 shadow-sm">
             <span className="text-[14px] animate-pulse">🔥</span>
             <span>{userToken} Tokens</span>

@@ -38,7 +38,6 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-
 axiosInstance.interceptors.response.use(
   (response) => response,
 
@@ -48,7 +47,9 @@ axiosInstance.interceptors.response.use(
     if (!error.response) return Promise.reject(error);
 
     const status = error.response.status;
-
+    if (originalReq.url.includes("/auth/login")) {
+      return Promise.reject(error);
+    }
     if (status === 401) {
       // Avoid infinite loop
       if (originalReq._retry) {
@@ -57,7 +58,6 @@ axiosInstance.interceptors.response.use(
       originalReq._retry = true;
 
       const accessToken = localStorage.getItem("accessToken");
-
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -108,6 +108,6 @@ axiosInstance.interceptors.response.use(
 
     return Promise.reject(error);
   }
-  )
+);
 
 export default axiosInstance;

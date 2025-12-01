@@ -94,7 +94,6 @@ export default function DashboardMain({
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
-        <Toaster richColors position="top-center" />
         {/* Show session selector ONLY when logged in */}
         {isLogged && (
           <div className="absolute top-20 right-6">
