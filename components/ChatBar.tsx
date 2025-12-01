@@ -152,7 +152,7 @@ export const ChatBar: React.FC<ChatBarProps> = ({
           mobile ? "bottom-0" : "top-12 right-0"
         } bg-white p-4 flex flex-col border-t md:border-l border-gray-200`}
       >
-        <Toaster richColors position="top-center" />
+        
         <div className="text-center mt-40">
           <h2 className="text-lg font-semibold primary mb-2">
             Upload a file to chat with InstaviZ AI

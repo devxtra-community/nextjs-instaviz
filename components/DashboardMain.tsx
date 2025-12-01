@@ -39,7 +39,6 @@ export default function DashboardMain({
 
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-  /** SAFE SESSION LOADING (404 handled silently) */
   const loadSession = async (sessionId: string) => {
     if (!sessionId || sessionId.length < 10) return;
 
@@ -90,12 +89,12 @@ export default function DashboardMain({
 
   /** BEFORE UPLOAD */
   if (!showData || !analysisData) {
-    const isLogged =
+    const isLogged = 
       typeof window !== "undefined" && !!localStorage.getItem("accessToken");
 
     return (
       <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
-        <Toaster richColors position="top-center" />
+        
         {/* Show session selector ONLY when logged in */}
         {isLogged && (
           <div className="absolute top-20 right-6">
@@ -177,6 +176,7 @@ export default function DashboardMain({
           <UploadButton
             onUploadSuccess={(newSessionId) => {
               localStorage.setItem("currentSessionId", newSessionId);
+              
               setRefreshSessions((prev) => prev + 1);
               loadSession(newSessionId);
               setDataUploaded(true);
