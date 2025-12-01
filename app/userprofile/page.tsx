@@ -60,20 +60,25 @@ export default function ProfilePage() {
   const [devices, setDevices] = useState<any[]>([]);
 
   const logoutDevice = async (id: string) => {
-    console.log("clicked logoutdevice", id);
+  console.log("clicked logoutdevice", id);
 
-    try {
-      const resp = await axiosInstance.post("/auth/logoutDevice", {
-        sessionId: id,
-      });
-      console.log(resp.data);
+  try {
+    const currentSessionId = localStorage.getItem("sessionId");  
 
-      getsession();
-      toast.success("Logged out from this device");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to logout device");
-    }
-  };
+    const resp = await axiosInstance.post("/auth/logoutDevice", {
+      sessionId: id,
+      currentSessionId, 
+    });
+
+    console.log(resp.data);
+
+    getsession();
+    toast.success("Logged out from this device");
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Failed to logout device");
+  }
+};
+
 
   const logoutAllDevices = async () => {
     console.log("in logoutAll Devices");
