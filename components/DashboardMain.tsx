@@ -9,7 +9,7 @@ import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
 import SessionSelector from "@/components/SessionSelector";
 import axiosInstance from "@/lib/axiosInstance";
-import axios from "axios";
+import { toast, Toaster } from "sonner";
 
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
@@ -38,7 +38,7 @@ export default function DashboardMain({
 
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-  /** SAFE SESSION LOADING (404 handled silently) */
+  /** Load a session */
   const loadSession = async (sessionId: string) => {
     if (!sessionId || sessionId.length < 10) return;
 
@@ -58,18 +58,9 @@ export default function DashboardMain({
       setActiveSessionId(sessionId);
       setDataUploaded(true);
       localStorage.setItem("currentSessionId", sessionId);
-
     } catch (err: any) {
-      // ❗ If session does not exist, clear it silently
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        console.warn("Invalid session cleared.");
-        resetAnalysis();
-        setDataUploaded(false);
-        localStorage.removeItem("currentSessionId");
-        return;
-      }
-
       console.error("Failed to load session:", err);
+      toast.warning(`${err.response.data.message}`);
     }
   };
 
@@ -87,14 +78,15 @@ export default function DashboardMain({
     }
   }, []);
 
-  /** BEFORE UPLOAD VIEW */
+  /** BEFORE UPLOAD */
   if (!showData || !analysisData) {
     const isLogged =
-      typeof window !== "undefined" &&
-      !!localStorage.getItem("accessToken");
+      typeof window !== "undefined" && !!localStorage.getItem("accessToken");
 
     return (
-      <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-gradient-to-br from-white to-[#faf5ff] p-8 text-center">
+      <main className="relative flex-1 flex h-screen flex-col items-center justify-center bg-linear-to-br from-white to-[#faf5ff] p-8 text-center">
+        <Toaster richColors position="top-center" />
+        {/* Show session selector ONLY when logged in */}
         {isLogged && (
           <div className="absolute top-20 right-6">
             <SessionSelector
@@ -190,21 +182,16 @@ export default function DashboardMain({
           value={metrics.total_rows}
           description="Records processed"
         />
-
         <MetricCard
           title="Total Columns"
           value={metrics.total_columns}
           description="Attributes detected"
         />
-
         <MetricCard
           title="Missing Values"
           value={metrics.missing_values}
-          total_rows={metrics.total_rows}
-          total_columns={metrics.total_columns}
-          description="Missing values / total cells"
+          description="Incomplete entries"
         />
-
         <MetricCard
           title="Charts Generated"
           value={charts.length}
@@ -214,7 +201,8 @@ export default function DashboardMain({
 
       <Charts charts={charts} />
 
-      <div className="mt-6 bg-gradient-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
+      {/* Summary */}
+      <div className="mt-6 bg-linear-to-r from-[#faf5ff] to-[#fdfbff] border border-[#f1e7ff] rounded-xl p-3 text-sm text-gray-700">
         <h3 className="font-semibold primary mb-2">Dataset Summary</h3>
         <ul className="space-y-1">
           {summary.map((point: string, i: number) => (

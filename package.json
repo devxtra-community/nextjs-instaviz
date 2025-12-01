@@ -25,10 +25,7 @@
     "@stripe/stripe-js": "^8.3.0",
     "@tabler/icons-react": "^3.35.0",
     "axios": "^1.13.2",
-
-
     "axios-jwt": "^4.0.3",
-
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",

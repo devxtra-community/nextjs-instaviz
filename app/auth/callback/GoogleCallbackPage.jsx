@@ -9,6 +9,7 @@ export default function GoogleCallbackPage() {
   useEffect(() => {
     const token = searchParams.get("token");
     const sessionId = searchParams.get("sessionId");
+    const redirect = searchParams.get("redirect");
     if (sessionId) {
       localStorage.setItem("sessionId", sessionId);
     }
@@ -20,7 +21,7 @@ export default function GoogleCallbackPage() {
       const cleanUrl = window.location.origin + "/auth/callback";
       window.history.replaceState({}, "", cleanUrl)
 
-      router.push("/home");
+      router.push(redirect || "/home");
     } else {
       router.push("/signup");
     }
@@ -28,7 +29,7 @@ export default function GoogleCallbackPage() {
 
   return (
     <div className="h-screen flex items-center justify-center">
-      <p className="text-gray-500 text-lg">Signing you in with Google...</p>
+      <p className="text-gray-500 text-lg">You are now login into InstaviZ...</p>
     </div>
   );
 }
