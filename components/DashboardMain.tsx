@@ -176,6 +176,7 @@ export default function DashboardMain({
           <UploadButton
             onUploadSuccess={(newSessionId) => {
               localStorage.setItem("currentSessionId", newSessionId);
+              
               setRefreshSessions((prev) => prev + 1);
               loadSession(newSessionId);
               setDataUploaded(true);
