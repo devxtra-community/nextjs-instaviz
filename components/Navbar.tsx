@@ -35,6 +35,13 @@ export function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    const handler = () => tokenCheck();
+    window.addEventListener("token-updated", handler);
+    return () => window.removeEventListener("token-updated", handler);
+  }, []);
+
+
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setIsLoggedIn(false);
