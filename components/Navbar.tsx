@@ -10,7 +10,6 @@ import { CircleArrowOutUpRight, LogOutIcon } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
-
 interface DecodedToken {
   id?: string;
   userId?: string;
@@ -29,7 +28,6 @@ export function Navbar() {
   const [userToken, setUserToken] = useState(0);
 
   const [loadingProfile, setLoadingProfile] = useState(true);
-  
 
   const router = useRouter();
   const pathname = usePathname();
@@ -70,8 +68,6 @@ export function Navbar() {
 
         setName(res.data.user.name);
         setEmail(res.data.user.email);
-        ;
-
         if (res.data.user?.picture) {
           setProfilePic(res.data.user.picture);
         }
@@ -104,16 +100,19 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post("/auth/logout");
+      const id = localStorage.getItem("sessionId");
+      if (id) {
+        await axiosInstance.post("/auth/logoutDevice", { sessionId: id });
+      }
       localStorage.clear();
-      setIsLoggedIn(false);
+      toast.success("Logged out");
+      setIsLoggedIn(false)
+      setMenuOpen(false);
       router.push("/home");
-    } catch (error) {
+    } catch (err) {
       toast.error("Logout failed");
-      console.log(error);
     }
   };
-
   const navigateToProfile = () => {
     router.push("/userprofile");
   };
