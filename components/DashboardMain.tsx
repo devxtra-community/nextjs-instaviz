@@ -9,9 +9,9 @@ import { useAnalysis } from "@/context/AnalysisContext";
 import FullLoader from "@/components/FullLoader";
 import SessionSelector from "@/components/SessionSelector";
 import axiosInstance from "@/lib/axiosInstance";
+import axios from "axios";
 import { toast, Toaster } from "sonner";
 
-// Lazy load Chart component
 const Charts = dynamic(() => import("@/components/chart"), {
   ssr: false,
   loading: () => (
@@ -37,12 +37,12 @@ export default function DashboardMain({
     resetAnalysis,
   } = useAnalysis();
 
-  // Remove buggy auto-load logic.
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [refreshSessions, setRefreshSessions] = useState(0);
 
-  /** Load a session */
+  /** SAFE SESSION LOADING (404 handled silently) */
   const loadSession = async (sessionId: string) => {
+    if (!sessionId || sessionId.length < 10) return;
+
     try {
       const res = await axiosInstance.get(`/session/${sessionId}`);
       const session = res.data;
@@ -59,16 +59,31 @@ export default function DashboardMain({
       setActiveSessionId(sessionId);
       setDataUploaded(true);
       localStorage.setItem("currentSessionId", sessionId);
+
     } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        console.warn("Invalid session cleared.");
+        resetAnalysis();
+        setDataUploaded(false);
+        localStorage.removeItem("currentSessionId");
+        return;
+      }
+
       console.error("Failed to load session:", err);
       toast.warning(`${err.response.data.message}`);
     }
   };
 
-  /** Auto-load only once */
+  /** Auto-load session if saved */
   useEffect(() => {
     const saved = localStorage.getItem("currentSessionId");
-    if (saved) {
+
+    if (
+      saved &&
+      saved !== "null" &&
+      saved !== "undefined" &&
+      saved.length > 10
+    ) {
       loadSession(saved);
     }
   }, []);
@@ -125,10 +140,13 @@ export default function DashboardMain({
     );
   }
 
-  /** AFTER UPLOAD — Dashboard View */
+  /** AFTER UPLOAD VIEW */
   const metrics = analysisData.data.metrics;
   const charts = analysisData.data.charts;
   const summary = analysisData.data.summary;
+
+  const totalValues =
+    (metrics?.total_rows || 0) * (metrics?.total_columns || 0);
 
   return (
     <main className="relative flex-1 overflow-y-auto flex flex-col bg-[#faf9fd] min-h-screen py-16 px-5 md:px-8 top-8">
@@ -174,16 +192,21 @@ export default function DashboardMain({
           value={metrics.total_rows}
           description="Records processed"
         />
+
         <MetricCard
           title="Total Columns"
           value={metrics.total_columns}
           description="Attributes detected"
         />
+
         <MetricCard
           title="Missing Values"
           value={metrics.missing_values}
-          description="Incomplete entries"
+          total_rows={metrics.total_rows}
+          total_columns={metrics.total_columns}
+          description="Missing values / total cells"
         />
+
         <MetricCard
           title="Charts Generated"
           value={charts.length}

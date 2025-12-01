@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import axios from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import axiosInstance from "@/lib/axiosInstance";
 
 interface CheckoutButtonProps {
   plan: string;
@@ -32,9 +32,7 @@ export default function CheckoutButton({
     }
     setLoading(true);
     try {
-      const { data } = await axios.post("/payment/create-checkout-session", {
-        plan,
-      });
+      const { data } = await axiosInstance.post("/payment/create-checkout-session", { plan });
       if (data.url) {
         window.location.href = data.url;
       } else {
