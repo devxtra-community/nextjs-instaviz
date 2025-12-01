@@ -85,7 +85,7 @@ export default function ForgotPasswordFlow() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-white to-purple-50 p-4 bg-dot-fade">
-      <Toaster richColors position="top-center" />
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

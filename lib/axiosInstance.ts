@@ -48,7 +48,9 @@ axiosInstance.interceptors.response.use(
     if (!error.response) return Promise.reject(error);
 
     const status = error.response.status;
-
+     if (originalReq.url.includes("/auth/login")) {
+    return Promise.reject(error);
+  }
     if (status === 401) {
       // Avoid infinite loop
       if (originalReq._retry) {
