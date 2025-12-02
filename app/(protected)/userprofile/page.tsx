@@ -249,7 +249,7 @@ export default function ProfilePage() {
 
           <div className="mt-8">
             <button
-              className="text-md text-red-500 cursor-pointer handwriting tracking-wider hover:underline"
+              className="text-md text-red-500 cursor-pointer  tracking-wider hover:underline"
               onClick={() => switchPassword()}
             >
               Change password
@@ -326,7 +326,7 @@ export default function ProfilePage() {
 
                   <p className="text-xs text-gray-500">IP: {d.ip}</p>
 
-                  <p className="text-sm text-red-400 handwriting tracking-wide ">
+                  <p className="text-sm text-red-400  tracking-wide ">
                     Last active: {new Date(d.lastActiveAt).toLocaleString()}
                   </p>
 
