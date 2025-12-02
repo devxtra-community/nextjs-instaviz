@@ -30,17 +30,17 @@ const UploadButton: React.FC<UploadButtonProps> = ({
 
     const uploadFileAndCreateSession = async (file: File) => {
 
-        const userToken = Number(localStorage.getItem("usertoken"));
+        // const userToken = Number(localStorage.getItem("usertoken"));
 
-        if (userToken <= 0) {
-            toast.error("You have no tokens left. Please recharge.");
+        // if (userToken <= 0) {
+        //     toast.error("You have no tokens left. Please recharge.");
             
-            setTimeout(()=>{
-                window.location.href = "/ourplans";
-            },1000);
+        //     setTimeout(()=>{
+        //         window.location.href = "/ourplans";
+        //     },1000);
 
-            return;
-        }
+        //     return;
+        // }
         const formData = new FormData();
         formData.append("file", file);
 

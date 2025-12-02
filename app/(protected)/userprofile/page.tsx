@@ -185,7 +185,7 @@ export default function ProfilePage() {
       const id = localStorage.getItem("sessionId");
 
       if (id) {
-        await axiosInstance.post("/auth/logoutDevice", { sessionId: id });
+        await axiosInstance.post("/auth/logoutDevice", { sessionId: id,currentSessionId:id });
       }
 
       localStorage.clear();
