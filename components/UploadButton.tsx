@@ -29,18 +29,6 @@ const UploadButton: React.FC<UploadButtonProps> = ({
     const isCsvFile = (file: File) => file.name.toLowerCase().endsWith(".csv");
 
     const uploadFileAndCreateSession = async (file: File) => {
-
-        const userToken = Number(localStorage.getItem("usertoken"));
-
-        if (userToken <= 0) {
-            toast.error("You have no tokens left. Please recharge.");
-            
-            setTimeout(()=>{
-                window.location.href = "/ourplans";
-            },1000);
-
-            return;
-        }
         const formData = new FormData();
         formData.append("file", file);
 

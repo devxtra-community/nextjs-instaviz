@@ -35,7 +35,7 @@ export default function RootLayout({ children }: any) {
       <body>
         <AnalysisProvider>
           {children}
-          <Toaster richColors position="top-center" />
+          {/* <Toaster richColors position="top-center" /> */}
         </AnalysisProvider>
 
       </body>

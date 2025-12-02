@@ -33,6 +33,20 @@ export function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    function handleChartGenerated(e: any) {
+      console.log("Chart Generated Event:", e.detail);
+      tokenCheck();
+    }
+
+    window.addEventListener("chart-generated", handleChartGenerated);
+    window.addEventListener("token-updated", tokenCheck);
+
+    return () => {
+      window.removeEventListener("chart-generated", handleChartGenerated);
+    };
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setIsLoggedIn(false);
@@ -68,6 +82,7 @@ export function Navbar() {
 
         setName(res.data.user.name);
         setEmail(res.data.user.email);
+
         if (res.data.user?.picture) {
           setProfilePic(res.data.user.picture);
         }
@@ -91,7 +106,7 @@ export function Navbar() {
         setUserToken(token.data.token);
         localStorage.setItem("usertoken", token.data.token.toString());
       } else {
-        setUserToken(2);
+        setUserToken(1);
       }
     } catch (err) {
       toast.error("error from the tokencheck at navbar");
