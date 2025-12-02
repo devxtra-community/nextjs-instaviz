@@ -66,7 +66,7 @@ export default function PeakHoursChart() {
                             backgroundColor: "var(--primary)",
                             padding: "8px 12px",
                             borderRadius: "8px",
-                            color: "var(--text-on-primary)",
+                            color: "var(--popover)",
                             boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
                           }}
                         >
@@ -89,7 +89,7 @@ export default function PeakHoursChart() {
                     dataKey="value"
                     position="insideTop"
                     style={{
-                      fill: "var(--text-on-primary)",
+                      fill: "var(--popover)",
                       fontSize: 12,
                       fontWeight: 700,
                     }}

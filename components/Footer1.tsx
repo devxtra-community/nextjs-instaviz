@@ -43,10 +43,10 @@ export default function Footer() {
           <div className="flex justify-center md:justify-start mt-6">
             <Link href="/home">
               <button
-                className="relative overflow-hidden font-medium px-8 py-3 rounded-xl shadow-md transition-all cursor-pointer hover:brightness-110"
+                className="relative overflow-hidden font-medium px-8 py-3 rounded-xl shadow-md transition-all cursor-pointer hover:brightness-100"
                 style={{
                   background: "var(--primary)",
-                  color: "var(--text-on-primary)",
+                  color: "var(--popover)",
                 }}
               >
                 Start Free
@@ -167,10 +167,10 @@ export default function Footer() {
               {/* SUBMIT BUTTON */}
               <motion.button
                 type="submit"
-                className="flex items-center justify-center gap-2 font-medium mt-2 px-6 py-3 rounded-xl transition-all hover:brightness-110"
+                className="flex items-center justify-center gap-2 font-medium mt-2 px-6 py-3 rounded-xl transition-all hover:brightness-110 cursor-pointer"
                 style={{
                   background: "var(--primary)",
-                  color: "var(--text-on-primary)",
+                  color: "var(--popover)",
                   boxShadow: "0 6px 25px rgba(0,0,0,0.10)",
                 }}
               >

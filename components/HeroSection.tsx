@@ -58,7 +58,7 @@ export default function HeroSection() {
             className="mt-6 flex flex-wrap gap-3 justify-center md:justify-start"
           >
             <Link href="/home">
-              <button className="px-5 bg-[var(--primary)] py-3 rounded-md font-medium shadow-md cursor-pointer hover:brightness-95 transition flex items-center gap-2">
+              <button className="px-5 bg-[var(--primary)]  text-[var(--popover)] py-3 rounded-md font-medium shadow-md cursor-pointer hover:brightness-95 transition flex items-center gap-2">
                 Try It Free
                 <ArrowRight size={16} />
               </button>

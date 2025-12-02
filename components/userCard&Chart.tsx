@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  LabelList
 } from "recharts";
 import { Users, UserCheck, UserCog, Star } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -188,7 +189,7 @@ export default function UserManagementDashboard() {
       {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        {/* MONTHLY USERS */}
+        {/* MONTHLY USERS CHART */}
         <Card
           className="
             rounded-[var(--radius)]
@@ -216,7 +217,7 @@ export default function UserManagementDashboard() {
                       <div className="p-2 rounded-lg"
                         style={{
                           background: "var(--primary)",
-                          color: "var(--text-on-primary)",
+                          color: "var(--popover)",
                         }}
                       >
                         <p className="font-semibold">{label}</p>
@@ -231,14 +232,25 @@ export default function UserManagementDashboard() {
                   dataKey="users"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
-                />
+                  dot={{ r: 4, fill: "var(--primary)" }}
+                >
+                  {/* ALWAYS SHOW VALUES */}
+                  <LabelList
+                    dataKey="users"
+                    position="top"
+                    style={{
+                      fill: "var(--primary)",
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  />
+                </Line>
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* ACTIVE TIME */}
+        {/* ACTIVE TIME CHART */}
         <Card
           className="
             rounded-[var(--radius)]
@@ -264,7 +276,7 @@ export default function UserManagementDashboard() {
                         className="p-2 rounded-lg"
                         style={{
                           background: "var(--primary)",
-                          color: "var(--text-on-primary)",
+                          color: "var(--popover)",
                         }}
                       >
                         <p className="font-semibold">{label}</p>
@@ -279,8 +291,19 @@ export default function UserManagementDashboard() {
                   dataKey="value"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
-                />
+                  dot={{ r: 4, fill: "var(--primary)" }}
+                >
+                  {/* ALWAYS SHOW VALUES */}
+                  <LabelList
+                    dataKey="value"
+                    position="top"
+                    style={{
+                      fill: "var(--primary)",
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  />
+                </Line>
               </LineChart>
             </ResponsiveContainer>
 

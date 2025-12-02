@@ -141,7 +141,7 @@ export default function LoginPage() {
               onClick={handleLogin}
               type="button"
               disabled={isLoading}
-              className="w-full rounded-md primarybg py-2.5 text-white font-medium cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+              className="w-full rounded-md  bg-[var(--primary)] text-[var(--popover)] py-2.5 font-medium cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
             >
               {isLoading ? "Signing in..." : "Sign in"}
             </button>
@@ -150,7 +150,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link href="/signup" className="primary hover:underline">
+              <Link href="/signup" className="text-[var(--primary)] hover:underline">
                 Sign up
               </Link>
             </p>

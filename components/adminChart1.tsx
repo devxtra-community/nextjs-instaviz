@@ -91,7 +91,7 @@ export function ChartBarMultiple() {
             dataKey="value"
             position="insideTop"
             style={{
-              fill: "var(--text-on-primary)",
+              fill: "var(--popover)",
               fontSize: 16,
               fontWeight: 700,
             }}

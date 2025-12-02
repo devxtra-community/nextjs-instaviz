@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  LabelList
 } from "recharts";
 import { motion } from "framer-motion";
 
@@ -48,28 +49,32 @@ export default function UploadTrendChart() {
         <CardHeader>
           <CardTitle>Weekly Upload Trend (Current Week)</CardTitle>
         </CardHeader>
+
         <CardContent>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#EAEAEA" />
 
-              <XAxis dataKey="day" tick={{ fontSize: 12, fill: "#6b7280" }} />
+              <XAxis
+                dataKey="day"
+                tick={{ fontSize: 12, fill: "#6b7280" }}
+              />
+
               <YAxis
                 allowDecimals={false}
                 tick={{ fontSize: 12, fill: "#6b7280" }}
               />
 
-              {/* Tooltip with theme */}
+              {/* Tooltip */}
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload?.length) {
-                    const val = payload[0]?.value ?? 0; 
-
+                    const val = payload[0]?.value ?? 0;
                     return (
                       <div
                         style={{
                           backgroundColor: "var(--primary)",
-                          color: "var(--text-on-primary)",
+                          color: "var(--popover)",
                           padding: "8px 12px",
                           borderRadius: "8px",
                           boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
@@ -86,14 +91,24 @@ export default function UploadTrendChart() {
                 }}
               />
 
-              {/* THEME LINE */}
+              {/* Line + ALWAYS VISIBLE LABEL VALUES */}
               <Line
                 type="monotone"
                 dataKey="uploads"
                 stroke="var(--primary)"
                 strokeWidth={3}
-                dot={{ r: 4, fill: "var(--primary-color)" }}
-              />
+                dot={{ r: 4, fill: "var(--primary)" }}
+              >
+                <LabelList
+                  dataKey="uploads"
+                  position="top"
+                  style={{
+                    fill: "var(--primary)",
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                />
+              </Line>
             </LineChart>
           </ResponsiveContainer>
         </CardContent>

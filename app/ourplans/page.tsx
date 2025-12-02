@@ -82,10 +82,10 @@ export default function PlansPage() {
                 <div className="text-2xl sm:text-3xl font-extrabold flex items-end space-x-1 sm:space-x-2 primary">
                   {plan.oldPrice && (
                     <span className="line-through text-base sm:text-lg text-gray-400">
-                      ${plan.oldPrice}
+                      {plan.oldPrice}
                     </span>
                   )}
-                  <span className="text-[var(--primary)]">${plan.price}</span>
+                  <span className="text-[var(--primary)]">₹{plan.price}</span>
                 </div>
 
                 <div className="text-xs sm:text-sm primary mb-4">

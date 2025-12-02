@@ -159,7 +159,7 @@ export default function TokenAccessDashboard() {
                         <div
                           style={{
                             background: "var(--primary)",
-                            color: "var(--text-on-primary)",
+                            color: "var(--popover)",
                             padding: "10px",
                             borderRadius: "8px",
                           }}
@@ -178,7 +178,7 @@ export default function TokenAccessDashboard() {
                   dataKey="value"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
+                  dot={{ r: 4, fill: "var(--popover)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -230,7 +230,7 @@ export default function TokenAccessDashboard() {
                   dataKey="value"
                   stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: "var(--text-on-primary)" }}
+                  dot={{ r: 4, fill: "var(--popover)" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -245,66 +245,8 @@ export default function TokenAccessDashboard() {
         </Card>
 
       </div>
+      </div>
 
-      {/* ===================== PREMIUM USERS CHART ===================== */}
-      <Card
-        className="rounded-2xl shadow-md"
-        style={{
-          background: "var(--card)",
-          borderColor: "var(--border)",
-          color: "var(--card-foreground)",
-        }}
-      >
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold mb-3">Premium Users Growth</h3>
-
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={alltokenusage}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)" }} />
-              <YAxis tick={{ fill: "var(--muted-foreground)" }} />
-
-              <Tooltip
-                content={({ active, payload, label }) => {
-                  if (active && payload?.length) {
-                    const val = payload[0]?.value ?? 0;
-                    return (
-                      <div
-                        style={{
-                          background: "var(--primary)",
-                          color: "var(--text-on-primary)",
-                          padding: "10px",
-                          borderRadius: "8px",
-                        }}
-                      >
-                        <p className="font-semibold">{label}</p>
-                        <p className="text-sm">{val}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="var(--primary)"
-                strokeWidth={3}
-                dot={{ r: 4, fill: "var(--text-on-primary)" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-
-          <div className="text-center mt-5">
-            <h2 className="text-3xl font-bold">2.3K</h2>
-            <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
-              Total premium active users
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-    </div>
+     
   );
 }

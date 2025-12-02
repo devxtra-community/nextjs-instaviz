@@ -16,8 +16,8 @@
   --text-color:oklch(0.141 0.005 285.823);
   --star:oklch(90.874% 0.18844 99.853);
   --icon: oklch(100% 0.00011 271.152);
-  --icon-bg:oklch(44.666% 0.30399 264.135);
-  --primary: oklch(84.111% 0.28157 143.004);
+  --icon-bg:#ad49e1;
+  --primary: #ad49e1;
   --primary-foreground: oklch(60.137% 0.23899 27.773);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
@@ -29,18 +29,18 @@
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.75 0.183 55.934);
- --chart-1: oklch(84.111% 0.28157 143.004);
---chart-2: oklch(75% 0.29 143);
---chart-3: oklch(90% 0.20 143);
---chart-4: oklch(82% 0.15 143);
---chart-5: oklch(65% 0.28 143);
+ --chart-1: #AD49E1;
+--chart-2:#C97EEC;
+--chart-3: #BF5CE8;
+--chart-4: #8D2BBE;
+--chart-5: #6F1F96;
 
 
 
 
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(13.94% 0.01768 48.171);
+  --sidebar-primary:#ad49e1;
   --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
   --sidebar-accent: oklch(0.967 0.001 286.375);
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
@@ -84,9 +84,6 @@
 
 
 
-/* ====================================================================== */
-/* BASE THEME – Everything now uses variables, not fixed colors          */
-/* ====================================================================== */
 
 @layer base {
   * {
@@ -100,10 +97,6 @@
     font-family: "Poppins", sans-serif;
   }
 }
-
-/* ====================================================================== */
-/* VARIABLE-DRIVEN UTILITY CLASSES (REPLACES old .primary, .primarybg)   */
-/* ====================================================================== */
 
 .primary {
   color: var(--primary-color);
@@ -120,9 +113,6 @@
   background-color: var(--primary-hover);
 }
 
-/* ====================================================================== */
-/* CARD STYLING (Fixing all white cards)                                 */
-/* ====================================================================== */
 
 .card {
   background-color: var(--card-bg) !important;
@@ -136,9 +126,7 @@
   border-color: var(--primary-color);
 }
 
-/* ====================================================================== */
-/* DOT LOADER – unchanged but themed                                     */
-/* ====================================================================== */
+
 
 .dot {
   width: 8px;
@@ -158,9 +146,7 @@
   100% { opacity: .2; transform: translateY(0px); }
 }
 
-/* ====================================================================== */
-/* TYPOGRAPHY CLASSES (unchanged)                                        */
-/* ====================================================================== */
+
 
 .title { font-family: "Bricolage Grotesque", sans-serif; }
 .subtitle { font-family: "Lato", sans-serif; }

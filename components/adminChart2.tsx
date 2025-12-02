@@ -28,7 +28,7 @@ const renderLabel = (props: any) => {
     <text
       x={x}
       y={y}
-      fill="var(--text-on-primary)"
+      fill="var(--popover)"
       textAnchor="middle"
       dominantBaseline="central"
       fontSize={14}

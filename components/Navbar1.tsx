@@ -58,7 +58,7 @@ export default function Navbar() {
             {/* SIGNUP BUTTON */}
             <Link href="/signup" className="hidden md:block">
               <button
-                className=" px-5 py-2 font-medium rounded-full shadow-sm hover:brightness-95 transition cursor-pointer"
+                className=" px-5 py-2 text-[var(--popover)] font-medium rounded-full shadow-sm hover:brightness-95 transition cursor-pointer"
                 style={{
                   background: "var(--primary)",
                 }}

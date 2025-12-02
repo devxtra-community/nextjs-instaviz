@@ -263,7 +263,7 @@ export default function AdminPlansPage() {
                 className="font-bold text-3xl"
                 style={{ color: "var(--primary)" }}
               >
-                ${plan.price}
+                ₹{plan.price}
               </p>
 
               <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
