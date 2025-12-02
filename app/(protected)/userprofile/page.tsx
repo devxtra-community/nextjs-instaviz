@@ -61,10 +61,12 @@ export default function ProfilePage() {
 
   const logoutDevice = async (id: string) => {
     console.log("clicked logoutdevice", id);
+     const currentSessionId = localStorage.getItem("sessionId");
 
     try {
       const resp = await axiosInstance.post("/auth/logoutDevice", {
         sessionId: id,
+        currentSessionId:currentSessionId,
       });
       console.log(resp.data);
 
@@ -183,7 +185,7 @@ export default function ProfilePage() {
       const id = localStorage.getItem("sessionId");
 
       if (id) {
-        await axiosInstance.post("/auth/logoutDevice", { sessionId: id });
+        await axiosInstance.post("/auth/logoutDevice", { sessionId: id,currentSessionId:id });
       }
 
       localStorage.clear();
@@ -347,4 +349,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-//comment
