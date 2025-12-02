@@ -61,18 +61,17 @@ export default function ProfilePage() {
 
   const logoutDevice = async (id: string) => {
     console.log("clicked logoutdevice", id);
-     const currentSessionId = localStorage.getItem("sessionId");
+    const currentSessionId = localStorage.getItem("sessionId");
 
     try {
       const resp = await axiosInstance.post("/auth/logoutDevice", {
         sessionId: id,
-        currentSessionId:currentSessionId,
+        currentSessionId: currentSessionId,
       });
       console.log(resp.data);
 
       getsession();
       toast.success("Logged out from this device");
-      localStorage.clear();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to logout device");
     }
@@ -94,7 +93,6 @@ export default function ProfilePage() {
 
       toast.success(resp.data.message);
       getsession();
-      localStorage.clear();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to logout devices");
     }
@@ -187,7 +185,10 @@ export default function ProfilePage() {
       const id = localStorage.getItem("sessionId");
 
       if (id) {
-        await axiosInstance.post("/auth/logoutDevice", { sessionId: id,currentSessionId:id });
+        await axiosInstance.post("/auth/logoutDevice", {
+          sessionId: id,
+          currentSessionId: id,
+        });
       }
 
       localStorage.clear();
@@ -206,7 +207,6 @@ export default function ProfilePage() {
   };
   return (
     <div className="min-h-screen p-6 flex justify-center bg-dot-fade ">
-      
       <Navbar />
       <div className="w-full max-w-6xl pt-15 flex gap-8 flex-col md:flex-row">
         <div className="flex-1 border rounded-2xl p-6 bg-white/80 backdrop-blur-sm">
