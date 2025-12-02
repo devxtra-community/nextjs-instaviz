@@ -25,6 +25,10 @@ export default function LoginPage() {
   const redirect = searchParams.get("redirect");
 
   async function handleLogin() {
+    console.log("clicked login");
+    console.log("ENV IS !!!",process.env.NEXT_PUBLIC_API);
+    
+    
     if (!email || !password) {
       toast.error("Please enter both email and password");
       return;
