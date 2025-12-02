@@ -33,6 +33,20 @@ export function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    function handleChartGenerated(e: any) {
+      console.log("Chart Generated Event:", e.detail);
+      tokenCheck();
+    }
+
+    window.addEventListener("chart-generated", handleChartGenerated);
+
+    return () => {
+      window.removeEventListener("chart-generated", handleChartGenerated);
+    };
+  }, []);
+
+
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       setIsLoggedIn(false);

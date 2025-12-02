@@ -75,12 +75,10 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     })();
   }, [sessionId]);
 
-  // Auto-scroll when new messages added
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Load user profile image (if logged in)
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) return;
@@ -103,7 +101,6 @@ export const ChatBar: React.FC<ChatBarProps> = ({
     })();
   }, []);
 
-  // Scroll detection
   const handleScroll = () => {
     if (!messagesRef.current) return;
     const el = messagesRef.current;
@@ -151,6 +148,9 @@ export const ChatBar: React.FC<ChatBarProps> = ({
 
       if (chart) {
         addNewChart(chart);
+        window.dispatchEvent(new CustomEvent("chart-generated", {
+          detail: { chart }
+        }));
       }
     } catch (err) {
       console.log(err);
@@ -179,9 +179,15 @@ export const ChatBar: React.FC<ChatBarProps> = ({
       const reply = data.reply || "";
       const chart = data.chart || null;
 
-      // append AI reply
       setMessages((prev) => [...prev, { role: "ai", text: reply }]);
-      if (chart) addNewChart(chart);
+      if (chart) {
+        addNewChart(chart);
+
+        window.dispatchEvent(
+          new CustomEvent("chart-generated", { detail: { chart } })
+        );
+      }
+
     } catch (err) {
       toast.error("Failed to generate chart.");
       console.log(err);
