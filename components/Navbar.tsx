@@ -69,7 +69,9 @@ export function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
+    if (isLoggedIn && userId) {
     tokenCheck();
+  }
 
     if (!userId) {
       return;
@@ -82,6 +84,7 @@ export function Navbar() {
 
         setName(res.data.user.name);
         setEmail(res.data.user.email);
+        
         if (res.data.user?.picture) {
           setProfilePic(res.data.user.picture);
         }
@@ -96,7 +99,7 @@ export function Navbar() {
     };
 
     loadProfile();
-  }, [userId]);
+  }, [isLoggedIn,userId]);
 
   const tokenCheck = async () => {
     try {
