@@ -70,6 +70,7 @@ export default function ProfilePage() {
 
       getsession();
       toast.success("Logged out from this device");
+      localStorage.clear();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to logout device");
     }
@@ -91,6 +92,7 @@ export default function ProfilePage() {
 
       toast.success(resp.data.message);
       getsession();
+      localStorage.clear();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to logout devices");
     }
