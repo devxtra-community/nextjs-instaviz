@@ -61,10 +61,12 @@ export default function ProfilePage() {
 
   const logoutDevice = async (id: string) => {
     console.log("clicked logoutdevice", id);
+     const currentSessionId = localStorage.getItem("sessionId");
 
     try {
       const resp = await axiosInstance.post("/auth/logoutDevice", {
         sessionId: id,
+        currentSessionId:currentSessionId,
       });
       console.log(resp.data);
 
